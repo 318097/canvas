@@ -1,0 +1,10 @@
+.highlighted {
+  @apply border border-solid;
+}
+
+.title p,
+.paragraph p,
+pre,
+code {
+  font-size: inherit;
+}

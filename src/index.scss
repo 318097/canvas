@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.canvas-root {
+  background: lightgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+html,
+body,
+* {
+  font-family: monospace;
+}
+
+code {
+  @apply bg-slate-500 rounded-[1px] py-0.5 px-1 text-white text-sm;
+}
