@@ -72,11 +72,11 @@ const Raw = () => {
   };
 
   return (
-    <div className="flex items-center flex-col p-0">
+    <div className="flex items-center flex-col p-0 h-full">
       <header class="flex items-center justify-between w-full p-4 bg-green-100">
         <h3 className="text-white font-bold">Canvas</h3>
       </header>
-      <div className="flex items-start gap-0 w-full">
+      <div className="flex items-start gap-0 w-full grow">
         <div className="p-2 bg-white grow">
           {config.map((config) => {
             const { layout, className = "", fontMultiplier, platform } = config;
@@ -129,7 +129,7 @@ const Raw = () => {
             );
           })}
         </div>
-        <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 basis-1/6">
+        <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 basis-1/6 h-full">
           <div className="flex flex-col items-start gap-1 mb-2">
             <label className="text-xs font-bold">Title</label>
             <TextArea
@@ -143,7 +143,7 @@ const Raw = () => {
           <div className="flex flex-col items-start gap-1 mb-2">
             <label className="text-xs font-bold">Content</label>
             <TextArea
-              rows={4}
+              rows={12}
               placeholder="Content"
               maxLength={6}
               value={data.content}
@@ -174,8 +174,11 @@ const Raw = () => {
               })}
             </Fragment>
           )}
-          <hr />
-          <Button onClick={handleDownload}>Download</Button>
+          <div className="grow flex items-end">
+            <Button className="w-full" onClick={handleDownload}>
+              Download
+            </Button>
+          </div>
         </div>
       </div>
     </div>

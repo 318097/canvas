@@ -218,6 +218,7 @@ const CONFIG = [
           "text-size": "text-3xl",
           "text-align": "text-left",
           "text-color": "text-white",
+          "text-weight": "font-normal",
         },
       },
     ],
