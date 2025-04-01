@@ -421,6 +421,32 @@ const PROPERTIES = [
       },
     ],
   },
+  {
+    label: "Padding",
+    key: "padding",
+    options: [
+      {
+        label: "None",
+        value: "p-0",
+      },
+      {
+        label: "Small",
+        value: "p-2",
+      },
+      {
+        label: "Medium",
+        value: "p-4",
+      },
+      {
+        label: "Large",
+        value: "p-6",
+      },
+      {
+        label: "Extra Large",
+        value: "p-8",
+      },
+    ],
+  },
 ];
 
 const CONFIG = [
@@ -438,6 +464,7 @@ const CONFIG = [
           "text-weight": "font-bold",
           "text-align": "text-center",
           "text-color": "text-white",
+          "flex-width": "w-3/4",
         },
       },
       {
@@ -449,6 +476,7 @@ const CONFIG = [
           "text-align": "text-left",
           "text-color": "text-white",
           "text-weight": "font-normal",
+          "flex-width": "w-3/4",
         },
       },
     ],

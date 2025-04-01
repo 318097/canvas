@@ -142,7 +142,7 @@ const Raw = () => {
             );
           })}
         </div>
-        <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 basis-1/6 h-full">
+        <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 w-[300px] h-full overflow-auto">
           <div className="flex flex-col items-start gap-1 mb-2">
             <label className="text-xs font-bold">Title</label>
             <TextArea
@@ -150,6 +150,7 @@ const Raw = () => {
               placeholder="Title"
               value={data.title}
               onChange={(e) => setData({ ...data, title: e.target.value })}
+              spellCheck={false}
             />
           </div>
           <div className="flex flex-col items-start gap-1 mb-2">
@@ -158,6 +159,7 @@ const Raw = () => {
               rows={12}
               placeholder="Content"
               value={data.content}
+              spellCheck={false}
               onChange={(e) => setData({ ...data, content: e.target.value })}
             />
           </div>
