@@ -17,9 +17,9 @@ code {
 }
 
 .element {
-  @apply border border-dashed border-transparent;
+  outline: none;
   &.selected {
-    @apply border-gray-100;
+    outline: thin solid cyan;
   }
 }
 

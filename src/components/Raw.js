@@ -21,6 +21,7 @@ const Raw = () => {
   const [selected, setSelected] = useState("");
   const [properties, setProperties] = useState({});
   const [config, setConfig] = useState(CONFIG);
+  const [filename, setFilename] = useState("");
   const ref = useRef();
 
   useEffect(() => {
@@ -30,6 +31,16 @@ const Raw = () => {
     const match = config[0].layout.find((item) => item.key === section);
     setProperties(match.properties);
   }, [selected]);
+
+  useEffect(() => {
+    setFilename(
+      data.title
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9\s]/g, "")
+        .replace(/\s+/g, "-")
+        .slice(0, 30)
+    );
+  }, [data]);
 
   const handleDownload = useCallback(() => {
     setSelected("");
@@ -46,7 +57,7 @@ const Raw = () => {
       })
       .then((dataUrl) => {
         const link = document.createElement("a");
-        link.download = "my-image-name.png";
+        link.download = `${filename}.png`;
         link.href = dataUrl;
         link.click();
       })
@@ -73,16 +84,18 @@ const Raw = () => {
 
   return (
     <div className="flex items-center flex-col p-0 h-full">
-      <header class="flex items-center justify-between w-full p-4 bg-green-100">
+      <header class="flex items-center justify-between w-full p-4 bg-cyan-200">
         <h3 className="text-white font-bold">Canvas</h3>
       </header>
-      <div className="flex items-start gap-0 w-full grow">
-        <div className="p-2 bg-white grow">
+      <div className="flex items-start gap-0 w-full grow overflow-hidden">
+        <div className="p-2 bg-white grow h-full overflow-auto flex flex-col items-center">
           {config.map((config) => {
             const { layout, className = "", fontMultiplier, platform } = config;
             return (
-              <div className="flex flex-col items-start gap-2">
-                <h1 className="text-2xl font-bold">{platform}</h1>
+              <div className="flex flex-col items-start gap-1 mb-12">
+                <h1 className="text-xl font-bold">
+                  {platform} ({className})
+                </h1>
                 <div
                   ref={ref}
                   className={`raw-editor-root flex flex-col gap-2 bg-gray-800 p-4 ${className}`}
@@ -135,7 +148,6 @@ const Raw = () => {
             <TextArea
               rows={4}
               placeholder="Title"
-              maxLength={6}
               value={data.title}
               onChange={(e) => setData({ ...data, title: e.target.value })}
             />
@@ -145,7 +157,6 @@ const Raw = () => {
             <TextArea
               rows={12}
               placeholder="Content"
-              maxLength={6}
               value={data.content}
               onChange={(e) => setData({ ...data, content: e.target.value })}
             />
@@ -174,7 +185,12 @@ const Raw = () => {
               })}
             </Fragment>
           )}
-          <div className="grow flex items-end">
+          <div className="grow flex justify-end flex-col gap-2">
+            <Input
+              placeholder="Filename"
+              value={filename}
+              onChange={(e) => setFilename(e.target.value)}
+            />
             <Button className="w-full" onClick={handleDownload}>
               Download
             </Button>
