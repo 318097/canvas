@@ -9,12 +9,3 @@
   justify-content: center;
   padding: 12px;
 }
-html,
-body,
-* {
-  font-family: monospace;
-}
-
-code {
-  @apply bg-slate-500 rounded-[1px] py-0.5 px-1 text-white text-sm;
-}
