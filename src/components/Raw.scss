@@ -13,49 +13,17 @@ code {
 }
 
 .raw-editor-root {
-  @apply flex flex-col gap-6 items-center justify-center;
+  @apply flex flex-col gap-6 items-center justify-center select-none;
 }
 
 .element {
-  @apply border-transparent;
+  @apply border border-dashed border-transparent;
   &.selected {
-    @apply border border-dashed border-gray-100;
+    @apply border-gray-100;
   }
 }
 
 pre,
 code {
   font-size: inherit;
-}
-
-.atom {
-  border: 1px dashed transparent;
-  transition: 0.2s all;
-  position: relative;
-  .actions {
-    display: none;
-    transition: 0.2s all;
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    align-items: center;
-    border: 1px solid #ccc;
-    padding: 2px 4px;
-    gap: 2px;
-    .action {
-      font-size: 8px;
-      text-transform: lowercase;
-      color: #ccc;
-      &:hover {
-        cursor: pointer;
-        text-decoration: underline;
-      }
-    }
-  }
-  &:hover {
-    border-color: #ccc;
-    .actions {
-      display: flex;
-    }
-  }
 }
