@@ -1,3 +1,86 @@
+const COLORS = [
+  {
+    label: "White",
+    value: "text-white",
+  },
+  {
+    label: "Gray-100",
+    value: "text-gray-100",
+  },
+  {
+    label: "Gray-200",
+    value: "text-gray-200",
+  },
+  {
+    label: "Gray-300",
+    value: "text-gray-300",
+  },
+  {
+    label: "Gray-400",
+    value: "text-gray-400",
+  },
+  {
+    label: "Gray-500",
+    value: "text-gray-500",
+  },
+  {
+    label: "Gray-600",
+    value: "text-gray-600",
+  },
+  {
+    label: "Gray-700",
+    value: "text-gray-700",
+  },
+  {
+    label: "Gray-800",
+    value: "text-gray-800",
+  },
+  {
+    label: "Gray-900",
+    value: "text-gray-900",
+  },
+  {
+    label: "Red",
+    value: "text-red-500",
+  },
+  {
+    label: "Blue",
+    value: "text-blue-500",
+  },
+  {
+    label: "Green",
+    value: "text-green-500",
+  },
+  {
+    label: "Yellow",
+    value: "text-yellow-500",
+  },
+  {
+    label: "Purple",
+    value: "text-purple-500",
+  },
+  {
+    label: "Pink",
+    value: "text-pink-500",
+  },
+  {
+    label: "Orange",
+    value: "text-orange-500",
+  },
+  {
+    label: "Teal",
+    value: "text-teal-500",
+  },
+  {
+    label: "Cyan",
+    value: "text-cyan-500",
+  },
+  {
+    label: "Lime",
+    value: "text-lime-500",
+  },
+];
+
 const PROPERTIES = [
   {
     label: "Font Size",
@@ -66,88 +149,15 @@ const PROPERTIES = [
   {
     label: "Text Color",
     key: "text-color",
-    options: [
-      {
-        label: "White",
-        value: "text-white",
-      },
-      {
-        label: "Gray-100",
-        value: "text-gray-100",
-      },
-      {
-        label: "Gray-200",
-        value: "text-gray-200",
-      },
-      {
-        label: "Gray-300",
-        value: "text-gray-300",
-      },
-      {
-        label: "Gray-400",
-        value: "text-gray-400",
-      },
-      {
-        label: "Gray-500",
-        value: "text-gray-500",
-      },
-      {
-        label: "Gray-600",
-        value: "text-gray-600",
-      },
-      {
-        label: "Gray-700",
-        value: "text-gray-700",
-      },
-      {
-        label: "Gray-800",
-        value: "text-gray-800",
-      },
-      {
-        label: "Gray-900",
-        value: "text-gray-900",
-      },
-      {
-        label: "Red",
-        value: "text-red-500",
-      },
-      {
-        label: "Blue",
-        value: "text-blue-500",
-      },
-      {
-        label: "Green",
-        value: "text-green-500",
-      },
-      {
-        label: "Yellow",
-        value: "text-yellow-500",
-      },
-      {
-        label: "Purple",
-        value: "text-purple-500",
-      },
-      {
-        label: "Pink",
-        value: "text-pink-500",
-      },
-      {
-        label: "Orange",
-        value: "text-orange-500",
-      },
-      {
-        label: "Teal",
-        value: "text-teal-500",
-      },
-      {
-        label: "Cyan",
-        value: "text-cyan-500",
-      },
-      {
-        label: "Lime",
-        value: "text-lime-500",
-      },
-    ],
+    options: COLORS,
+  },
+  {
+    label: "Background",
+    key: "bg-color",
+    options: COLORS.map((color) => ({
+      ...color,
+      value: color.value.replace("text", "bg"),
+    })),
   },
   {
     label: "Font Weight",
