@@ -147,6 +147,58 @@ const PROPERTIES = [
     ],
   },
   {
+    label: "Text Decoration",
+    key: "text-decoration",
+    options: [
+      {
+        label: "None",
+        value: "no-underline",
+      },
+      {
+        label: "Underline",
+        value: "underline",
+      },
+      {
+        label: "Overline",
+        value: "overline",
+      },
+      {
+        label: "Line Through",
+        value: "line-through",
+      },
+    ],
+  },
+  {
+    label: "Text Decoration Color",
+    key: "text-decoration-color",
+    options: COLORS.map((color) => ({
+      ...color,
+      value: color.value.replace("text", "decoration"),
+    })),
+  },
+  {
+    label: "Text Transform",
+    key: "text-transform",
+    options: [
+      {
+        label: "None",
+        value: "normal-case",
+      },
+      {
+        label: "Uppercase",
+        value: "uppercase",
+      },
+      {
+        label: "Lowercase",
+        value: "lowercase",
+      },
+      {
+        label: "Capitalize",
+        value: "capitalize",
+      },
+    ],
+  },
+  {
     label: "Text Color",
     key: "text-color",
     options: COLORS,
@@ -198,6 +250,20 @@ const PROPERTIES = [
       {
         label: "Black",
         value: "font-black",
+      },
+    ],
+  },
+  {
+    label: "Font Style",
+    key: "font-style",
+    options: [
+      {
+        label: "Normal",
+        value: "not-italic",
+      },
+      {
+        label: "Italic",
+        value: "italic",
       },
     ],
   },
