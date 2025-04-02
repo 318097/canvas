@@ -16,6 +16,8 @@ import { getDefaultContent, PROPERTIES, CONFIG } from "./config";
 
 const { TextArea } = Input;
 
+const GENERIC_PROPERTIES = ["CODE", "STRONG"];
+
 const Raw = () => {
   const [data, setData] = useState(getDefaultContent());
   const [selected, setSelected] = useState("");
@@ -24,7 +26,15 @@ const Raw = () => {
   const [filename, setFilename] = useState("");
   const ref = useRef();
   const canvasRef = useRef();
-  const isGenericProperty = ["CODE", "STRONG"].includes(selected);
+  const isGenericProperty = GENERIC_PROPERTIES.includes(selected);
+
+  const updateSelectedItem = (newValue) => {
+    setSelected((prev) => {
+      if (GENERIC_PROPERTIES.includes(prev))
+        updatedClassesForTag(prev, "selected", "remove");
+      return newValue;
+    });
+  };
 
   useEffect(() => {
     if (!selected || isGenericProperty) return;
@@ -41,19 +51,24 @@ const Raw = () => {
   }, [selected]);
 
   useEffect(() => {
-    canvasRef.current.addEventListener("click", (e) => {
-      const tag = e.target.tagName;
-      if (["CODE", "STRONG"].includes(tag)) {
-        e.stopPropagation();
-        console.log("Detected click on <code>, <strong>");
-        const id = Math.random().toString(36).substr(2, 9);
-        e.target.dataset.id = id;
-        // setSelected(`${tag}:${id}`);
-        setSelected(tag);
-      } else {
-        setSelected("");
-      }
-    });
+    canvasRef.current.addEventListener(
+      "click",
+      (e) => {
+        const tag = e.target.tagName;
+        if (["CODE", "STRONG"].includes(tag)) {
+          e.stopPropagation();
+          console.log("Detected click on <code>, <strong>");
+          const id = Math.random().toString(36).substr(2, 9);
+          e.target.dataset.id = id;
+          // updateSelectedItem(`${tag}:${id}`);
+          updateSelectedItem(tag);
+          updatedClassesForTag(tag, "selected", "add");
+        } else {
+          updateSelectedItem("");
+        }
+      },
+      true
+    );
   }, [canvasRef.current]);
 
   useEffect(() => {
@@ -67,7 +82,7 @@ const Raw = () => {
   }, [data]);
 
   const handleDownload = useCallback(() => {
-    setSelected("");
+    updateSelectedItem("");
     if (ref.current === null) {
       return;
     }
@@ -90,25 +105,41 @@ const Raw = () => {
       });
   }, [ref]);
 
+  const updatedClassesForTag = (tag, classes, action = "set") => {
+    if (!tag) return;
+    const elements = canvasRef.current.querySelectorAll(tag);
+    elements.forEach((el) => {
+      if (action === "remove") {
+        el.classList.remove(classes);
+      } else if (action === "set") {
+        el.classList = classes;
+      } else if (action === "add") {
+        el.classList.add(classes);
+      }
+    });
+  };
+
   const handlePropertyChange = (key, value) => {
     const [element, section] = selected.split(":");
-    setProperties((prev) => ({
-      ...prev,
-      [selected]: {
+    let updatedProperties;
+    setProperties((prev) => {
+      updatedProperties = {
         ...(prev[selected] || {}),
         [key]: value,
-      },
-    }));
+      };
+      return {
+        ...prev,
+        [selected]: updatedProperties,
+      };
+    });
 
     if (isGenericProperty) {
-      const updatedClasses = {
-        ...(properties[element] || {}),
-        [key]: value,
-      };
-
-      canvasRef.current.querySelectorAll(element).forEach((el) => {
-        el.classList = Object.values(updatedClasses).join(" ");
-      });
+      const updatedClasses = [
+        ...Object.values(updatedProperties),
+        value,
+        "selected",
+      ].join(" ");
+      updatedClassesForTag(element, updatedClasses);
     } else {
       setConfig((prev) => {
         const newConfig = [...prev];
@@ -166,7 +197,7 @@ const Raw = () => {
                     return (
                       <div
                         onClick={() => {
-                          setSelected(fullKey);
+                          updateSelectedItem(fullKey);
                         }}
                         className={classNames}
                         dangerouslySetInnerHTML={{

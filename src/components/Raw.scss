@@ -18,9 +18,9 @@ code {
 
 .element {
   outline: none;
-  &.selected {
-    outline: thin solid cyan;
-  }
+}
+.selected {
+  outline: thin solid cyan;
 }
 
 pre,
