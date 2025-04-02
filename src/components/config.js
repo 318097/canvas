@@ -157,7 +157,7 @@ const PROPERTIES = [
     options: COLORS.map((color) => ({
       ...color,
       value: color.value.replace("text", "bg"),
-    })),
+    })).reverse(),
   },
   {
     label: "Font Weight",
@@ -524,7 +524,7 @@ const CONFIG = [
 
 const getDefaultContent = () => {
   return {
-    title: "Custom `.pick` for objects",
+    title: "Custom `.pick` for **objects**",
     content: `
 1. snake_case  
 2. keb-case  
