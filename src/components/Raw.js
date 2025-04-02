@@ -23,14 +23,38 @@ const Raw = () => {
   const [config, setConfig] = useState(CONFIG);
   const [filename, setFilename] = useState("");
   const ref = useRef();
+  const canvasRef = useRef();
+  const isGenericProperty = ["CODE", "STRONG"].includes(selected);
 
   useEffect(() => {
-    if (!selected) return;
+    if (!selected || isGenericProperty) return;
 
     const [platform, section] = selected.split(":");
     const match = config[0].layout.find((item) => item.key === section);
-    setProperties(match.properties);
+    setProperties((prev) => ({
+      ...prev,
+      [selected]: {
+        ...(prev[selected] || {}),
+        ...match.properties,
+      },
+    }));
   }, [selected]);
+
+  useEffect(() => {
+    canvasRef.current.addEventListener("click", (e) => {
+      const tag = e.target.tagName;
+      if (["CODE", "STRONG"].includes(tag)) {
+        e.stopPropagation();
+        console.log("Detected click on <code>, <strong>");
+        const id = Math.random().toString(36).substr(2, 9);
+        e.target.dataset.id = id;
+        // setSelected(`${tag}:${id}`);
+        setSelected(tag);
+      } else {
+        setSelected("");
+      }
+    });
+  }, [canvasRef.current]);
 
   useEffect(() => {
     setFilename(
@@ -66,20 +90,33 @@ const Raw = () => {
       });
   }, [ref]);
 
-  const handleChange = (key, value) => {
+  const handlePropertyChange = (key, value) => {
+    const [element, section] = selected.split(":");
     setProperties((prev) => ({
       ...prev,
-      [key]: value,
+      [selected]: {
+        ...(prev[selected] || {}),
+        [key]: value,
+      },
     }));
 
-    const [, section] = selected.split(":");
+    if (isGenericProperty) {
+      const updatedClasses = {
+        ...(properties[element] || {}),
+        [key]: value,
+      };
 
-    setConfig((prev) => {
-      const newConfig = [...prev];
-      const match = newConfig[0].layout.find((item) => item.key === section);
-      match.properties[key] = value;
-      return newConfig;
-    });
+      canvasRef.current.querySelectorAll(element).forEach((el) => {
+        el.classList = Object.values(updatedClasses).join(" ");
+      });
+    } else {
+      setConfig((prev) => {
+        const newConfig = [...prev];
+        const match = newConfig[0].layout.find((item) => item.key === section);
+        match.properties[key] = value;
+        return newConfig;
+      });
+    }
   };
 
   return (
@@ -88,9 +125,12 @@ const Raw = () => {
         <h3 className="text-white font-bold">Canvas</h3>
       </header>
       <div className="flex items-start gap-0 w-full grow overflow-hidden">
-        <div className="p-2 bg-white grow h-full overflow-auto flex flex-col items-center">
+        <div
+          className="p-2 bg-white grow h-full overflow-auto flex flex-col items-center"
+          ref={canvasRef}
+        >
           {config.map((config) => {
-            const { layout, className = "", fontMultiplier, platform } = config;
+            const { layout, className = "", platform } = config;
             return (
               <div className="flex flex-col items-start gap-1 mb-12">
                 <h1 className="text-xl font-bold">
@@ -142,7 +182,8 @@ const Raw = () => {
             );
           })}
         </div>
-        <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 w-[300px] h-full overflow-auto">
+        {/* Sidebar */}
+        <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 w-[300px] shrink-0 h-full overflow-auto">
           <div className="flex flex-col items-start gap-1 mb-2">
             <label className="text-xs font-bold">Title</label>
             <TextArea
@@ -172,13 +213,13 @@ const Raw = () => {
               {PROPERTIES.map((property) => {
                 const { options, label, key } = property;
 
-                const value = _.get(properties, key, "");
+                const value = _.get(properties, [selected, key], "");
                 return (
                   <div className="flex flex-col items-start gap-1 mb-2">
                     <label className="text-xs font-bold">{label}</label>
                     <Select
                       options={options}
-                      onChange={(value) => handleChange(key, value)}
+                      onChange={(value) => handlePropertyChange(key, value)}
                       value={value}
                       className="w-full"
                     />
