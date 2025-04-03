@@ -4,19 +4,19 @@ import * as fabric from "fabric"; // v6
 const FabricJSCanvas = () => {
   const canvasEl = useRef();
   const textRef = useRef();
-  const canvasRef = useRef();
+  const canvasContainerRef = useRef();
   const [text, setText] = useState("Text");
 
   useEffect(() => {
     const options = { backgroundColor: "whitesmoke" };
-    canvasRef.current = new fabric.Canvas(canvasEl.current, options);
+    canvasContainerRef.current = new fabric.Canvas(canvasEl.current, options);
 
     textRef.current = createText({});
 
-    canvasRef.current.add(textRef.current);
+    canvasContainerRef.current.add(textRef.current);
 
     return () => {
-      canvasRef.current.dispose();
+      canvasContainerRef.current.dispose();
     };
   }, []);
 
@@ -67,7 +67,7 @@ const FabricJSCanvas = () => {
           setText(e.target.value);
           // textRef.current.text = e.target.value;
           textRef.current.set("text", e.target.value);
-          canvasRef.current.renderAll();
+          canvasContainerRef.current.renderAll();
         }}
       />
     </div>

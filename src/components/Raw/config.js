@@ -525,7 +525,7 @@ const PROPERTIES = [
   },
 ];
 
-const CONFIG = [
+const TEMPLATES = [
   {
     platform: "Instagram",
     fontMultiplier: 2,
@@ -601,4 +601,6 @@ const getDefaultContent = () => {
   };
 };
 
-export { getDefaultContent, PROPERTIES, CONFIG };
+const GENERIC_PROPERTIES = ["CODE", "STRONG"];
+
+export { getDefaultContent, PROPERTIES, TEMPLATES, GENERIC_PROPERTIES };
