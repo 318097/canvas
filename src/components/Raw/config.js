@@ -1,86 +1,3 @@
-const COLORS = [
-  {
-    label: "White",
-    value: "text-white",
-  },
-  {
-    label: "Gray-100",
-    value: "text-gray-100",
-  },
-  {
-    label: "Gray-200",
-    value: "text-gray-200",
-  },
-  {
-    label: "Gray-300",
-    value: "text-gray-300",
-  },
-  {
-    label: "Gray-400",
-    value: "text-gray-400",
-  },
-  {
-    label: "Gray-500",
-    value: "text-gray-500",
-  },
-  {
-    label: "Gray-600",
-    value: "text-gray-600",
-  },
-  {
-    label: "Gray-700",
-    value: "text-gray-700",
-  },
-  {
-    label: "Gray-800",
-    value: "text-gray-800",
-  },
-  {
-    label: "Gray-900",
-    value: "text-gray-900",
-  },
-  {
-    label: "Red",
-    value: "text-red-500",
-  },
-  {
-    label: "Blue",
-    value: "text-blue-500",
-  },
-  {
-    label: "Green",
-    value: "text-green-500",
-  },
-  {
-    label: "Yellow",
-    value: "text-yellow-500",
-  },
-  {
-    label: "Purple",
-    value: "text-purple-500",
-  },
-  {
-    label: "Pink",
-    value: "text-pink-500",
-  },
-  {
-    label: "Orange",
-    value: "text-orange-500",
-  },
-  {
-    label: "Teal",
-    value: "text-teal-500",
-  },
-  {
-    label: "Cyan",
-    value: "text-cyan-500",
-  },
-  {
-    label: "Lime",
-    value: "text-lime-500",
-  },
-];
-
 const PROPERTIES = [
   {
     label: "Font Size",
@@ -171,10 +88,88 @@ const PROPERTIES = [
   {
     label: "Text Decoration Color",
     key: "text-decoration-color",
-    options: COLORS.map((color) => ({
-      ...color,
-      value: color.value.replace("text", "decoration"),
-    })),
+    options: [
+      {
+        label: "White",
+        value: "decoration-white",
+      },
+      {
+        label: "Gray-100",
+        value: "decoration-gray-100",
+      },
+      {
+        label: "Gray-200",
+        value: "decoration-gray-200",
+      },
+      {
+        label: "Gray-300",
+        value: "decoration-gray-300",
+      },
+      {
+        label: "Gray-400",
+        value: "decoration-gray-400",
+      },
+      {
+        label: "Gray-500",
+        value: "decoration-gray-500",
+      },
+      {
+        label: "Gray-600",
+        value: "decoration-gray-600",
+      },
+      {
+        label: "Gray-700",
+        value: "decoration-gray-700",
+      },
+      {
+        label: "Gray-800",
+        value: "decoration-gray-800",
+      },
+      {
+        label: "Gray-900",
+        value: "decoration-gray-900",
+      },
+      {
+        label: "Red",
+        value: "decoration-red-500",
+      },
+      {
+        label: "Blue",
+        value: "decoration-blue-500",
+      },
+      {
+        label: "Green",
+        value: "decoration-green-500",
+      },
+      {
+        label: "Yellow",
+        value: "decoration-yellow-500",
+      },
+      {
+        label: "Purple",
+        value: "decoration-purple-500",
+      },
+      {
+        label: "Pink",
+        value: "decoration-pink-500",
+      },
+      {
+        label: "Orange",
+        value: "decoration-orange-500",
+      },
+      {
+        label: "Teal",
+        value: "decoration-teal-500",
+      },
+      {
+        label: "Cyan",
+        value: "decoration-cyan-500",
+      },
+      {
+        label: "Lime",
+        value: "decoration-lime-500",
+      },
+    ],
   },
   {
     label: "Text Transform",
@@ -201,15 +196,174 @@ const PROPERTIES = [
   {
     label: "Text Color",
     key: "text-color",
-    options: COLORS,
+    options: [
+      {
+        label: "White",
+        value: "text-white",
+      },
+      {
+        label: "Gray-100",
+        value: "text-gray-100",
+      },
+      {
+        label: "Gray-200",
+        value: "text-gray-200",
+      },
+      {
+        label: "Gray-300",
+        value: "text-gray-300",
+      },
+      {
+        label: "Gray-400",
+        value: "text-gray-400",
+      },
+      {
+        label: "Gray-500",
+        value: "text-gray-500",
+      },
+      {
+        label: "Gray-600",
+        value: "text-gray-600",
+      },
+      {
+        label: "Gray-700",
+        value: "text-gray-700",
+      },
+      {
+        label: "Gray-800",
+        value: "text-gray-800",
+      },
+      {
+        label: "Gray-900",
+        value: "text-gray-900",
+      },
+      {
+        label: "Red",
+        value: "text-red-500",
+      },
+      {
+        label: "Blue",
+        value: "text-blue-500",
+      },
+      {
+        label: "Green",
+        value: "text-green-500",
+      },
+      {
+        label: "Yellow",
+        value: "text-yellow-500",
+      },
+      {
+        label: "Purple",
+        value: "text-purple-500",
+      },
+      {
+        label: "Pink",
+        value: "text-pink-500",
+      },
+      {
+        label: "Orange",
+        value: "text-orange-500",
+      },
+      {
+        label: "Teal",
+        value: "text-teal-500",
+      },
+      {
+        label: "Cyan",
+        value: "text-cyan-500",
+      },
+      {
+        label: "Lime",
+        value: "text-lime-500",
+      },
+    ],
   },
   {
     label: "Background",
     key: "bg-color",
-    options: COLORS.map((color) => ({
-      ...color,
-      value: color.value.replace("text", "bg"),
-    })).reverse(),
+    options: [
+      {
+        label: "White",
+        value: "bg-white",
+      },
+      {
+        label: "Gray-100",
+        value: "bg-gray-100",
+      },
+      {
+        label: "Gray-200",
+        value: "bg-gray-200",
+      },
+      {
+        label: "Gray-300",
+        value: "bg-gray-300",
+      },
+      {
+        label: "Gray-400",
+        value: "bg-gray-400",
+      },
+      {
+        label: "Gray-500",
+        value: "bg-gray-500",
+      },
+      {
+        label: "Gray-600",
+        value: "bg-gray-600",
+      },
+      {
+        label: "Gray-700",
+        value: "bg-gray-700",
+      },
+      {
+        label: "Gray-800",
+        value: "bg-gray-800",
+      },
+      {
+        label: "Gray-900",
+        value: "bg-gray-900",
+      },
+      {
+        label: "Red",
+        value: "bg-red-500",
+      },
+      {
+        label: "Blue",
+        value: "bg-blue-500",
+      },
+      {
+        label: "Green",
+        value: "bg-green-500",
+      },
+      {
+        label: "Yellow",
+        value: "bg-yellow-500",
+      },
+      {
+        label: "Purple",
+        value: "bg-purple-500",
+      },
+      {
+        label: "Pink",
+        value: "bg-pink-500",
+      },
+      {
+        label: "Orange",
+        value: "bg-orange-500",
+      },
+      {
+        label: "Teal",
+        value: "bg-teal-500",
+      },
+      {
+        label: "Cyan",
+        value: "bg-cyan-500",
+      },
+      {
+        label: "Lime",
+        value: "bg-lime-500",
+      },
+    ],
   },
   {
     label: "Font Weight",
