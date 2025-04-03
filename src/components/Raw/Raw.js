@@ -20,7 +20,7 @@ const Raw = () => {
   const [theme, setTheme] = useState("Listicle");
   const [filename, setFilename] = useState("");
 
-  const templateRef = useRef();
+  const templateRef = useRef({});
   const canvasContainerRef = useRef();
 
   const isGenericTagSelected = GENERIC_PROPERTIES.includes(selectedElement);
@@ -113,12 +113,18 @@ const Raw = () => {
         title: "title",
         content: null,
         groupId,
-      }).concat([
-        ...contentPageIds.map(
-          (id) =>
-            generateTemplate(platform, { title: null, content: id, groupId })[0]
-        ),
-      ]);
+      })
+        .concat([
+          ...contentPageIds.map(
+            (id) =>
+              generateTemplate(platform, {
+                title: null,
+                content: id,
+                groupId,
+              })[0]
+          ),
+        ])
+        .map((obj, idx) => ({ ...obj, idx: idx + 1 }));
 
       setData((prev) => ({ ...prev, ...parsedContent }));
       setTemplates(pages);
@@ -129,27 +135,30 @@ const Raw = () => {
 
   const handleDownload = useCallback(() => {
     _updateSelectedElement("");
-    if (templateRef.current === null) {
-      return;
-    }
 
-    htmlToImage
-      .toPng(templateRef.current, {
-        cacheBust: true,
-        quality: 1,
-        width: 1080,
-        height: 1080,
-      })
-      .then((dataUrl) => {
-        const link = document.createElement("a");
-        link.download = `${filename}.png`;
-        link.href = dataUrl;
-        link.click();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [templateRef]);
+    templates.forEach((template) => {
+      const { platform, groupId, idx, containerWidth, containerHeight } =
+        template;
+      const refId = `${groupId}-${platform}-${idx}`;
+
+      htmlToImage
+        .toPng(templateRef.current[refId], {
+          cacheBust: true,
+          quality: 1,
+          width: containerWidth,
+          height: containerHeight,
+        })
+        .then((dataUrl) => {
+          const link = document.createElement("a");
+          link.download = `[${new Date().getTime()}] ${idx}.${filename}.png`;
+          link.href = dataUrl;
+          link.click();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  }, [templateRef, templates]);
 
   const updatedClassesForTag = (tag, classes, action = "set") => {
     if (!tag) return;

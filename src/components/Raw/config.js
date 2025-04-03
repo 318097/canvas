@@ -687,6 +687,7 @@ const generateTemplate = (platform, keys) => {
       platform: "Instagram",
       groupId: groupId,
       containerWidth: 680,
+      containerHeight: 680,
       className: `h-[680px] w-[680px]`,
       layout: [
         {
@@ -720,6 +721,7 @@ const generateTemplate = (platform, keys) => {
       platform: "Twitter",
       groupId: groupId,
       containerWidth: 1200,
+      containerHeight: 675,
       className: `h-[675px] w-[1200px]`,
       layout: [
         {

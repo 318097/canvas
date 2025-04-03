@@ -86,10 +86,11 @@ const Card = ({
   selectedElement,
   _updateSelectedElement,
 }) => {
-  const { layout, className = "", platform, groupId } = template;
+  const { layout, className = "", platform, groupId, idx } = template;
+  const refId = `${groupId}-${platform}-${idx}`;
   return (
     <div
-      ref={templateRef}
+      ref={(el) => (templateRef.current[refId] = el)}
       className={`raw-editor-root flex flex-col gap-2 bg-gray-800 p-4 ${className}`}
     >
       {layout.map((layout) => {
