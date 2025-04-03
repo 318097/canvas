@@ -525,66 +525,103 @@ const PROPERTIES = [
   },
 ];
 
-const TEMPLATES = [
+const generateTemplate = (platform, keys) => {
+  const { title = "title", content = "content", groupId = "none" } = keys || {};
+
+  const TEMPLATES = [
+    {
+      platform: "Instagram",
+      groupId: groupId,
+      containerWidth: 680,
+      className: `h-[680px] w-[680px]`,
+      layout: [
+        {
+          type: "text",
+          key: title,
+          label: "Title",
+          className: "leading-relaxed",
+          properties: {
+            "text-size": "text-5xl",
+            "text-weight": "font-bold",
+            "text-align": "text-center",
+            "text-color": "text-white",
+            "flex-width": "w-3/4",
+          },
+        },
+        {
+          type: "text",
+          key: content,
+          className: "leading-relaxed",
+          properties: {
+            "text-size": "text-3xl",
+            "text-align": "text-left",
+            "text-color": "text-white",
+            "text-weight": "font-normal",
+            "flex-width": "w-3/4",
+          },
+        },
+      ],
+    },
+    {
+      platform: "Twitter",
+      groupId: groupId,
+      containerWidth: 1200,
+      className: `h-[675px] w-[1200px]`,
+      layout: [
+        {
+          type: "text",
+          key: title,
+          className: "leading-relaxed",
+          properties: {
+            "text-size": "text-5xl",
+            "text-weight": "font-bold",
+            "text-align": "text-center",
+            "text-color": "text-white",
+          },
+        },
+        {
+          type: "text",
+          key: content,
+          className: "leading-relaxed",
+          properties: {
+            "text-size": "text-3xl",
+            "text-align": "text-left",
+            "text-color": "text-white",
+            "text-weight": "font-normal",
+          },
+        },
+      ],
+    },
+  ];
+
+  return TEMPLATES.filter((template) =>
+    platform === "all" ? true : template.platform === platform
+  ).map((template) => {
+    return {
+      ...template,
+      layout: template.layout.filter((layout) => layout.key !== null),
+    };
+  });
+};
+
+const THEMES = [
   {
-    platform: "Instagram",
-    fontMultiplier: 2,
-    className: `h-[1080px] w-[1080px]`,
-    layout: [
-      {
-        type: "title",
-        key: "title",
-        className: "leading-relaxed",
-        properties: {
-          "text-size": "text-5xl",
-          "text-weight": "font-bold",
-          "text-align": "text-center",
-          "text-color": "text-white",
-          "flex-width": "w-3/4",
-        },
-      },
-      {
-        type: "paragraph",
-        key: "content",
-        className: "leading-relaxed",
-        properties: {
-          "text-size": "text-3xl",
-          "text-align": "text-left",
-          "text-color": "text-white",
-          "text-weight": "font-normal",
-          "flex-width": "w-3/4",
-        },
-      },
-    ],
+    name: "Default",
   },
   {
-    platform: "Twitter",
-    fontMultiplier: 2,
-    className: `h-[675px] w-[1200px]`,
-    layout: [
-      {
-        type: "title",
-        key: "title",
-        className: "leading-relaxed",
-        properties: {
-          "text-size": "text-5xl",
-          "text-weight": "font-bold",
-          "text-align": "text-center",
-          "text-color": "text-white",
-        },
-      },
-      {
-        type: "paragraph",
-        key: "content",
-        className: "leading-relaxed",
-        properties: {
-          "text-size": "text-3xl",
-          "text-align": "text-left",
-          "text-color": "text-white",
-          "text-weight": "font-normal",
-        },
-      },
-    ],
+    name: "Multipage",
+  },
+  {
+    name: "Cover",
+  },
+  {
+    name: "Listicle",
+  },
+  {
+    name: "Carousel",
+  },
+  {
+    name: "Video",
   },
 ];
 
@@ -603,4 +640,10 @@ const getDefaultContent = () => {
 
 const GENERIC_PROPERTIES = ["CODE", "STRONG"];
 
-export { getDefaultContent, PROPERTIES, TEMPLATES, GENERIC_PROPERTIES };
+export {
+  getDefaultContent,
+  PROPERTIES,
+  generateTemplate,
+  GENERIC_PROPERTIES,
+  THEMES,
+};

@@ -1,24 +1,31 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as htmlToImage from "html-to-image";
 import "./Raw.scss";
-import { GENERIC_PROPERTIES, getDefaultContent, TEMPLATES } from "./config";
+import {
+  GENERIC_PROPERTIES,
+  getDefaultContent,
+  generateTemplate,
+} from "./config";
 import Sidebar from "./Sidebar";
 import Canvas from "./Canvas";
 import Header from "./Header";
+import shortid from "shortid";
 
 const Raw = () => {
   const [data, setData] = useState(getDefaultContent());
   const [selectedElement, setSelectedElement] = useState("");
   const [properties, setProperties] = useState({});
-  const [templates, setTemplates] = useState(TEMPLATES);
+  const [templates, setTemplates] = useState([]);
+  const [template, setTemplate] = useState("Instagram");
+  const [theme, setTheme] = useState("Listicle");
   const [filename, setFilename] = useState("");
 
-  const ref = useRef();
+  const templateRef = useRef();
   const canvasContainerRef = useRef();
 
   const isGenericTagSelected = GENERIC_PROPERTIES.includes(selectedElement);
 
-  const updateSelectedItem = (newValue) => {
+  const _updateSelectedElement = (newValue) => {
     setSelectedElement((prev) => {
       if (GENERIC_PROPERTIES.includes(prev))
         updatedClassesForTag(prev, "outlined", "remove");
@@ -27,15 +34,33 @@ const Raw = () => {
   };
 
   useEffect(() => {
+    setTemplates(generateTemplate("Instagram"));
+  }, []);
+
+  useEffect(() => {
+    parseDataForTheme();
+  }, [theme]);
+
+  useEffect(() => {
     if (!selectedElement || isGenericTagSelected) return;
 
-    const [platform, section] = selectedElement.split(":");
-    const match = templates[0].layout.find((item) => item.key === section);
+    const [groupId, platform, key] = selectedElement.split(":");
+    let matchedProperties = {};
+    for (let i = 0; i < templates.length; i++) {
+      const template = templates[i];
+      if (template.groupId === groupId && template.platform === platform) {
+        matchedProperties = template.layout.find((item) => item.key === key);
+        if (matchedProperties) {
+          break;
+        }
+      }
+    }
+
     setProperties((prev) => ({
       ...prev,
       [selectedElement]: {
         ...(prev[selectedElement] || {}),
-        ...match.properties,
+        ...matchedProperties,
       },
     }));
   }, [selectedElement]);
@@ -50,11 +75,11 @@ const Raw = () => {
           console.log("Detected click on <code>, <strong>");
           const id = Math.random().toString(36).substr(2, 9);
           e.target.dataset.id = id;
-          // updateSelectedItem(`${tag}:${id}`);
-          updateSelectedItem(tag);
+          // _updateSelectedElement(`${tag}:${id}`);
+          _updateSelectedElement(tag);
           updatedClassesForTag(tag, "outlined", "add");
         } else {
-          updateSelectedItem("");
+          _updateSelectedElement("");
         }
       },
       true
@@ -71,14 +96,45 @@ const Raw = () => {
     );
   }, [data]);
 
+  const parseDataForTheme = () => {
+    const platform = "Instagram";
+    if (theme === "Listicle") {
+      const content = data.content.trim().split("\n");
+      const contentPageIds = [];
+      const parsedContent = content.reduce((ob, content, index) => {
+        const key = `content_#${index + 1}`;
+        contentPageIds.push(key);
+        return { ...ob, [key]: content };
+      }, {});
+
+      // const platform = templates[0]["platform"];
+      const groupId = shortid();
+      const pages = generateTemplate(platform, {
+        title: "title",
+        content: null,
+        groupId,
+      }).concat([
+        ...contentPageIds.map(
+          (id) =>
+            generateTemplate(platform, { title: null, content: id, groupId })[0]
+        ),
+      ]);
+
+      setData((prev) => ({ ...prev, ...parsedContent }));
+      setTemplates(pages);
+    } else {
+      setTemplates(generateTemplate(platform));
+    }
+  };
+
   const handleDownload = useCallback(() => {
-    updateSelectedItem("");
-    if (ref.current === null) {
+    _updateSelectedElement("");
+    if (templateRef.current === null) {
       return;
     }
 
     htmlToImage
-      .toPng(ref.current, {
+      .toPng(templateRef.current, {
         cacheBust: true,
         quality: 1,
         width: 1080,
@@ -93,7 +149,7 @@ const Raw = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [ref]);
+  }, [templateRef]);
 
   const updatedClassesForTag = (tag, classes, action = "set") => {
     if (!tag) return;
@@ -109,13 +165,14 @@ const Raw = () => {
     });
   };
 
-  const handlePropertyChange = (key, value) => {
-    const [element, section] = selectedElement.split(":");
+  const handlePropertyChange = (property, value) => {
+    const [groupId, platform, key] = selectedElement.split(":");
     let updatedProperties;
+
     setProperties((prev) => {
       updatedProperties = {
         ...(prev[selectedElement] || {}),
-        [key]: value,
+        [property]: value,
       };
       return {
         ...prev,
@@ -124,27 +181,49 @@ const Raw = () => {
     });
 
     if (isGenericTagSelected) {
+      // if tags, then apply the classes
       const updatedClasses = [
         ...Object.values(updatedProperties),
         value,
         "outlined",
       ].join(" ");
-      updatedClassesForTag(element, updatedClasses);
+      updatedClassesForTag(platform, updatedClasses);
     } else {
+      // otherwise add the classes in templates obj
       setTemplates((prev) => {
-        const newConfig = [...prev];
-        const match = newConfig[0].layout.find((item) => item.key === section);
-        match.properties[key] = value;
-        return newConfig;
+        const updatedData = [...prev];
+
+        let matchedProperties = {};
+        for (let i = 0; i < updatedData.length; i++) {
+          const template = updatedData[i];
+          if (template.groupId === groupId && template.platform === platform) {
+            matchedProperties = template.layout.find(
+              (item) => item.key === key
+            );
+            if (matchedProperties) {
+              break;
+            }
+          }
+        }
+
+        matchedProperties.properties[property] = value;
+        return updatedData;
       });
     }
   };
 
+  const headerProps = {
+    template,
+    setTemplate,
+    theme,
+    setTheme,
+  };
+
   const canvasProps = {
     canvasContainerRef,
-    ref,
+    templateRef,
     data,
-    updateSelectedItem,
+    _updateSelectedElement,
     selectedElement,
     templates,
   };
@@ -158,11 +237,12 @@ const Raw = () => {
     selectedElement,
     properties,
     handlePropertyChange,
+    templates,
   };
 
   return (
     <div className="flex items-center flex-col p-0 h-full">
-      <Header />
+      <Header {...headerProps} />
       <div className="flex items-start gap-0 w-full grow overflow-hidden">
         <Canvas {...canvasProps} />
         <Sidebar {...sidebarProps} />
