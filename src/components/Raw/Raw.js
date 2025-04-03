@@ -17,7 +17,7 @@ const Raw = () => {
   const [properties, setProperties] = useState({});
   const [templates, setTemplates] = useState([]);
   const [template, setTemplate] = useState("Instagram");
-  const [theme, setTheme] = useState("Default");
+  const [postVariant, setPostVariant] = useState("Default");
   const [filename, setFilename] = useState("");
 
   const templateRef = useRef({});
@@ -42,7 +42,7 @@ const Raw = () => {
 
   useEffect(() => {
     parseDataForTheme();
-  }, [theme]);
+  }, [postVariant]);
 
   useEffect(() => {
     if (!selectedElement || isGenericTagSelected) return;
@@ -53,9 +53,7 @@ const Raw = () => {
       const template = templates[i];
       if (template.groupId === groupId && template.platform === platform) {
         matchedProperties = template.layout.find((item) => item.key === key);
-        if (matchedProperties) {
-          break;
-        }
+        if (matchedProperties) break;
       }
     }
 
@@ -63,7 +61,7 @@ const Raw = () => {
       ...prev,
       [selectedElement]: {
         ...(prev[selectedElement] || {}),
-        ...matchedProperties,
+        ...matchedProperties.properties,
       },
     }));
   }, [selectedElement]);
@@ -101,7 +99,7 @@ const Raw = () => {
 
   const parseDataForTheme = () => {
     const platform = "Instagram";
-    if (theme === "Listicle") {
+    if (postVariant === "Listicle") {
       const content = data.content.trim().split("\n");
       const contentPageIds = [];
       const parsedContent = content.reduce((ob, content, index) => {
@@ -227,8 +225,8 @@ const Raw = () => {
   const headerProps = {
     template,
     setTemplate,
-    theme,
-    setTheme,
+    postVariant,
+    setPostVariant,
   };
 
   const canvasProps = {

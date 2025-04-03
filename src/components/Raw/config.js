@@ -760,7 +760,7 @@ const generateTemplate = (platform, keys) => {
   });
 };
 
-const THEMES = [
+const POST_VARIANTS = [
   {
     name: "Default",
   },
@@ -801,5 +801,5 @@ export {
   PROPERTIES,
   generateTemplate,
   GENERIC_PROPERTIES,
-  THEMES,
+  POST_VARIANTS,
 };

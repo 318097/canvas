@@ -22,7 +22,7 @@ const Canvas = ({
       className="p-2 bg-white grow h-full overflow-auto flex flex-col items-center max-w-full"
       ref={canvasContainerRef}
     >
-      {grouppedTemplates.map(([groupId, templates]) => {
+      {grouppedTemplates.map(([groupId, templates], idx) => {
         const cardProps = {
           templateRef,
           data,
@@ -33,7 +33,7 @@ const Canvas = ({
           return templates.map((template) => {
             const { platform, className } = template;
             return (
-              <div className={containerClasses}>
+              <div className={containerClasses} key={idx}>
                 <Title platform={platform} className={className} />
                 <Card template={template} {...cardProps} />
               </div>
@@ -42,7 +42,7 @@ const Canvas = ({
         } else {
           const { containerWidth, className, platform } = templates[0];
           return (
-            <div className={containerClasses}>
+            <div className={containerClasses} key={idx}>
               <Title
                 platform={platform}
                 className={className}
@@ -56,7 +56,11 @@ const Canvas = ({
               >
                 <Carousel arrows infinite={false} className="m-auto">
                   {templates.map((template) => (
-                    <Card template={template} {...cardProps} />
+                    <Card
+                      template={template}
+                      key={template.idx}
+                      {...cardProps}
+                    />
                   ))}
                 </Carousel>
               </div>
@@ -114,6 +118,7 @@ const Card = ({
         );
         return (
           <div
+            key={fullKey}
             onClick={() => {
               _updateSelectedElement(fullKey);
             }}

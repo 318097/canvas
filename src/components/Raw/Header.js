@@ -1,8 +1,8 @@
 import React from "react";
 import { Select } from "antd";
-import { generateTemplate, THEMES } from "./config";
+import { generateTemplate, POST_VARIANTS } from "./config";
 
-const Header = ({ template, setTemplate, theme, setTheme }) => {
+const Header = ({ template, setTemplate, postVariant, setPostVariant }) => {
   return (
     <header className="flex items-center justify-between w-full p-4 bg-cyan-200">
       <h3 className="text-white font-bold">Canvas</h3>
@@ -19,12 +19,12 @@ const Header = ({ template, setTemplate, theme, setTheme }) => {
         <Select
           placeholder="Theme"
           className="w-[100px]"
-          options={THEMES.map(({ name }) => ({
+          options={POST_VARIANTS.map(({ name }) => ({
             label: name,
             value: name,
           }))}
-          value={theme}
-          onChange={setTheme}
+          value={postVariant}
+          onChange={setPostVariant}
         />
       </div>
     </header>
