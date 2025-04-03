@@ -16,19 +16,18 @@ const Sidebar = ({
   handlePropertyChange,
   templates,
 }) => {
-  const selectedElementFields = templates.find((template) => {
-    const [groupId, platform, key] = selectedElement.split(":");
-    return (
-      groupId === template.groupId &&
-      platform === template.platform &&
-      template.layout.find((layout) => layout.key === key)
-    );
-  });
+  // const selectedElementFields = templates.find((template) => {
+  //   const [groupId, platform, key] = selectedElement.split(":");
+  //   return (
+  //     groupId === template.groupId &&
+  //     platform === template.platform &&
+  //     template.layout.find((layout) => layout.key === key)
+  //   );
+  // });
 
   return (
     <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 w-[300px] shrink-0 h-full overflow-auto">
-      {(selectedElementFields?.layout ?? []).map((fields) => {
-        const { key } = fields;
+      {Object.keys(data).map((key) => {
         return (
           <div className="flex flex-col items-start gap-1 mb-2">
             <label className="text-xs font-bold">{key}</label>

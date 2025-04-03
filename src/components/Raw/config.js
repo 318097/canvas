@@ -90,6 +90,10 @@ const PROPERTIES = [
     key: "text-decoration-color",
     options: [
       {
+        label: "Transparent",
+        value: "decoration-transparent",
+      },
+      {
         label: "White",
         value: "decoration-white",
       },
@@ -198,6 +202,10 @@ const PROPERTIES = [
     key: "text-color",
     options: [
       {
+        label: "Transparent",
+        value: "text-transparent",
+      },
+      {
         label: "White",
         value: "text-white",
       },
@@ -283,6 +291,10 @@ const PROPERTIES = [
     label: "Background",
     key: "bg-color",
     options: [
+      {
+        label: "Transparent",
+        value: "bg-transparent",
+      },
       {
         label: "White",
         value: "bg-white",
@@ -544,6 +556,10 @@ const PROPERTIES = [
     key: "border-color",
     options: [
       {
+        label: "Transparent",
+        value: "border-transparent",
+      },
+      {
         label: "White",
         value: "border-white",
       },
@@ -679,12 +695,24 @@ const PROPERTIES = [
   },
 ];
 
+const defaultClasses = {
+  "text-decoration": "no-underline",
+  "text-decoration-color": "decoration-transparent",
+  "text-transform": "normal-case",
+  "bg-color": "bg-transparent",
+  "font-style": "not-italic",
+  border: "border-none",
+  "border-color": "border-transparent",
+  "border-radius": "rounded-none",
+  padding: "p-0",
+};
+
 const generateTemplate = (platform, keys) => {
   const { title = "title", content = "content", groupId = "none" } = keys || {};
 
   const TEMPLATES = [
     {
-      platform: "Instagram",
+      platform: "instagram",
       groupId: groupId,
       containerWidth: 1080,
       containerHeight: 1080,
@@ -701,6 +729,7 @@ const generateTemplate = (platform, keys) => {
             "text-align": "text-center",
             "text-color": "text-white",
             "flex-width": "w-3/4",
+            ...defaultClasses,
           },
         },
         {
@@ -713,12 +742,13 @@ const generateTemplate = (platform, keys) => {
             "text-color": "text-white",
             "text-weight": "font-normal",
             "flex-width": "w-3/4",
+            ...defaultClasses,
           },
         },
       ],
     },
     {
-      platform: "Twitter",
+      platform: "twitter",
       groupId: groupId,
       containerWidth: 1200,
       containerHeight: 675,
@@ -733,6 +763,7 @@ const generateTemplate = (platform, keys) => {
             "text-weight": "font-bold",
             "text-align": "text-center",
             "text-color": "text-white",
+            ...defaultClasses,
           },
         },
         {
@@ -744,6 +775,7 @@ const generateTemplate = (platform, keys) => {
             "text-align": "text-left",
             "text-color": "text-white",
             "text-weight": "font-normal",
+            ...defaultClasses,
           },
         },
       ],

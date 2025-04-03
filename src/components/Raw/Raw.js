@@ -16,7 +16,7 @@ const Raw = () => {
   const [selectedElement, setSelectedElement] = useState("");
   const [properties, setProperties] = useState({});
   const [templates, setTemplates] = useState([]);
-  const [template, setTemplate] = useState("Instagram");
+  const [template, setTemplate] = useState("instagram");
   const [postVariant, setPostVariant] = useState("Default");
   const [filename, setFilename] = useState("");
 
@@ -37,7 +37,7 @@ const Raw = () => {
   };
 
   useEffect(() => {
-    setTemplates(generateTemplate("Instagram"));
+    setTemplates(generateTemplate("instagram"));
   }, []);
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const Raw = () => {
   }, [data]);
 
   const parseDataForTheme = () => {
-    const platform = "Instagram";
+    const platform = "instagram";
     if (postVariant === "Listicle") {
       const content = data.content.trim().split("\n");
       const contentPageIds = [];
