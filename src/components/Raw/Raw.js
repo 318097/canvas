@@ -17,18 +17,21 @@ const Raw = () => {
   const [properties, setProperties] = useState({});
   const [templates, setTemplates] = useState([]);
   const [template, setTemplate] = useState("Instagram");
-  const [theme, setTheme] = useState("Listicle");
+  const [theme, setTheme] = useState("Default");
   const [filename, setFilename] = useState("");
 
   const templateRef = useRef({});
   const canvasContainerRef = useRef();
 
-  const isGenericTagSelected = GENERIC_PROPERTIES.includes(selectedElement);
+  const isGenericTagSelected = GENERIC_PROPERTIES.includes(
+    selectedElement.split(":")[1]
+  );
 
   const _updateSelectedElement = (newValue) => {
     setSelectedElement((prev) => {
-      if (GENERIC_PROPERTIES.includes(prev))
-        updatedClassesForTag(prev, "outlined", "remove");
+      const tag = prev.split(":")[1];
+      if (GENERIC_PROPERTIES.includes(tag))
+        updatedClassesForTag(tag, "outlined", "remove");
       return newValue;
     });
   };
@@ -73,10 +76,10 @@ const Raw = () => {
         if (["CODE", "STRONG"].includes(tag)) {
           e.stopPropagation();
           console.log("Detected click on <code>, <strong>");
-          const id = Math.random().toString(36).substr(2, 9);
+          const id = e.target.dataset.id ? e.target.dataset.id : shortid();
           e.target.dataset.id = id;
-          // _updateSelectedElement(`${tag}:${id}`);
-          _updateSelectedElement(tag);
+
+          _updateSelectedElement(`none:${tag}:${id}`);
           updatedClassesForTag(tag, "outlined", "add");
         } else {
           _updateSelectedElement("");
@@ -107,7 +110,6 @@ const Raw = () => {
         return { ...ob, [key]: content };
       }, {});
 
-      // const platform = templates[0]["platform"];
       const groupId = shortid();
       const pages = generateTemplate(platform, {
         title: "title",
@@ -163,6 +165,7 @@ const Raw = () => {
   const updatedClassesForTag = (tag, classes, action = "set") => {
     if (!tag) return;
     const elements = canvasContainerRef.current.querySelectorAll(tag);
+
     elements.forEach((el) => {
       if (action === "remove") {
         el.classList.remove(classes);
