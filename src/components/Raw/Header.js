@@ -1,6 +1,7 @@
 import React from "react";
 import { Select } from "antd";
-import { generateTemplate, POST_VARIANTS } from "./config";
+import { POST_VARIANTS } from "./config";
+import { generateTemplate } from "./helpers";
 
 const Header = ({ template, setTemplate, postVariant, setPostVariant }) => {
   return (

@@ -2,6 +2,7 @@ import _ from "lodash";
 import React, { Fragment } from "react";
 import { Input, Select, Button, Radio } from "antd";
 import { PROPERTIES } from "./config";
+import { splitName } from "./helpers";
 
 const { TextArea } = Input;
 
@@ -61,9 +62,9 @@ const Sidebar = ({
           {PROPERTIES.map((property) => {
             const { options, label, key } = property;
 
-            const [, element] = selectedElement.split(":");
+            const res = splitName(selectedElement);
             const value = isGlobal
-              ? _.get(global, [element, key], "")
+              ? _.get(global, [res["key"], key], "")
               : _.get(properties, [selectedElement, key], "");
 
             return (

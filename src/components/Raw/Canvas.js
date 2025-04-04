@@ -4,6 +4,7 @@ import React from "react";
 import "./Raw.scss";
 import cn from "classnames";
 import { Carousel } from "antd";
+import { generateName } from "./helpers";
 
 const Canvas = ({
   canvasContainerRef,
@@ -14,6 +15,7 @@ const Canvas = ({
   templates,
 }) => {
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
+  console.log("::-", grouppedTemplates);
 
   const containerClasses = `flex flex-col items-start gap-1 mb-12`;
 
@@ -104,7 +106,7 @@ const Card = ({
 
         if (!value) return null;
 
-        const fullKey = `${groupId}:${platform}:${key}`;
+        const fullKey = generateName(groupId, platform, key);
 
         const classNames = cn(
           "element",

@@ -1,16 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as htmlToImage from "html-to-image";
 import "./Raw.scss";
-import {
-  GENERIC_PROPERTIES,
-  getDefaultContent,
-  generateTemplate,
-  GLOBAL,
-} from "./config";
+import { GENERIC_PROPERTIES, GLOBAL } from "./config";
 import Sidebar from "./Sidebar";
 import Canvas from "./Canvas";
 import Header from "./Header";
 import shortid from "shortid";
+import {
+  isGenericTag,
+  splitName,
+  generateName,
+  getDefaultContent,
+  generateTemplate,
+} from "./helpers";
 
 const Raw = () => {
   const [data, setData] = useState(getDefaultContent());
@@ -26,22 +28,21 @@ const Raw = () => {
   const templateRef = useRef({});
   const canvasContainerRef = useRef();
 
-  const isGenericTagSelected = GENERIC_PROPERTIES.includes(
-    selectedElement.split(":")[1]
-  );
+  const isGenericTagSelected = isGenericTag(selectedElement);
+
   const isGlobal = propertyType === "global";
 
   const _updateSelectedElement = (newValue) => {
     setSelectedElement((prev) => {
-      const tag = prev.split(":")[1];
-      if (GENERIC_PROPERTIES.includes(tag))
+      const { platform } = splitName(prev);
+      if (GENERIC_PROPERTIES.includes(platform))
         updatedClassesForTag(prev, "outlined", "remove");
       return newValue;
     });
   };
 
   useEffect(() => {
-    setTemplates(generateTemplate("instagram"));
+    setTemplates(generateTemplate("all"));
   }, []);
 
   useEffect(() => {
@@ -51,7 +52,7 @@ const Raw = () => {
   useEffect(() => {
     if (!selectedElement || isGenericTagSelected) return;
 
-    const [groupId, platform, key] = selectedElement.split(":");
+    const { groupId, platform, key } = splitName(selectedElement);
     let matchedProperties = {};
 
     for (let i = 0; i < templates.length; i++) {
@@ -82,7 +83,7 @@ const Raw = () => {
           console.log("Detected click on <code>, <strong>");
           const id = e.target.dataset.id ? e.target.dataset.id : shortid();
           e.target.dataset.id = id;
-          const key = `none:${tag}:${id}`;
+          const key = generateName(`none`, tag, id);
           _updateSelectedElement(key);
           updatedClassesForTag(key, "outlined", "add");
         } else {
@@ -146,7 +147,7 @@ const Raw = () => {
       setData((prev) => ({ ...prev, ...parsedContent }));
       setTemplates(pages);
     } else {
-      setTemplates(generateTemplate(platform));
+      // setTemplates(generateTemplate(platform));
     }
   };
 
@@ -177,11 +178,11 @@ const Raw = () => {
     });
   }, [templateRef, templates]);
 
-  const updatedClassesForTag = (key, classes, action = "set") => {
-    if (!key) return;
-    const [, tag, id] = key.split(":");
+  const updatedClassesForTag = (selectedElement, classes, action = "set") => {
+    if (!selectedElement) return;
+    const { platform, key } = splitName(selectedElement);
     const elements = canvasContainerRef.current.querySelectorAll(
-      id ? `${tag}[data-id='${id}']` : tag
+      key ? `${platform}[data-id='${key}']` : platform
     );
 
     elements.forEach((el) => {
@@ -196,7 +197,7 @@ const Raw = () => {
   };
 
   const handlePropertyChange = (property, value) => {
-    const [groupId, platform, key] = selectedElement.split(":");
+    const { groupId, platform, key } = splitName(selectedElement);
     let updatedProperties;
 
     if (isGlobal) {
@@ -238,10 +239,7 @@ const Raw = () => {
         value,
         "outlined",
       ].join(" ");
-      updatedClassesForTag(
-        isGlobal ? `${groupId}:${platform}` : selectedElement,
-        updatedClasses
-      );
+      updatedClassesForTag(selectedElement, updatedClasses);
     } else {
       // otherwise add the classes in templates obj
       setTemplates((prev) => {
