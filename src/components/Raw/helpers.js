@@ -1,20 +1,20 @@
 import { DEFAULT_CLASSES, GENERIC_PROPERTIES } from "./config";
 
 const isGenericTag = (selectedElement) => {
-  return GENERIC_PROPERTIES.includes(splitName(selectedElement)["platform"]);
+  return GENERIC_PROPERTIES.includes(splitName(selectedElement)["element"]);
 };
 
 const splitName = (selectedElement) => {
-  const [groupId, platform, key] = selectedElement.split(":");
+  const [groupId, element, uid] = selectedElement.split(":");
   return {
     groupId,
-    platform,
-    key,
+    element,
+    uid,
   };
 };
 
-const generateName = (groupId, platform, key) => {
-  return `${groupId || "none"}:${platform}:${key}`;
+const generateName = (groupId, element, uid) => {
+  return `${groupId || "none"}:${element}:${uid}`;
 };
 
 const getDefaultContent = () => {
@@ -86,6 +86,7 @@ const generateTemplate = (platform, keys) => {
             "text-weight": "font-bold",
             "text-align": "text-center",
             "text-color": "text-white",
+            "flex-width": "w-3/4",
             ...DEFAULT_CLASSES,
           },
         },
@@ -98,6 +99,7 @@ const generateTemplate = (platform, keys) => {
             "text-align": "text-left",
             "text-color": "text-white",
             "text-weight": "font-normal",
+            "flex-width": "w-3/4",
             ...DEFAULT_CLASSES,
           },
         },

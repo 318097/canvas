@@ -15,7 +15,7 @@ const Canvas = ({
   templates,
 }) => {
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
-  console.log("::-", grouppedTemplates);
+  // console.log("::-", grouppedTemplates);
 
   const containerClasses = `flex flex-col items-start gap-1 mb-12`;
 

@@ -62,9 +62,9 @@ const Sidebar = ({
           {PROPERTIES.map((property) => {
             const { options, label, key } = property;
 
-            const res = splitName(selectedElement);
+            const { uid } = splitName(selectedElement);
             const value = isGlobal
-              ? _.get(global, [res["key"], key], "")
+              ? _.get(global, [uid, key], "")
               : _.get(properties, [selectedElement, key], "");
 
             return (
@@ -87,7 +87,7 @@ const Sidebar = ({
           value={filename}
           onChange={(e) => setFilename(e.target.value)}
         />
-        <Button className="w-full" onClick={handleDownload}>
+        <Button type="primary" className="w-full" onClick={handleDownload}>
           Download
         </Button>
       </div>

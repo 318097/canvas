@@ -24,18 +24,16 @@ const Raw = () => {
   const [template, setTemplate] = useState("instagram");
   const [postVariant, setPostVariant] = useState("Default");
   const [filename, setFilename] = useState("");
-
+  const isGlobal = propertyType === "global";
   const templateRef = useRef({});
   const canvasContainerRef = useRef();
 
   const isGenericTagSelected = isGenericTag(selectedElement);
 
-  const isGlobal = propertyType === "global";
-
   const _updateSelectedElement = (newValue) => {
     setSelectedElement((prev) => {
-      const { platform } = splitName(prev);
-      if (GENERIC_PROPERTIES.includes(platform))
+      const { element } = splitName(prev);
+      if (GENERIC_PROPERTIES.includes(element))
         updatedClassesForTag(prev, "outlined", "remove");
       return newValue;
     });
@@ -52,13 +50,13 @@ const Raw = () => {
   useEffect(() => {
     if (!selectedElement || isGenericTagSelected) return;
 
-    const { groupId, platform, key } = splitName(selectedElement);
+    const { groupId, element, uid } = splitName(selectedElement);
     let matchedProperties = {};
 
     for (let i = 0; i < templates.length; i++) {
       const template = templates[i];
-      if (template.groupId === groupId && template.platform === platform) {
-        matchedProperties = template.layout.find((item) => item.key === key);
+      if (template.groupId === groupId && template.platform === element) {
+        matchedProperties = template.layout.find((item) => item.key === uid);
         if (matchedProperties) break;
       }
     }
@@ -180,9 +178,9 @@ const Raw = () => {
 
   const updatedClassesForTag = (selectedElement, classes, action = "set") => {
     if (!selectedElement) return;
-    const { platform, key } = splitName(selectedElement);
+    const { element, uid } = splitName(selectedElement);
     const elements = canvasContainerRef.current.querySelectorAll(
-      key ? `${platform}[data-id='${key}']` : platform
+      uid ? `${element}[data-id='${uid}']` : element
     );
 
     elements.forEach((el) => {
@@ -197,18 +195,18 @@ const Raw = () => {
   };
 
   const handlePropertyChange = (property, value) => {
-    const { groupId, platform, key } = splitName(selectedElement);
+    const { groupId, element, uid } = splitName(selectedElement);
     let updatedProperties;
 
     if (isGlobal) {
       setGlobal((prev) => {
         updatedProperties = {
-          ...(prev[platform] || {}),
+          ...(prev[element] || {}),
           [property]: value,
         };
         return {
           ...prev,
-          [platform]: updatedProperties,
+          [element]: updatedProperties,
         };
       });
       updatedProperties = {
@@ -227,7 +225,7 @@ const Raw = () => {
         };
       });
       updatedProperties = {
-        ...global[platform],
+        ...global[element],
         ...updatedProperties,
       };
     }
@@ -248,9 +246,9 @@ const Raw = () => {
         let matchedProperties = {};
         for (let i = 0; i < updatedData.length; i++) {
           const template = updatedData[i];
-          if (template.groupId === groupId && template.platform === platform) {
+          if (template.groupId === groupId && template.platform === element) {
             matchedProperties = template.layout.find(
-              (item) => item.key === key
+              (item) => item.key === uid
             );
             if (matchedProperties) {
               break;
