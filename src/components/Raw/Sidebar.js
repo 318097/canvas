@@ -2,7 +2,7 @@ import _ from "lodash";
 import React, { Fragment } from "react";
 import { Input, Select, Button, Radio } from "antd";
 import { PROPERTIES } from "./config";
-import { splitName } from "./helpers";
+import { getCleanKey, splitName } from "./helpers";
 
 const { TextArea } = Input;
 
@@ -63,8 +63,9 @@ const Sidebar = ({
             const { options, label, key } = property;
 
             const { uid } = splitName(selectedElement);
+
             const value = isGlobal
-              ? _.get(global, [uid, key], "")
+              ? _.get(global, [getCleanKey(uid), key], "")
               : _.get(properties, [selectedElement, key], "");
 
             return (

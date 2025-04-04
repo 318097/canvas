@@ -4,7 +4,7 @@ import React from "react";
 import "./Raw.scss";
 import cn from "classnames";
 import { Carousel } from "antd";
-import { generateName } from "./helpers";
+import { generateName, getCleanKey } from "./helpers";
 
 const Canvas = ({
   canvasContainerRef,
@@ -13,9 +13,10 @@ const Canvas = ({
   _updateSelectedElement,
   selectedElement,
   templates,
+  properties,
+  global,
 }) => {
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
-  // console.log("::-", grouppedTemplates);
 
   const containerClasses = `flex flex-col items-start gap-1 mb-12`;
 
@@ -30,6 +31,8 @@ const Canvas = ({
           data,
           selectedElement,
           _updateSelectedElement,
+          properties,
+          global,
         };
         if (groupId === "none") {
           return templates.map((template) => {
@@ -91,6 +94,8 @@ const Card = ({
   data,
   selectedElement,
   _updateSelectedElement,
+  properties,
+  global,
 }) => {
   const { layout, className = "", platform, groupId, idx } = template;
   const refId = `${groupId}-${platform}-${idx}`;
@@ -100,20 +105,22 @@ const Card = ({
       className={`raw-editor-root flex flex-col gap-2 bg-gray-800 p-4 ${className}`}
     >
       {layout.map((layout) => {
-        const { key, type, className = "", properties = {} } = layout;
-
+        const { key, type, className = "" } = layout;
+        const fullKey = generateName(groupId, platform, key);
         const value = _.get(data, key, "");
 
+        const mergedProperties = {
+          ..._.get(global, getCleanKey(key), {}),
+          ..._.get(properties, fullKey, {}),
+        };
         if (!value) return null;
-
-        const fullKey = generateName(groupId, platform, key);
 
         const classNames = cn(
           "element",
           type,
-          "p-2",
+          // "p-2",
           className,
-          ...Object.values(properties),
+          ...Object.values(mergedProperties),
           {
             outlined: selectedElement === fullKey,
           }
@@ -121,9 +128,7 @@ const Card = ({
         return (
           <div
             key={fullKey}
-            onClick={() => {
-              _updateSelectedElement(fullKey);
-            }}
+            onClick={() => _updateSelectedElement(fullKey)}
             className={classNames}
             dangerouslySetInnerHTML={{
               __html: marked.parseInline(value).replace(/^<p>|<\/p>$/g, ""),

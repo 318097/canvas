@@ -9,7 +9,8 @@ const Header = ({ template, setTemplate, postVariant, setPostVariant }) => {
       <h3 className="text-white font-bold">Canvas</h3>
       <div className="flex items-center gap-2">
         <Select
-          className="w-[100px]"
+          mode="multiple"
+          className="min-w-[100px]"
           options={generateTemplate("all").map(({ platform }) => ({
             label: platform,
             value: platform,

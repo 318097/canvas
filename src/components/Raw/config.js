@@ -721,6 +721,22 @@ const GLOBAL = {
     "text-color": "text-gray-400",
     // "text-size": "font-[inherit]",
   },
+  title: {
+    "text-size": "text-5xl",
+    "text-weight": "font-bold",
+    "text-align": "text-center",
+    "text-color": "text-white",
+    "flex-width": "w-3/4",
+    ...DEFAULT_CLASSES,
+  },
+  content: {
+    "text-size": "text-3xl",
+    "text-align": "text-left",
+    "text-color": "text-white",
+    "text-weight": "font-normal",
+    "flex-width": "w-3/4",
+    ...DEFAULT_CLASSES,
+  },
 };
 
 const POST_VARIANTS = [

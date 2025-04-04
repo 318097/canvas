@@ -12,6 +12,7 @@ import {
   generateName,
   getDefaultContent,
   generateTemplate,
+  getCleanKey,
 } from "./helpers";
 
 const Raw = () => {
@@ -21,7 +22,7 @@ const Raw = () => {
   const [properties, setProperties] = useState({});
   const [propertyType, setPropertyType] = useState("local");
   const [templates, setTemplates] = useState([]);
-  const [template, setTemplate] = useState("instagram");
+  const [template, setTemplate] = useState(["instagram"]);
   const [postVariant, setPostVariant] = useState("Default");
   const [filename, setFilename] = useState("");
   const isGlobal = propertyType === "global";
@@ -48,30 +49,6 @@ const Raw = () => {
   }, [postVariant]);
 
   useEffect(() => {
-    if (!selectedElement || isGenericTagSelected) return;
-
-    const { groupId, element, uid } = splitName(selectedElement);
-    let matchedProperties = {};
-
-    for (let i = 0; i < templates.length; i++) {
-      const template = templates[i];
-      if (template.groupId === groupId && template.platform === element) {
-        matchedProperties = template.layout.find((item) => item.key === uid);
-        if (matchedProperties) break;
-      }
-    }
-    setProperties((prev) => {
-      return {
-        ...prev,
-        [selectedElement]: {
-          ...(prev[selectedElement] || {}),
-          ...(matchedProperties.properties || {}),
-        },
-      };
-    });
-  }, [selectedElement]);
-
-  useEffect(() => {
     canvasContainerRef.current.addEventListener(
       "click",
       (e) => {
@@ -81,9 +58,9 @@ const Raw = () => {
           console.log("Detected click on <code>, <strong>");
           const id = e.target.dataset.id ? e.target.dataset.id : shortid();
           e.target.dataset.id = id;
-          const key = generateName(`none`, tag, id);
-          _updateSelectedElement(key);
-          updatedClassesForTag(key, "outlined", "add");
+          const fullKey = generateName(`none`, tag, id);
+          _updateSelectedElement(fullKey);
+          updatedClassesForTag(fullKey, "outlined", "add");
         } else {
           _updateSelectedElement("");
         }
@@ -96,10 +73,12 @@ const Raw = () => {
     const node = canvasContainerRef.current;
 
     for (const key in global) {
-      node.querySelectorAll(key).forEach((el) => {
-        const classes = Object.values(global[key]);
-        el.classList.add(...classes);
-      });
+      if (isGenericTag(key)) {
+        node.querySelectorAll(key).forEach((el) => {
+          const classes = Object.values(global[key]);
+          el.classList.add(...classes);
+        });
+      }
     }
   }, [global, canvasContainerRef.current]);
 
@@ -118,31 +97,30 @@ const Raw = () => {
     if (postVariant === "Listicle") {
       const content = data.content.trim().split("\n");
       const contentPageIds = [];
-      const parsedContent = content.reduce((ob, content, index) => {
+      const contentBreakdownObj = content.reduce((ob, content, index) => {
         const key = `content_#${index + 1}`;
         contentPageIds.push(key);
         return { ...ob, [key]: content };
       }, {});
 
       const groupId = shortid();
-      const pages = generateTemplate(platform, {
-        title: "title",
-        content: null,
-        groupId,
-      })
-        .concat([
-          ...contentPageIds.map(
-            (id) =>
-              generateTemplate(platform, {
-                title: null,
-                content: id,
-                groupId,
-              })[0]
-          ),
-        ])
-        .map((obj, idx) => ({ ...obj, idx: idx + 1 }));
+      const pages = [
+        ...generateTemplate(platform, {
+          title: "title",
+          content: null,
+          groupId,
+        }),
+        ...contentPageIds.map(
+          (id) =>
+            generateTemplate(platform, {
+              title: null,
+              content: id,
+              groupId,
+            })[0]
+        ),
+      ].map((obj, idx) => ({ ...obj, idx: idx + 1 }));
 
-      setData((prev) => ({ ...prev, ...parsedContent }));
+      setData((prev) => ({ ...prev, ...contentBreakdownObj }));
       setTemplates(pages);
     } else {
       // setTemplates(generateTemplate(platform));
@@ -195,18 +173,20 @@ const Raw = () => {
   };
 
   const handlePropertyChange = (property, value) => {
-    const { groupId, element, uid } = splitName(selectedElement);
+    const { element, uid } = splitName(selectedElement);
     let updatedProperties;
+
+    const keyToUpdate = isGenericTagSelected ? element : getCleanKey(uid);
 
     if (isGlobal) {
       setGlobal((prev) => {
         updatedProperties = {
-          ...(prev[element] || {}),
+          ...(prev[keyToUpdate] || {}),
           [property]: value,
         };
         return {
           ...prev,
-          [element]: updatedProperties,
+          [keyToUpdate]: updatedProperties,
         };
       });
       updatedProperties = {
@@ -225,7 +205,7 @@ const Raw = () => {
         };
       });
       updatedProperties = {
-        ...global[element],
+        ...global[keyToUpdate],
         ...updatedProperties,
       };
     }
@@ -238,27 +218,6 @@ const Raw = () => {
         "outlined",
       ].join(" ");
       updatedClassesForTag(selectedElement, updatedClasses);
-    } else {
-      // otherwise add the classes in templates obj
-      setTemplates((prev) => {
-        const updatedData = [...prev];
-
-        let matchedProperties = {};
-        for (let i = 0; i < updatedData.length; i++) {
-          const template = updatedData[i];
-          if (template.groupId === groupId && template.platform === element) {
-            matchedProperties = template.layout.find(
-              (item) => item.key === uid
-            );
-            if (matchedProperties) {
-              break;
-            }
-          }
-        }
-
-        matchedProperties.properties[property] = value;
-        return updatedData;
-      });
     }
   };
 
@@ -276,6 +235,8 @@ const Raw = () => {
     _updateSelectedElement,
     selectedElement,
     templates,
+    properties,
+    global,
   };
 
   const sidebarProps = {

@@ -1,7 +1,10 @@
-import { DEFAULT_CLASSES, GENERIC_PROPERTIES } from "./config";
+import { GENERIC_PROPERTIES } from "./config";
 
 const isGenericTag = (selectedElement) => {
-  return GENERIC_PROPERTIES.includes(splitName(selectedElement)["element"]);
+  return (
+    GENERIC_PROPERTIES.includes(splitName(selectedElement)["element"]) ||
+    GENERIC_PROPERTIES.includes(selectedElement)
+  );
 };
 
 const splitName = (selectedElement) => {
@@ -16,6 +19,8 @@ const splitName = (selectedElement) => {
 const generateName = (groupId, element, uid) => {
   return `${groupId || "none"}:${element}:${uid}`;
 };
+
+const getCleanKey = (key) => (key.includes("_") ? key.split("_")[0] : key);
 
 const getDefaultContent = () => {
   return {
@@ -46,27 +51,11 @@ const generateTemplate = (platform, keys) => {
           key: title,
           label: "Title",
           className: "leading-normal",
-          properties: {
-            "text-size": "text-5xl",
-            "text-weight": "font-bold",
-            "text-align": "text-center",
-            "text-color": "text-white",
-            "flex-width": "w-3/4",
-            ...DEFAULT_CLASSES,
-          },
         },
         {
           type: "text",
           key: content,
           className: "leading-relaxed",
-          properties: {
-            "text-size": "text-3xl",
-            "text-align": "text-left",
-            "text-color": "text-white",
-            "text-weight": "font-normal",
-            "flex-width": "w-3/4",
-            ...DEFAULT_CLASSES,
-          },
         },
       ],
     },
@@ -81,27 +70,11 @@ const generateTemplate = (platform, keys) => {
           type: "text",
           key: title,
           className: "leading-normal",
-          properties: {
-            "text-size": "text-5xl",
-            "text-weight": "font-bold",
-            "text-align": "text-center",
-            "text-color": "text-white",
-            "flex-width": "w-3/4",
-            ...DEFAULT_CLASSES,
-          },
         },
         {
           type: "text",
           key: content,
           className: "leading-relaxed",
-          properties: {
-            "text-size": "text-3xl",
-            "text-align": "text-left",
-            "text-color": "text-white",
-            "text-weight": "font-normal",
-            "flex-width": "w-3/4",
-            ...DEFAULT_CLASSES,
-          },
         },
       ],
     },
@@ -123,4 +96,5 @@ export {
   generateName,
   getDefaultContent,
   generateTemplate,
+  getCleanKey,
 };
