@@ -5,6 +5,7 @@ import {
   GENERIC_PROPERTIES,
   getDefaultContent,
   generateTemplate,
+  GLOBAL,
 } from "./config";
 import Sidebar from "./Sidebar";
 import Canvas from "./Canvas";
@@ -14,7 +15,9 @@ import shortid from "shortid";
 const Raw = () => {
   const [data, setData] = useState(getDefaultContent());
   const [selectedElement, setSelectedElement] = useState("");
+  const [global, setGlobal] = useState(GLOBAL);
   const [properties, setProperties] = useState({});
+  const [propertyType, setPropertyType] = useState("local");
   const [templates, setTemplates] = useState([]);
   const [template, setTemplate] = useState("instagram");
   const [postVariant, setPostVariant] = useState("Default");
@@ -26,12 +29,13 @@ const Raw = () => {
   const isGenericTagSelected = GENERIC_PROPERTIES.includes(
     selectedElement.split(":")[1]
   );
+  const isGlobal = propertyType === "global";
 
   const _updateSelectedElement = (newValue) => {
     setSelectedElement((prev) => {
       const tag = prev.split(":")[1];
       if (GENERIC_PROPERTIES.includes(tag))
-        updatedClassesForTag(tag, "outlined", "remove");
+        updatedClassesForTag(prev, "outlined", "remove");
       return newValue;
     });
   };
@@ -49,6 +53,7 @@ const Raw = () => {
 
     const [groupId, platform, key] = selectedElement.split(":");
     let matchedProperties = {};
+
     for (let i = 0; i < templates.length; i++) {
       const template = templates[i];
       if (template.groupId === groupId && template.platform === platform) {
@@ -56,14 +61,15 @@ const Raw = () => {
         if (matchedProperties) break;
       }
     }
-
-    setProperties((prev) => ({
-      ...prev,
-      [selectedElement]: {
-        ...(prev[selectedElement] || {}),
-        ...matchedProperties.properties,
-      },
-    }));
+    setProperties((prev) => {
+      return {
+        ...prev,
+        [selectedElement]: {
+          ...(prev[selectedElement] || {}),
+          ...(matchedProperties.properties || {}),
+        },
+      };
+    });
   }, [selectedElement]);
 
   useEffect(() => {
@@ -76,9 +82,9 @@ const Raw = () => {
           console.log("Detected click on <code>, <strong>");
           const id = e.target.dataset.id ? e.target.dataset.id : shortid();
           e.target.dataset.id = id;
-
-          _updateSelectedElement(`none:${tag}:${id}`);
-          updatedClassesForTag(tag, "outlined", "add");
+          const key = `none:${tag}:${id}`;
+          _updateSelectedElement(key);
+          updatedClassesForTag(key, "outlined", "add");
         } else {
           _updateSelectedElement("");
         }
@@ -86,6 +92,17 @@ const Raw = () => {
       true
     );
   }, [canvasContainerRef.current]);
+
+  useEffect(() => {
+    const node = canvasContainerRef.current;
+
+    for (const key in global) {
+      node.querySelectorAll(key).forEach((el) => {
+        const classes = Object.values(global[key]);
+        el.classList.add(...classes);
+      });
+    }
+  }, [global, canvasContainerRef.current]);
 
   useEffect(() => {
     setFilename(
@@ -160,9 +177,12 @@ const Raw = () => {
     });
   }, [templateRef, templates]);
 
-  const updatedClassesForTag = (tag, classes, action = "set") => {
-    if (!tag) return;
-    const elements = canvasContainerRef.current.querySelectorAll(tag);
+  const updatedClassesForTag = (key, classes, action = "set") => {
+    if (!key) return;
+    const [, tag, id] = key.split(":");
+    const elements = canvasContainerRef.current.querySelectorAll(
+      id ? `${tag}[data-id='${id}']` : tag
+    );
 
     elements.forEach((el) => {
       if (action === "remove") {
@@ -179,16 +199,37 @@ const Raw = () => {
     const [groupId, platform, key] = selectedElement.split(":");
     let updatedProperties;
 
-    setProperties((prev) => {
+    if (isGlobal) {
+      setGlobal((prev) => {
+        updatedProperties = {
+          ...(prev[platform] || {}),
+          [property]: value,
+        };
+        return {
+          ...prev,
+          [platform]: updatedProperties,
+        };
+      });
       updatedProperties = {
-        ...(prev[selectedElement] || {}),
-        [property]: value,
+        ...updatedProperties,
+        ...properties[selectedElement],
       };
-      return {
-        ...prev,
-        [selectedElement]: updatedProperties,
+    } else {
+      setProperties((prev) => {
+        updatedProperties = {
+          ...(prev[selectedElement] || {}),
+          [property]: value,
+        };
+        return {
+          ...prev,
+          [selectedElement]: updatedProperties,
+        };
+      });
+      updatedProperties = {
+        ...global[platform],
+        ...updatedProperties,
       };
-    });
+    }
 
     if (isGenericTagSelected) {
       // if tags, then apply the classes
@@ -197,7 +238,10 @@ const Raw = () => {
         value,
         "outlined",
       ].join(" ");
-      updatedClassesForTag(platform, updatedClasses);
+      updatedClassesForTag(
+        isGlobal ? `${groupId}:${platform}` : selectedElement,
+        updatedClasses
+      );
     } else {
       // otherwise add the classes in templates obj
       setTemplates((prev) => {
@@ -247,7 +291,11 @@ const Raw = () => {
     selectedElement,
     properties,
     handlePropertyChange,
-    templates,
+    global,
+    setGlobal,
+    propertyType,
+    setPropertyType,
+    isGlobal,
   };
 
   return (

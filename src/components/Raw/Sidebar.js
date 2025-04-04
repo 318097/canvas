@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React, { Fragment } from "react";
-import { Input, Select, Button } from "antd";
+import { Input, Select, Button, Radio } from "antd";
 import { PROPERTIES } from "./config";
 
 const { TextArea } = Input;
@@ -14,17 +14,12 @@ const Sidebar = ({
   selectedElement,
   properties,
   handlePropertyChange,
-  templates,
+  global,
+  setGlobal,
+  propertyType,
+  setPropertyType,
+  isGlobal,
 }) => {
-  // const selectedElementFields = templates.find((template) => {
-  //   const [groupId, platform, key] = selectedElement.split(":");
-  //   return (
-  //     groupId === template.groupId &&
-  //     platform === template.platform &&
-  //     template.layout.find((layout) => layout.key === key)
-  //   );
-  // });
-
   return (
     <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 w-[300px] shrink-0 h-full overflow-auto">
       {Object.keys(data).map((key) => {
@@ -45,13 +40,32 @@ const Sidebar = ({
       {!!selectedElement && (
         <Fragment>
           <hr />
-          <h3 className="text-sm font-bold text-left">
-            Properties: {selectedElement}
-          </h3>
+          <h3 className="text-sm font-bold text-left">{selectedElement}</h3>
+          <Radio.Group
+            optionType="button"
+            buttonStyle="solid"
+            className="mb-4"
+            options={[
+              {
+                label: "Global",
+                value: "global",
+              },
+              {
+                label: "Local",
+                value: "local",
+              },
+            ]}
+            onChange={(e) => setPropertyType(e.target.value)}
+            value={propertyType}
+          />
           {PROPERTIES.map((property) => {
             const { options, label, key } = property;
 
-            const value = _.get(properties, [selectedElement, key], "");
+            const [, element] = selectedElement.split(":");
+            const value = isGlobal
+              ? _.get(global, [element, key], "")
+              : _.get(properties, [selectedElement, key], "");
+
             return (
               <div className="flex flex-col items-start gap-1 mb-2">
                 <label className="text-xs font-bold">{label}</label>

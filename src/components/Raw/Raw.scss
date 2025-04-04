@@ -8,9 +8,9 @@ body,
   font-family: monospace;
 }
 
-code {
-  @apply bg-gray-500 rounded p-1 text-white;
-}
+// code {
+//   @apply bg-gray-500 rounded p-1 text-white;
+// }
 
 .raw-editor-root {
   @apply flex flex-col gap-6 items-center justify-center select-none;

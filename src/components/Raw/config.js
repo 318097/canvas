@@ -707,6 +707,22 @@ const defaultClasses = {
   padding: "p-0",
 };
 
+const GLOBAL = {
+  CODE: {
+    ...defaultClasses,
+    "bg-color": "bg-gray-500",
+    border: "rounded",
+    padding: "p-1",
+    "text-color": "text-white",
+    // "text-size": "font-[inherit]",
+  },
+  STRONG: {
+    ...defaultClasses,
+    "text-color": "text-gray-400",
+    // "text-size": "font-[inherit]",
+  },
+};
+
 const generateTemplate = (platform, keys) => {
   const { title = "title", content = "content", groupId = "none" } = keys || {};
 
@@ -722,7 +738,7 @@ const generateTemplate = (platform, keys) => {
           type: "text",
           key: title,
           label: "Title",
-          className: "leading-relaxed",
+          className: "leading-normal",
           properties: {
             "text-size": "text-5xl",
             "text-weight": "font-bold",
@@ -757,7 +773,7 @@ const generateTemplate = (platform, keys) => {
         {
           type: "text",
           key: title,
-          className: "leading-relaxed",
+          className: "leading-normal",
           properties: {
             "text-size": "text-5xl",
             "text-weight": "font-bold",
@@ -815,7 +831,7 @@ const POST_VARIANTS = [
 
 const getDefaultContent = () => {
   return {
-    title: "Custom `.pick` for **objects**",
+    title: " `.pick` : Custom `.pick` **method** for **objects**",
     content: `
 1. snake_case  
 2. keb-case  
@@ -834,4 +850,5 @@ export {
   generateTemplate,
   GENERIC_PROPERTIES,
   POST_VARIANTS,
+  GLOBAL,
 };
