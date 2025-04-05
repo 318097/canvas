@@ -6,6 +6,7 @@ import Sidebar from "./Sidebar";
 import Canvas from "./Canvas";
 import Header from "./Header";
 import shortid from "shortid";
+import { getFormattedDate, getSlug } from "./helpers";
 import {
   isGenericTag,
   splitName,
@@ -46,7 +47,7 @@ const Raw = () => {
   };
 
   useEffect(() => {
-    setZoomLevel(selectedTemplates.length > 1 ? INITIAL_ZOOM_LEVEL : 1);
+    setZoomLevel(selectedTemplates.length > 1 ? INITIAL_ZOOM_LEVEL : 0.8);
     setView(selectedTemplates.length > 1 ? "row" : "col");
     setTemplates(generateTemplate(selectedTemplates));
   }, [selectedTemplates]);
@@ -60,7 +61,7 @@ const Raw = () => {
       "click",
       (e) => {
         const tag = e.target.tagName;
-        if (["CODE", "STRONG"].includes(tag)) {
+        if (["CODE", "STRONG", "A"].includes(tag)) {
           e.stopPropagation();
           console.log("Detected click on <code>, <strong>");
           const id = e.target.dataset.id ? e.target.dataset.id : shortid();
@@ -87,17 +88,10 @@ const Raw = () => {
         });
       }
     }
-  }, [globalProperties, canvasContainerRef.current]);
+  }, [globalProperties, data, canvasContainerRef.current]);
 
   useEffect(() => {
-    setFilename(
-      data.title
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-zA-Z0-9\s]/g, "")
-        .replace(/\s+/g, "-")
-        .slice(0, 30)
-    );
+    setFilename(getSlug(data.title));
   }, [data]);
 
   const parseDataForVariant = () => {
@@ -159,7 +153,7 @@ const Raw = () => {
         })
         .then((dataUrl) => {
           const link = document.createElement("a");
-          link.download = `[${platform}] ${
+          link.download = `[${getFormattedDate()}:${platform}] ${
             order ? `${order} - ` : ""
           }${filename}.png`;
           link.href = dataUrl;
@@ -169,7 +163,7 @@ const Raw = () => {
           console.log(err);
         });
     });
-  }, [templateRef, templates]);
+  }, [templateRef, templates, filename]);
 
   const updatedClassesForTag = (selectedElement, classes, action = "set") => {
     if (!selectedElement) return;

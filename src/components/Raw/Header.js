@@ -20,7 +20,7 @@ const Header = ({
   setView,
 }) => {
   return (
-    <header className="flex items-center justify-between w-full p-4 bg-cyan-200">
+    <header className="flex items-center justify-between w-full p-4 bg-slate-300">
       <h3 className="text-white font-bold">Canvas</h3>
       <div className="flex items-center gap-2">
         <Select

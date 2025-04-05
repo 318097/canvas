@@ -800,8 +800,8 @@ const DEFAULT_CLASSES = {
 const GLOBAL = {
   CODE: {
     ...DEFAULT_CLASSES,
-    "bg-color": "bg-gray-500",
-    border: "rounded",
+    "bg-color": "bg-gray-700",
+    "border-radius": "rounded",
     padding: "p-1",
     "text-color": "text-white",
     "text-size": "font-[inherit]",
@@ -811,13 +811,21 @@ const GLOBAL = {
     "text-color": "text-gray-400",
     "text-size": "font-[inherit]",
   },
+  A: {
+    ...DEFAULT_CLASSES,
+    "text-color": "text-white",
+    "text-size": "font-[inherit]",
+    "text-decoration": "underline",
+    "text-decoration-color": "decoration-cyan-500",
+    decoration: "decoration-4",
+  },
   title: {
     ...DEFAULT_CLASSES,
     "text-size": "text-5xl",
     "text-weight": "font-bold",
     "text-align": "text-center",
     "text-color": "text-white",
-    "flex-width": "w-3/4",
+    "flex-width": "w-4/5",
     padding: "p-2",
     leading: "leading-normal",
   },
@@ -827,7 +835,7 @@ const GLOBAL = {
     "text-align": "text-left",
     "text-color": "text-white",
     "text-weight": "font-normal",
-    "flex-width": "w-3/4",
+    "flex-width": "w-4/5",
     padding: "p-2",
     leading: "leading-relaxed",
   },
@@ -870,7 +878,7 @@ const POST_VARIANTS = [
   // },
 ];
 
-const GENERIC_PROPERTIES = ["CODE", "STRONG"];
+const GENERIC_PROPERTIES = ["CODE", "STRONG", "A"];
 
 export {
   PROPERTIES,

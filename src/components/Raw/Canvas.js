@@ -6,6 +6,18 @@ import cn from "classnames";
 import { Carousel } from "antd";
 import { generateName, getCleanKey } from "./helpers";
 
+// const renderer = new marked.Renderer();
+
+// renderer.br = () => {
+//   // Replace a single <br> with multiple <br> tags
+//   return "<span class='space'></span>";
+// };
+
+// Configure marked to use the custom renderer
+// marked.setOptions({
+//   renderer,
+// });
+
 const Canvas = ({
   canvasContainerRef,
   templateRef,
@@ -33,7 +45,7 @@ const Canvas = ({
         view === "col"
           ? "flex-col gap-2 items-center"
           : "flex-wrap gap-8 items-start"
-      } `}
+      }`}
       ref={canvasContainerRef}
     >
       {grouppedTemplates.map(([groupId, templates]) => {
@@ -145,7 +157,7 @@ const Card = ({
   return (
     <div
       ref={(el) => (templateRef.current[refId] = el)}
-      className={`raw-editor-root flex flex-col gap-2 bg-gray-800 p-4 ${className}`}
+      className={`raw-editor-root flex flex-col gap-2 bg-[#202227] p-4 ${className}`}
     >
       {layout.map(({ key }) => {
         const fullKey = generateName(groupId, platform, key);

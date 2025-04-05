@@ -1,4 +1,16 @@
 import { GENERIC_PROPERTIES } from "./config";
+import slugify from "slugify";
+import dayjs from "dayjs";
+
+const getFormattedDate = () => {
+  return dayjs().format("YYYY-MM-DD");
+};
+
+const getSlug = (str) =>
+  slugify(str, {
+    lower: true,
+    strict: true,
+  });
 
 const isGenericTag = (selectedElement) => {
   return (
@@ -24,14 +36,10 @@ const getCleanKey = (key) => (key.includes("_") ? key.split("_")[0] : key);
 
 const getDefaultContent = () => {
   return {
-    title: " `.pick` : Custom `.pick` **method** for **objects**",
-    content: `
-1. snake_case  
-2. keb-case  
-3. camelCase (JS variables, functions)  
-4. PascalCase (JS Classes)  
-5. SCREAMING_SNAKE_CASE (JS constants)  
-`,
+    title: "Did you know the `world’s` first website is still live? 🌍💻",
+    content: `Tim Berners-Lee launched the **World Wide Web Project** at CERN, giving birth to the internet as we know it.   
+The original site, hosted at [**info.cern.ch**](https://info.cern.ch/), was the first step toward a digital revolution.
+    `,
   };
 };
 
@@ -116,4 +124,6 @@ export {
   getDefaultContent,
   generateTemplate,
   getCleanKey,
+  getSlug,
+  getFormattedDate,
 };
