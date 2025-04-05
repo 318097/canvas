@@ -87,6 +87,7 @@ const Raw = () => {
   useEffect(() => {
     setFilename(
       data.title
+        .trim()
         .toLowerCase()
         .replace(/[^a-zA-Z0-9\s]/g, "")
         .replace(/\s+/g, "-")
@@ -144,7 +145,6 @@ const Raw = () => {
       const { platform, groupId, order, containerWidth, containerHeight } =
         template;
       const refId = `${groupId}-${platform}-${order}`;
-
       htmlToImage
         .toPng(templateRef.current[refId], {
           cacheBust: true,
@@ -154,8 +154,8 @@ const Raw = () => {
         })
         .then((dataUrl) => {
           const link = document.createElement("a");
-          link.download = `[${new Date().getTime()}] ${
-            order ? `${order}.` : ""
+          link.download = `[${platform}] ${
+            order ? `${order} - ` : ""
           }${filename}.png`;
           link.href = dataUrl;
           link.click();

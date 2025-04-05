@@ -41,15 +41,10 @@ const generateTemplate = (platforms, keys) => {
 
   const layout = [
     {
-      type: "text",
       key: title,
-      label: "Title",
-      className: "leading-normal",
     },
     {
-      type: "text",
       key: content,
-      className: "leading-relaxed",
     },
   ];
 

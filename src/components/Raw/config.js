@@ -733,6 +733,7 @@ const GLOBAL = {
     "text-color": "text-white",
     "flex-width": "w-3/4",
     padding: "p-2",
+    leading: "leading-normal",
   },
   content: {
     ...DEFAULT_CLASSES,
@@ -742,6 +743,16 @@ const GLOBAL = {
     "text-weight": "font-normal",
     "flex-width": "w-3/4",
     padding: "p-2",
+    leading: "leading-relaxed",
+  },
+};
+
+const DATA_CONFIG = {
+  title: {
+    rows: 3,
+  },
+  content: {
+    rows: 10,
   },
 };
 
@@ -751,13 +762,13 @@ const POST_VARIANTS = [
     value: "default",
   },
   {
-    label: "Multipage",
-    value: "multipage",
-  },
-  {
     label: "Listicle",
     value: "listicle",
   },
+  // {
+  //   label: "Multipage",
+  //   value: "multipage",
+  // },
   // {
   //   label: "Cover",
   //   value: "cover",
@@ -781,4 +792,5 @@ export {
   POST_VARIANTS,
   GLOBAL,
   DEFAULT_CLASSES,
+  DATA_CONFIG,
 };

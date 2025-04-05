@@ -19,7 +19,7 @@ const Canvas = ({
 }) => {
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
 
-  const zoomTransitionClasses = `transition-all duration-500 ease-in-out`;
+  const zoomTransitionClasses = `transition-all duration-300 ease-in-out`;
   const cardContainerClasses = `flex flex-col items-start gap-1 ${zoomTransitionClasses}`;
   const cardContainerStyles = {
     transform: `scale(${zoomLevel})`,
@@ -31,7 +31,7 @@ const Canvas = ({
       className="p-2 bg-white grow h-full overflow-auto flex flex-wrap gap-8 items-start max-w-full"
       ref={canvasContainerRef}
     >
-      {grouppedTemplates.map(([groupId, templates], idx) => {
+      {grouppedTemplates.map(([groupId, templates]) => {
         const cardProps = {
           templateRef,
           data,
@@ -42,7 +42,7 @@ const Canvas = ({
         };
 
         if (groupId === "none") {
-          return templates.map((template) => {
+          return templates.map((template, idx) => {
             const { platform, className } = template;
             const scalingContainerStyles = {
               width: `${template.containerWidth * zoomLevel}px`,
@@ -50,7 +50,7 @@ const Canvas = ({
             };
             return (
               <div
-                key={idx}
+                key={groupId + idx}
                 style={scalingContainerStyles}
                 className={zoomTransitionClasses}
               >
@@ -76,7 +76,7 @@ const Canvas = ({
           };
           return (
             <div
-              key={idx}
+              key={groupId}
               style={scalingContainerStyles}
               className={zoomTransitionClasses}
             >
@@ -142,8 +142,7 @@ const Card = ({
       ref={(el) => (templateRef.current[refId] = el)}
       className={`raw-editor-root flex flex-col gap-2 bg-gray-800 p-4 ${className}`}
     >
-      {layout.map((layout) => {
-        const { key, type, className = "" } = layout;
+      {layout.map(({ key }) => {
         const fullKey = generateName(groupId, platform, key);
         const value = _.get(data, key, "");
 
@@ -153,16 +152,9 @@ const Card = ({
         };
         if (!value) return null;
 
-        const classNames = cn(
-          "element",
-          // type,
-          // "p-2",
-          className,
-          ...Object.values(mergedProperties),
-          {
-            outlined: selectedElement === fullKey,
-          }
-        );
+        const classNames = cn("element", ...Object.values(mergedProperties), {
+          outlined: selectedElement === fullKey,
+        });
         return (
           <div
             key={fullKey}

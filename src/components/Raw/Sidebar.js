@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React, { Fragment } from "react";
 import { Input, Select, Button, Radio } from "antd";
-import { PROPERTIES } from "./config";
+import { DATA_CONFIG, PROPERTIES } from "./config";
 import { getCleanKey, splitName } from "./helpers";
 
 const { TextArea } = Input;
@@ -24,11 +24,12 @@ const Sidebar = ({
   return (
     <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 w-[300px] shrink-0 h-full overflow-auto">
       {Object.keys(data).map((key) => {
+        const rows = _.get(DATA_CONFIG, [key, "rows"], 3);
         return (
-          <div className="flex flex-col items-start gap-1 mb-2">
+          <div className="flex flex-col items-start gap-1 mb-2" key={key}>
             <label className="text-xs font-bold">{key}</label>
             <TextArea
-              rows={4}
+              rows={rows}
               placeholder={key}
               value={data[key]}
               onChange={(e) => setData({ ...data, [key]: e.target.value })}
@@ -69,7 +70,10 @@ const Sidebar = ({
               : _.get(localProperties, [selectedElement, key], "");
 
             return (
-              <div className="flex flex-col items-start gap-1 mb-2">
+              <div
+                className="flex flex-col items-start gap-1 mb-2"
+                key={`${isGlobal ? "g-" : "l-"}${key}`}
+              >
                 <label className="text-xs font-bold">{label}</label>
                 <Select
                   options={options}
