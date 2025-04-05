@@ -1,5 +1,91 @@
 const PROPERTIES = [
   {
+    label: "Font Family",
+    key: "font-family",
+    options: [
+      {
+        label: "Arvo",
+        value: "font-arvo",
+      },
+      {
+        label: "Cabin",
+        value: "font-cabin",
+      },
+      {
+        label: "Courier Prime",
+        value: "font-courier-prime",
+      },
+      {
+        label: "Crimson Text",
+        value: "font-crimson-text",
+      },
+      {
+        label: "Fira Code",
+        value: "font-fira-code",
+      },
+      {
+        label: "IBM Plex Mono",
+        value: "font-ibm-plex-mono",
+      },
+      {
+        label: "Inconsolata",
+        value: "font-inconsolata",
+      },
+      {
+        label: "Lato",
+        value: "font-lato",
+      },
+      {
+        label: "Merriweather",
+        value: "font-merriweather",
+      },
+      {
+        label: "Montserrat",
+        value: "font-montserrat",
+      },
+      {
+        label: "Nunito",
+        value: "font-nunito",
+      },
+      {
+        label: "Open Sans",
+        value: "font-open-sans",
+      },
+      {
+        label: "Playfair Display",
+        value: "font-playfair-display",
+      },
+      {
+        label: "Poppins",
+        value: "font-poppins",
+      },
+      {
+        label: "PT Serif",
+        value: "font-pt-serif",
+      },
+      {
+        label: "Raleway",
+        value: "font-raleway",
+      },
+      {
+        label: "Roboto",
+        value: "font-roboto",
+      },
+      {
+        label: "Source Sans Pro",
+        value: "font-source-sans-pro",
+      },
+      {
+        label: "Space Mono",
+        value: "font-space-mono",
+      },
+      {
+        label: "Zilla Slab",
+        value: "font-zilla-slab",
+      },
+    ],
+  },
+  {
     label: "Font Size",
     key: "text-size",
     options: [
