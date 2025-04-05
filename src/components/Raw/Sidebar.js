@@ -13,10 +13,10 @@ const Sidebar = ({
   setFilename,
   handleDownload,
   selectedElement,
-  properties,
+  localProperties,
   handlePropertyChange,
-  global,
-  setGlobal,
+  globalProperties,
+  setGlobalProperties,
   propertyType,
   setPropertyType,
   isGlobal,
@@ -65,8 +65,8 @@ const Sidebar = ({
             const { uid } = splitName(selectedElement);
 
             const value = isGlobal
-              ? _.get(global, [getCleanKey(uid), key], "")
-              : _.get(properties, [selectedElement, key], "");
+              ? _.get(globalProperties, [getCleanKey(uid), key], "")
+              : _.get(localProperties, [selectedElement, key], "");
 
             return (
               <div className="flex flex-col items-start gap-1 mb-2">

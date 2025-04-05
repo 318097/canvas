@@ -3,7 +3,12 @@ import { Select } from "antd";
 import { POST_VARIANTS } from "./config";
 import { generateTemplate } from "./helpers";
 
-const Header = ({ template, setTemplate, postVariant, setPostVariant }) => {
+const Header = ({
+  selectedTemplates,
+  setSelectedTemplates,
+  postVariant,
+  setPostVariant,
+}) => {
   return (
     <header className="flex items-center justify-between w-full p-4 bg-cyan-200">
       <h3 className="text-white font-bold">Canvas</h3>
@@ -15,16 +20,13 @@ const Header = ({ template, setTemplate, postVariant, setPostVariant }) => {
             label: platform,
             value: platform,
           }))}
-          value={template}
-          onChange={setTemplate}
+          value={selectedTemplates}
+          onChange={setSelectedTemplates}
         />
         <Select
           placeholder="Theme"
           className="w-[100px]"
-          options={POST_VARIANTS.map(({ name }) => ({
-            label: name,
-            value: name,
-          }))}
+          options={POST_VARIANTS}
           value={postVariant}
           onChange={setPostVariant}
         />

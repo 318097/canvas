@@ -35,7 +35,8 @@ const getDefaultContent = () => {
   };
 };
 
-const generateTemplate = (platform, keys) => {
+const generateTemplate = (platforms, keys) => {
+  platforms = [].concat(platforms);
   const { title = "title", content = "content", groupId = "none" } = keys || {};
 
   const TEMPLATES = [
@@ -81,7 +82,7 @@ const generateTemplate = (platform, keys) => {
   ];
 
   return TEMPLATES.filter((template) =>
-    platform === "all" ? true : template.platform === platform
+    platforms[0] === "all" ? true : platforms.includes(template.platform)
   ).map((template) => {
     return {
       ...template,

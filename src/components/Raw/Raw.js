@@ -18,13 +18,14 @@ import {
 const Raw = () => {
   const [data, setData] = useState(getDefaultContent());
   const [selectedElement, setSelectedElement] = useState("");
-  const [global, setGlobal] = useState(GLOBAL);
-  const [properties, setProperties] = useState({});
+  const [globalProperties, setGlobalProperties] = useState(GLOBAL);
+  const [localProperties, setLocalProperties] = useState({});
   const [propertyType, setPropertyType] = useState("local");
   const [templates, setTemplates] = useState([]);
-  const [template, setTemplate] = useState(["instagram"]);
-  const [postVariant, setPostVariant] = useState("Default");
+  const [selectedTemplates, setSelectedTemplates] = useState(["instagram"]);
+  const [postVariant, setPostVariant] = useState("default");
   const [filename, setFilename] = useState("");
+
   const isGlobal = propertyType === "global";
   const templateRef = useRef({});
   const canvasContainerRef = useRef();
@@ -41,8 +42,8 @@ const Raw = () => {
   };
 
   useEffect(() => {
-    setTemplates(generateTemplate("all"));
-  }, []);
+    setTemplates(generateTemplate(selectedTemplates));
+  }, [selectedTemplates]);
 
   useEffect(() => {
     parseDataForTheme();
@@ -72,15 +73,15 @@ const Raw = () => {
   useEffect(() => {
     const node = canvasContainerRef.current;
 
-    for (const key in global) {
+    for (const key in globalProperties) {
       if (isGenericTag(key)) {
         node.querySelectorAll(key).forEach((el) => {
-          const classes = Object.values(global[key]);
+          const classes = Object.values(globalProperties[key]);
           el.classList.add(...classes);
         });
       }
     }
-  }, [global, canvasContainerRef.current]);
+  }, [globalProperties, canvasContainerRef.current]);
 
   useEffect(() => {
     setFilename(
@@ -94,7 +95,7 @@ const Raw = () => {
 
   const parseDataForTheme = () => {
     const platform = "instagram";
-    if (postVariant === "Listicle") {
+    if (postVariant === "listicle") {
       const content = data.content.trim().split("\n");
       const contentPageIds = [];
       const contentBreakdownObj = content.reduce((ob, content, index) => {
@@ -179,7 +180,7 @@ const Raw = () => {
     const keyToUpdate = isGenericTagSelected ? element : getCleanKey(uid);
 
     if (isGlobal) {
-      setGlobal((prev) => {
+      setGlobalProperties((prev) => {
         updatedProperties = {
           ...(prev[keyToUpdate] || {}),
           [property]: value,
@@ -191,10 +192,10 @@ const Raw = () => {
       });
       updatedProperties = {
         ...updatedProperties,
-        ...properties[selectedElement],
+        ...localProperties[selectedElement],
       };
     } else {
-      setProperties((prev) => {
+      setLocalProperties((prev) => {
         updatedProperties = {
           ...(prev[selectedElement] || {}),
           [property]: value,
@@ -205,7 +206,7 @@ const Raw = () => {
         };
       });
       updatedProperties = {
-        ...global[keyToUpdate],
+        ...globalProperties[keyToUpdate],
         ...updatedProperties,
       };
     }
@@ -222,8 +223,8 @@ const Raw = () => {
   };
 
   const headerProps = {
-    template,
-    setTemplate,
+    selectedTemplates,
+    setSelectedTemplates,
     postVariant,
     setPostVariant,
   };
@@ -235,8 +236,8 @@ const Raw = () => {
     _updateSelectedElement,
     selectedElement,
     templates,
-    properties,
-    global,
+    localProperties,
+    globalProperties,
   };
 
   const sidebarProps = {
@@ -246,10 +247,10 @@ const Raw = () => {
     setFilename,
     handleDownload,
     selectedElement,
-    properties,
+    localProperties,
     handlePropertyChange,
-    global,
-    setGlobal,
+    globalProperties,
+    setGlobalProperties,
     propertyType,
     setPropertyType,
     isGlobal,

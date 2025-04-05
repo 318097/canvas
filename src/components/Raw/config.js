@@ -4,6 +4,10 @@ const PROPERTIES = [
     key: "text-size",
     options: [
       {
+        label: "Inherit",
+        value: "font-[inherit]",
+      },
+      {
         label: "Base",
         value: "text-base",
       },
@@ -714,50 +718,59 @@ const GLOBAL = {
     border: "rounded",
     padding: "p-1",
     "text-color": "text-white",
-    // "text-size": "font-[inherit]",
+    "text-size": "font-[inherit]",
   },
   STRONG: {
     ...DEFAULT_CLASSES,
     "text-color": "text-gray-400",
-    // "text-size": "font-[inherit]",
+    "text-size": "font-[inherit]",
   },
   title: {
+    ...DEFAULT_CLASSES,
     "text-size": "text-5xl",
     "text-weight": "font-bold",
     "text-align": "text-center",
     "text-color": "text-white",
     "flex-width": "w-3/4",
-    ...DEFAULT_CLASSES,
+    padding: "p-2",
   },
   content: {
+    ...DEFAULT_CLASSES,
     "text-size": "text-3xl",
     "text-align": "text-left",
     "text-color": "text-white",
     "text-weight": "font-normal",
     "flex-width": "w-3/4",
-    ...DEFAULT_CLASSES,
+    padding: "p-2",
   },
 };
 
 const POST_VARIANTS = [
   {
-    name: "Default",
+    label: "Default",
+    value: "default",
   },
   {
-    name: "Multipage",
+    label: "Multipage",
+    value: "multipage",
   },
   {
-    name: "Cover",
+    label: "Listicle",
+    value: "listicle",
   },
-  {
-    name: "Listicle",
-  },
-  {
-    name: "Carousel",
-  },
-  {
-    name: "Video",
-  },
+  // {
+  //   label: "Cover",
+  //   value: "cover",
+  // },
+
+  // {
+  //   label: "Carousel",
+  //   value: "carousel",
+  // },
+  // {
+  //   label: "Video",
+  //   value: "video",
+  // },
 ];
 
 const GENERIC_PROPERTIES = ["CODE", "STRONG"];

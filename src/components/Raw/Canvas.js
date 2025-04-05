@@ -13,8 +13,8 @@ const Canvas = ({
   _updateSelectedElement,
   selectedElement,
   templates,
-  properties,
-  global,
+  localProperties,
+  globalProperties,
 }) => {
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
 
@@ -31,8 +31,8 @@ const Canvas = ({
           data,
           selectedElement,
           _updateSelectedElement,
-          properties,
-          global,
+          localProperties,
+          globalProperties,
         };
         if (groupId === "none") {
           return templates.map((template) => {
@@ -94,8 +94,8 @@ const Card = ({
   data,
   selectedElement,
   _updateSelectedElement,
-  properties,
-  global,
+  localProperties,
+  globalProperties,
 }) => {
   const { layout, className = "", platform, groupId, idx } = template;
   const refId = `${groupId}-${platform}-${idx}`;
@@ -110,14 +110,14 @@ const Card = ({
         const value = _.get(data, key, "");
 
         const mergedProperties = {
-          ..._.get(global, getCleanKey(key), {}),
-          ..._.get(properties, fullKey, {}),
+          ..._.get(globalProperties, getCleanKey(key), {}),
+          ..._.get(localProperties, fullKey, {}),
         };
         if (!value) return null;
 
         const classNames = cn(
           "element",
-          type,
+          // type,
           // "p-2",
           className,
           ...Object.values(mergedProperties),
