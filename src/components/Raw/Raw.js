@@ -26,6 +26,7 @@ const Raw = () => {
   const [postVariant, setPostVariant] = useState("default");
   const [filename, setFilename] = useState("");
   const [zoomLevel, setZoomLevel] = useState(0.5);
+  const [view, setView] = useState("col");
 
   const isGlobal = propertyType === "global";
   const templateRef = useRef({});
@@ -240,6 +241,8 @@ const Raw = () => {
     setPostVariant,
     zoomLevel,
     setZoomLevel,
+    setView,
+    view,
   };
 
   const canvasProps = {
@@ -252,6 +255,7 @@ const Raw = () => {
     localProperties,
     globalProperties,
     zoomLevel,
+    view,
   };
 
   const sidebarProps = {

@@ -16,6 +16,7 @@ const Canvas = ({
   localProperties,
   globalProperties,
   zoomLevel,
+  view,
 }) => {
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
 
@@ -28,7 +29,11 @@ const Canvas = ({
 
   return (
     <div
-      className="p-2 bg-white grow h-full overflow-auto flex flex-wrap gap-8 items-start max-w-full"
+      className={`p-2 bg-white grow h-full overflow-auto flex max-w-full ${
+        view === "col"
+          ? "flex-col gap-2 items-center"
+          : "flex-wrap gap-8 items-start"
+      }`}
       ref={canvasContainerRef}
     >
       {grouppedTemplates.map(([groupId, templates]) => {

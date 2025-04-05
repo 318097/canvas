@@ -1,8 +1,13 @@
 import React from "react";
-import { Button, Select } from "antd";
+import { Button, Segmented, Select } from "antd";
 import { POST_VARIANTS } from "./config";
 import { generateTemplate } from "./helpers";
-import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  ColumnHeightOutlined,
+  ColumnWidthOutlined,
+  MinusOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 
 const Header = ({
   selectedTemplates,
@@ -11,6 +16,8 @@ const Header = ({
   setPostVariant,
   setZoomLevel,
   zoomLevel,
+  view,
+  setView,
 }) => {
   return (
     <header className="flex items-center justify-between w-full p-4 bg-cyan-200">
@@ -32,6 +39,14 @@ const Header = ({
           options={POST_VARIANTS}
           value={postVariant}
           onChange={setPostVariant}
+        />
+        <Segmented
+          onChange={setView}
+          value={view}
+          options={[
+            { value: "col", icon: <ColumnHeightOutlined /> },
+            { value: "row", icon: <ColumnWidthOutlined /> },
+          ]}
         />
         <div className="flex items-center gap-1">
           <Button
