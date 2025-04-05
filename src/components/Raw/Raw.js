@@ -95,35 +95,43 @@ const Raw = () => {
   }, [data]);
 
   const parseDataForVariant = () => {
-    const platform = "instagram";
     if (postVariant === "listicle") {
-      const content = data.content.trim().split("\n");
-      const contentPageIds = [];
-      const contentBreakdownObj = content.reduce((ob, content, index) => {
-        const key = `content_#${index + 1}`;
-        contentPageIds.push(key);
-        return { ...ob, [key]: content };
-      }, {});
+      const contentList = data.content.trim().split("\n");
+      const contentIdObj = [];
+      const contentBreakdownObj = contentList.reduce(
+        (ob, contentLine, index) => {
+          const key = `content_#${index + 1}`;
+          contentIdObj.push(key);
+          return { ...ob, [key]: contentLine };
+        },
+        {}
+      );
 
-      const groupId = shortid();
-      const pages = [
-        ...generateTemplate(platform, {
-          title: "title",
-          content: null,
-          groupId,
-        }),
-        ...contentPageIds.map(
-          (id) =>
-            generateTemplate(platform, {
-              title: null,
-              content: id,
-              groupId,
-            })[0]
-        ),
-      ].map((obj, idx) => ({ ...obj, idx: idx + 1 }));
+      const finalPages = [];
+      templates.forEach((template) => {
+        const { platform } = template;
+        const groupId = shortid();
+        const pages = [
+          ...generateTemplate(platform, {
+            title: "title",
+            content: null,
+            groupId,
+          }),
+          ...contentIdObj.map(
+            (id) =>
+              generateTemplate(platform, {
+                title: null,
+                content: id,
+                groupId,
+              })[0]
+          ),
+        ].map((obj, idx) => ({ ...obj, order: idx + 1 }));
 
+        finalPages.push(...pages);
+      });
+
+      setTemplates(finalPages);
       setData((prev) => ({ ...prev, ...contentBreakdownObj }));
-      setTemplates(pages);
     } else {
       setTemplates(generateTemplate(selectedTemplates));
     }
@@ -133,9 +141,9 @@ const Raw = () => {
     _updateSelectedElement("");
 
     templates.forEach((template) => {
-      const { platform, groupId, idx, containerWidth, containerHeight } =
+      const { platform, groupId, order, containerWidth, containerHeight } =
         template;
-      const refId = `${groupId}-${platform}-${idx}`;
+      const refId = `${groupId}-${platform}-${order}`;
 
       htmlToImage
         .toPng(templateRef.current[refId], {
@@ -147,7 +155,7 @@ const Raw = () => {
         .then((dataUrl) => {
           const link = document.createElement("a");
           link.download = `[${new Date().getTime()}] ${
-            idx ? `${idx}.` : ""
+            order ? `${order}.` : ""
           }${filename}.png`;
           link.href = dataUrl;
           link.click();

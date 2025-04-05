@@ -97,7 +97,7 @@ const Canvas = ({
                     {templates.map((template) => (
                       <Card
                         template={template}
-                        key={template.idx}
+                        key={template.order}
                         {...cardProps}
                       />
                     ))}
@@ -135,8 +135,8 @@ const Card = ({
   localProperties,
   globalProperties,
 }) => {
-  const { layout, className = "", platform, groupId, idx } = template;
-  const refId = `${groupId}-${platform}-${idx}`;
+  const { layout, className = "", platform, groupId, order } = template;
+  const refId = `${groupId}-${platform}-${order}`;
   return (
     <div
       ref={(el) => (templateRef.current[refId] = el)}
