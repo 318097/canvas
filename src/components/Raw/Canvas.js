@@ -15,14 +15,20 @@ const Canvas = ({
   templates,
   localProperties,
   globalProperties,
+  zoomLevel,
 }) => {
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
 
-  const containerClasses = `flex flex-col items-start gap-1 mb-12`;
+  const zoomTransitionClasses = `transition-all duration-500 ease-in-out`;
+  const cardContainerClasses = `flex flex-col items-start gap-1 ${zoomTransitionClasses}`;
+  const cardContainerStyles = {
+    transform: `scale(${zoomLevel})`,
+    transformOrigin: "0% 0%",
+  };
 
   return (
     <div
-      className="p-2 bg-white grow h-full overflow-auto flex flex-col items-center max-w-full"
+      className="p-2 bg-white grow h-full overflow-auto flex flex-wrap gap-8 items-start max-w-full"
       ref={canvasContainerRef}
     >
       {grouppedTemplates.map(([groupId, templates], idx) => {
@@ -34,40 +40,69 @@ const Canvas = ({
           localProperties,
           globalProperties,
         };
+
         if (groupId === "none") {
           return templates.map((template) => {
             const { platform, className } = template;
+            const scalingContainerStyles = {
+              width: `${template.containerWidth * zoomLevel}px`,
+              height: `${template.containerHeight * zoomLevel + 40}px`,
+            };
             return (
-              <div className={containerClasses} key={idx}>
-                <Title platform={platform} className={className} />
-                <Card template={template} {...cardProps} />
+              <div
+                key={idx}
+                style={scalingContainerStyles}
+                className={zoomTransitionClasses}
+              >
+                <div
+                  className={cardContainerClasses}
+                  style={cardContainerStyles}
+                >
+                  <Title
+                    platform={platform}
+                    className={className}
+                    containerWidth={template.containerWidth}
+                  />
+                  <Card template={template} {...cardProps} />
+                </div>
               </div>
             );
           });
         } else {
           const { containerWidth, className, platform } = templates[0];
+          const scalingContainerStyles = {
+            width: `${templates[0].containerWidth * zoomLevel}px`,
+            height: `${templates[0].containerHeight * zoomLevel + 40}px`,
+          };
           return (
-            <div className={containerClasses} key={idx}>
-              <Title
-                platform={platform}
-                className={className}
-                templates={templates}
-              />
-              <div
-                className={`bg-gray-200 border p-[10px]`}
-                style={{
-                  width: `${containerWidth}px`,
-                }}
-              >
-                <Carousel arrows infinite={false} className="m-auto">
-                  {templates.map((template) => (
-                    <Card
-                      template={template}
-                      key={template.idx}
-                      {...cardProps}
-                    />
-                  ))}
-                </Carousel>
+            <div
+              key={idx}
+              style={scalingContainerStyles}
+              className={zoomTransitionClasses}
+            >
+              <div className={cardContainerClasses} style={cardContainerStyles}>
+                <Title
+                  platform={platform}
+                  className={className}
+                  templates={templates}
+                  containerWidth={templates[0].containerWidth}
+                />
+                <div
+                  className={`bg-gray-200 border p-[10px]`}
+                  style={{
+                    width: `${containerWidth}px`,
+                  }}
+                >
+                  <Carousel arrows infinite={false} className="m-auto">
+                    {templates.map((template) => (
+                      <Card
+                        template={template}
+                        key={template.idx}
+                        {...cardProps}
+                      />
+                    ))}
+                  </Carousel>
+                </div>
               </div>
             </div>
           );
@@ -77,13 +112,16 @@ const Canvas = ({
   );
 };
 
-const Title = ({ platform, className, templates }) => (
-  <div className="flex items-center justify-between w-full">
-    <h1 className="text-xl font-bold">
+const Title = ({ platform, className, templates, containerWidth }) => (
+  <div
+    className="flex items-center justify-between w-full"
+    style={{ width: `${containerWidth}px` }}
+  >
+    <h1 className="text-xl font-bold grow w-full">
       {platform} ({className})
     </h1>
     {!!templates && (
-      <div className="text-sm">{`Total ${templates.length}`}</div>
+      <div className="text-sm shrink-0">{`Total ${templates.length}`}</div>
     )}
   </div>
 );

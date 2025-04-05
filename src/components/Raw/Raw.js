@@ -25,6 +25,7 @@ const Raw = () => {
   const [selectedTemplates, setSelectedTemplates] = useState(["instagram"]);
   const [postVariant, setPostVariant] = useState("default");
   const [filename, setFilename] = useState("");
+  const [zoomLevel, setZoomLevel] = useState(0.5);
 
   const isGlobal = propertyType === "global";
   const templateRef = useRef({});
@@ -46,7 +47,7 @@ const Raw = () => {
   }, [selectedTemplates]);
 
   useEffect(() => {
-    parseDataForTheme();
+    parseDataForVariant();
   }, [postVariant]);
 
   useEffect(() => {
@@ -93,7 +94,7 @@ const Raw = () => {
     );
   }, [data]);
 
-  const parseDataForTheme = () => {
+  const parseDataForVariant = () => {
     const platform = "instagram";
     if (postVariant === "listicle") {
       const content = data.content.trim().split("\n");
@@ -124,7 +125,7 @@ const Raw = () => {
       setData((prev) => ({ ...prev, ...contentBreakdownObj }));
       setTemplates(pages);
     } else {
-      // setTemplates(generateTemplate(platform));
+      setTemplates(generateTemplate(selectedTemplates));
     }
   };
 
@@ -145,7 +146,9 @@ const Raw = () => {
         })
         .then((dataUrl) => {
           const link = document.createElement("a");
-          link.download = `[${new Date().getTime()}] ${idx}.${filename}.png`;
+          link.download = `[${new Date().getTime()}] ${
+            idx ? `${idx}.` : ""
+          }${filename}.png`;
           link.href = dataUrl;
           link.click();
         })
@@ -227,6 +230,8 @@ const Raw = () => {
     setSelectedTemplates,
     postVariant,
     setPostVariant,
+    zoomLevel,
+    setZoomLevel,
   };
 
   const canvasProps = {
@@ -238,6 +243,7 @@ const Raw = () => {
     templates,
     localProperties,
     globalProperties,
+    zoomLevel,
   };
 
   const sidebarProps = {

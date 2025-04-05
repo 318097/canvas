@@ -39,6 +39,20 @@ const generateTemplate = (platforms, keys) => {
   platforms = [].concat(platforms);
   const { title = "title", content = "content", groupId = "none" } = keys || {};
 
+  const layout = [
+    {
+      type: "text",
+      key: title,
+      label: "Title",
+      className: "leading-normal",
+    },
+    {
+      type: "text",
+      key: content,
+      className: "leading-relaxed",
+    },
+  ];
+
   const TEMPLATES = [
     {
       platform: "instagram",
@@ -46,19 +60,15 @@ const generateTemplate = (platforms, keys) => {
       containerWidth: 1080,
       containerHeight: 1080,
       className: `h-[1080px] w-[1080px]`,
-      layout: [
-        {
-          type: "text",
-          key: title,
-          label: "Title",
-          className: "leading-normal",
-        },
-        {
-          type: "text",
-          key: content,
-          className: "leading-relaxed",
-        },
-      ],
+      layout,
+    },
+    {
+      platform: "instagram_story",
+      groupId: groupId,
+      containerWidth: 1080,
+      containerHeight: 1920,
+      className: `h-[1920px] w-[1080px]`,
+      layout,
     },
     {
       platform: "twitter",
@@ -66,18 +76,31 @@ const generateTemplate = (platforms, keys) => {
       containerWidth: 1200,
       containerHeight: 675,
       className: `h-[675px] w-[1200px]`,
-      layout: [
-        {
-          type: "text",
-          key: title,
-          className: "leading-normal",
-        },
-        {
-          type: "text",
-          key: content,
-          className: "leading-relaxed",
-        },
-      ],
+      layout,
+    },
+    {
+      platform: "facebook_post",
+      groupId: groupId,
+      containerWidth: 1200,
+      containerHeight: 630,
+      className: `h-[630px] w-[1200px]`,
+      layout,
+    },
+    {
+      platform: "linkedin_post",
+      groupId: groupId,
+      containerWidth: 1200,
+      containerHeight: 627,
+      className: `h-[627px] w-[1200px]`,
+      layout,
+    },
+    {
+      platform: "youtube_cover",
+      groupId: groupId,
+      containerWidth: 2560,
+      containerHeight: 1440,
+      className: `h-[1440px] w-[2560px]`,
+      layout,
     },
   ];
 
