@@ -90,11 +90,11 @@ const generateTemplate = (platforms, keys) => {
       layout,
     },
     {
-      platform: "youtube_cover",
+      platform: "youtube_thumbnail",
       groupId: groupId,
-      containerWidth: 2560,
-      containerHeight: 1440,
-      className: `h-[1440px] w-[2560px]`,
+      containerWidth: 1280,
+      containerHeight: 720,
+      className: `h-[720px] w-[1280px]`,
       layout,
     },
   ];

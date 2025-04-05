@@ -15,6 +15,8 @@ import {
   getCleanKey,
 } from "./helpers";
 
+const INITIAL_ZOOM_LEVEL = 0.6;
+
 const Raw = () => {
   const [data, setData] = useState(getDefaultContent());
   const [selectedElement, setSelectedElement] = useState("");
@@ -25,7 +27,7 @@ const Raw = () => {
   const [selectedTemplates, setSelectedTemplates] = useState(["instagram"]);
   const [postVariant, setPostVariant] = useState("default");
   const [filename, setFilename] = useState("");
-  const [zoomLevel, setZoomLevel] = useState(0.5);
+  const [zoomLevel, setZoomLevel] = useState(INITIAL_ZOOM_LEVEL);
   const [view, setView] = useState("col");
 
   const isGlobal = propertyType === "global";
@@ -44,6 +46,8 @@ const Raw = () => {
   };
 
   useEffect(() => {
+    setZoomLevel(selectedTemplates.length > 1 ? INITIAL_ZOOM_LEVEL : 1);
+    setView(selectedTemplates.length > 1 ? "row" : "col");
     setTemplates(generateTemplate(selectedTemplates));
   }, [selectedTemplates]);
 
