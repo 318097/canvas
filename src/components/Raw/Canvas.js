@@ -5,6 +5,7 @@ import "./Raw.scss";
 import cn from "classnames";
 import { Carousel } from "antd";
 import { generateName, getCleanKey } from "./helpers";
+import { useSelector } from "react-redux";
 
 // const renderer = new marked.Renderer();
 
@@ -21,15 +22,18 @@ import { generateName, getCleanKey } from "./helpers";
 const Canvas = ({
   canvasContainerRef,
   templateRef,
-  data,
   _updateSelectedElement,
   selectedElement,
-  templates,
-  localProperties,
-  globalProperties,
-  zoomLevel,
-  view,
 }) => {
+  const {
+    zoomLevel,
+    view,
+    templates,
+    localProperties,
+    globalProperties,
+    data,
+  } = useSelector((state) => state.config);
+
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
 
   const zoomTransitionClasses = `transition-all duration-300 ease-in-out`;

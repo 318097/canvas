@@ -1,35 +1,42 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as htmlToImage from "html-to-image";
 import "./Raw.scss";
-import { GENERIC_PROPERTIES, GLOBAL } from "./config";
+import { GENERIC_PROPERTIES } from "./config";
 import Sidebar from "./Sidebar";
 import Canvas from "./Canvas";
 import Header from "./Header";
 import shortid from "shortid";
-import { getFormattedDate, getSlug } from "./helpers";
+import { getFormattedDate } from "./helpers";
 import {
   isGenericTag,
   splitName,
   generateName,
-  getDefaultContent,
   generateTemplate,
   getCleanKey,
 } from "./helpers";
-
-const INITIAL_ZOOM_LEVEL = 0.6;
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setData,
+  setGlobalProperties,
+  setLocalProperties,
+  setTemplates,
+  setView,
+} from "./store";
 
 const Raw = () => {
-  const [data, setData] = useState(getDefaultContent());
   const [selectedElement, setSelectedElement] = useState("");
-  const [globalProperties, setGlobalProperties] = useState(GLOBAL);
-  const [localProperties, setLocalProperties] = useState({});
-  const [propertyType, setPropertyType] = useState("local");
-  const [templates, setTemplates] = useState([]);
-  const [selectedTemplates, setSelectedTemplates] = useState(["instagram"]);
-  const [postVariant, setPostVariant] = useState("default");
-  const [filename, setFilename] = useState("");
-  const [zoomLevel, setZoomLevel] = useState(INITIAL_ZOOM_LEVEL);
-  const [view, setView] = useState("col");
+
+  const dispatch = useDispatch();
+  const {
+    data,
+    postVariant,
+    selectedTemplates,
+    filename,
+    propertyType,
+    templates,
+    globalProperties,
+    localProperties,
+  } = useSelector((state) => state.config);
 
   const isGlobal = propertyType === "global";
   const templateRef = useRef({});
@@ -46,10 +53,12 @@ const Raw = () => {
     });
   };
 
+  useEffect(() => {}, []);
+
   useEffect(() => {
-    setZoomLevel(selectedTemplates.length > 1 ? INITIAL_ZOOM_LEVEL : 0.8);
-    setView(selectedTemplates.length > 1 ? "row" : "col");
-    setTemplates(generateTemplate(selectedTemplates));
+    // setZoomLevel(selectedTemplates.length > 1 ? INITIAL_ZOOM_LEVEL : 0.8);
+    dispatch(setView(selectedTemplates.length > 1 ? "row" : "col"));
+    dispatch(setTemplates(generateTemplate(selectedTemplates)));
   }, [selectedTemplates]);
 
   useEffect(() => {
@@ -90,10 +99,6 @@ const Raw = () => {
     }
   }, [globalProperties, data, canvasContainerRef.current]);
 
-  useEffect(() => {
-    setFilename(getSlug(data.title));
-  }, [data]);
-
   const parseDataForVariant = () => {
     if (postVariant === "listicle") {
       const contentList = data.content.trim().split("\n");
@@ -115,6 +120,7 @@ const Raw = () => {
           ...generateTemplate(platform, {
             title: "title",
             content: null,
+
             groupId,
           }),
           ...contentIdObj.map(
@@ -130,10 +136,10 @@ const Raw = () => {
         finalPages.push(...pages);
       });
 
-      setTemplates(finalPages);
-      setData((prev) => ({ ...prev, ...contentBreakdownObj }));
+      dispatch(setTemplates(finalPages));
+      dispatch(setData(contentBreakdownObj));
     } else {
-      setTemplates(generateTemplate(selectedTemplates));
+      dispatch(setTemplates(generateTemplate(selectedTemplates)));
     }
   };
 
@@ -190,31 +196,33 @@ const Raw = () => {
     const keyToUpdate = isGenericTagSelected ? element : getCleanKey(uid);
 
     if (isGlobal) {
-      setGlobalProperties((prev) => {
-        updatedProperties = {
-          ...(prev[keyToUpdate] || {}),
-          [property]: value,
-        };
-        return {
-          ...prev,
+      updatedProperties = {
+        ...(globalProperties[keyToUpdate] || {}),
+        [property]: value,
+      };
+
+      dispatch(
+        setGlobalProperties({
+          ...globalProperties,
           [keyToUpdate]: updatedProperties,
-        };
-      });
+        })
+      );
       updatedProperties = {
         ...updatedProperties,
         ...localProperties[selectedElement],
       };
     } else {
-      setLocalProperties((prev) => {
-        updatedProperties = {
-          ...(prev[selectedElement] || {}),
-          [property]: value,
-        };
-        return {
-          ...prev,
+      updatedProperties = {
+        ...(localProperties[selectedElement] || {}),
+        [property]: value,
+      };
+
+      dispatch(
+        setLocalProperties({
+          ...localProperties,
           [selectedElement]: updatedProperties,
-        };
-      });
+        })
+      );
       updatedProperties = {
         ...globalProperties[keyToUpdate],
         ...updatedProperties,
@@ -232,49 +240,23 @@ const Raw = () => {
     }
   };
 
-  const headerProps = {
-    selectedTemplates,
-    setSelectedTemplates,
-    postVariant,
-    setPostVariant,
-    zoomLevel,
-    setZoomLevel,
-    setView,
-    view,
-  };
-
   const canvasProps = {
     canvasContainerRef,
     templateRef,
-    data,
     _updateSelectedElement,
     selectedElement,
-    templates,
-    localProperties,
-    globalProperties,
-    zoomLevel,
-    view,
   };
 
   const sidebarProps = {
-    data,
-    setData,
-    filename,
-    setFilename,
     handleDownload,
     selectedElement,
-    localProperties,
-    handlePropertyChange,
-    globalProperties,
-    setGlobalProperties,
-    propertyType,
-    setPropertyType,
     isGlobal,
+    handlePropertyChange,
   };
 
   return (
     <div className="flex items-center flex-col p-0 h-full">
-      <Header {...headerProps} />
+      <Header />
       <div className="flex items-start gap-0 w-full grow overflow-hidden">
         <Canvas {...canvasProps} />
         <Sidebar {...sidebarProps} />

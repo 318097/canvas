@@ -3,24 +3,21 @@ import React, { Fragment } from "react";
 import { Input, Select, Button, Radio } from "antd";
 import { DATA_CONFIG, PROPERTIES } from "./config";
 import { getCleanKey, splitName } from "./helpers";
+import { useDispatch, useSelector } from "react-redux";
+import { setData, setFilename, setPropertyType } from "./store";
 
 const { TextArea } = Input;
 
 const Sidebar = ({
-  data,
-  setData,
-  filename,
-  setFilename,
   handleDownload,
   selectedElement,
-  localProperties,
   handlePropertyChange,
-  globalProperties,
-  setGlobalProperties,
-  propertyType,
-  setPropertyType,
   isGlobal,
 }) => {
+  const { data, filename, localProperties, globalProperties, propertyType } =
+    useSelector((state) => state.config);
+
+  const dispatch = useDispatch();
   return (
     <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 w-[300px] shrink-0 h-full overflow-auto">
       {Object.keys(data).map((key) => {
@@ -32,7 +29,7 @@ const Sidebar = ({
               rows={rows}
               placeholder={key}
               value={data[key]}
-              onChange={(e) => setData({ ...data, [key]: e.target.value })}
+              onChange={(e) => dispatch(setData({ [key]: e.target.value }))}
               spellCheck={false}
             />
           </div>
@@ -57,7 +54,7 @@ const Sidebar = ({
                 value: "local",
               },
             ]}
-            onChange={(e) => setPropertyType(e.target.value)}
+            onChange={(e) => dispatch(setPropertyType(e.target.value))}
             value={propertyType}
           />
           {PROPERTIES.map((property) => {
@@ -90,7 +87,7 @@ const Sidebar = ({
         <Input
           placeholder="Filename"
           value={filename}
-          onChange={(e) => setFilename(e.target.value)}
+          onChange={(e) => dispatch(setFilename(e.target.value))}
         />
         <Button type="primary" className="w-full" onClick={handleDownload}>
           Download
