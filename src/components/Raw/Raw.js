@@ -115,12 +115,11 @@ const Raw = () => {
       const finalPages = [];
       templates.forEach((template) => {
         const { platform } = template;
-        const groupId = shortid();
+        const groupId = template.groupId ? template.groupId : shortid();
         const pages = [
           ...generateTemplate(platform, {
             title: "title",
             content: null,
-
             groupId,
           }),
           ...contentIdObj.map(
@@ -252,6 +251,7 @@ const Raw = () => {
     selectedElement,
     isGlobal,
     handlePropertyChange,
+    isGenericTagSelected,
   };
 
   return (

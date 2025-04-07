@@ -6,6 +6,7 @@ import {
   getUser,
   updateConfigInFirestore,
 } from "./firebase";
+import _ from "lodash";
 
 const loadInitialState = async () => {
   const initial = {
@@ -23,7 +24,9 @@ const loadInitialState = async () => {
   };
 
   await getUser();
-  return getConfigFromFirestore() || initial;
+  const savedSession = await getConfigFromFirestore();
+
+  return savedSession || initial;
   // onAuthStateChanged(auth, (user) => {
   //   if (user) {
   //     const uid = user.uid;
@@ -103,7 +106,20 @@ const store = configureStore({
 
 store.subscribe((a, b) => {
   const state = store.getState();
-  updateConfigInFirestore({ ...state.config });
+  updateConfigInFirestore({
+    data: {
+      ..._.pick(state.config.data, ["title", "content"]),
+    },
+    selectedElement: "",
+    globalProperties: GLOBAL,
+    localProperties: {},
+    propertyType: "local",
+    templates: [],
+    selectedTemplates: ["instagram"],
+    postVariant: "default",
+    zoomLevel: 0.7,
+    view: "col",
+  });
 });
 
 export default store;

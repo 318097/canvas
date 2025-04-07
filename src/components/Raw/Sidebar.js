@@ -13,6 +13,7 @@ const Sidebar = ({
   selectedElement,
   handlePropertyChange,
   isGlobal,
+  isGenericTagSelected,
 }) => {
   const { data, filename, localProperties, globalProperties, propertyType } =
     useSelector((state) => state.config);
@@ -59,11 +60,16 @@ const Sidebar = ({
           />
           {PROPERTIES.map((property) => {
             const { options, label, key } = property;
-
-            const { uid } = splitName(selectedElement);
+            const { uid, element } = splitName(selectedElement);
 
             const value = isGlobal
-              ? _.get(globalProperties, [getCleanKey(uid), key], "")
+              ? _.get(
+                  globalProperties,
+                  isGenericTagSelected
+                    ? [getCleanKey(element), key]
+                    : [getCleanKey(uid), key],
+                  ""
+                )
               : _.get(localProperties, [selectedElement, key], "");
 
             return (
