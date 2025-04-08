@@ -839,6 +839,12 @@ const GLOBAL = {
     padding: "p-2",
     leading: "leading-relaxed",
   },
+  images: {
+    border: "rounded",
+    "border-radius": "rounded",
+    overflow: "overflow-hidden",
+    "flex-width": "w-4/5",
+  },
 };
 
 const DATA_CONFIG = {
@@ -852,17 +858,17 @@ const DATA_CONFIG = {
 
 const POST_VARIANTS = [
   {
-    label: "Default",
+    label: "Singlepage",
     value: "default",
+  },
+  {
+    label: "Multipage",
+    value: "multipage",
   },
   {
     label: "Listicle",
     value: "listicle",
   },
-  // {
-  //   label: "Multipage",
-  //   value: "multipage",
-  // },
   // {
   //   label: "Cover",
   //   value: "cover",

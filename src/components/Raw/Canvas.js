@@ -3,10 +3,11 @@ import { marked } from "marked";
 import React from "react";
 import "./Raw.scss";
 import cn from "classnames";
-import { Carousel } from "antd";
+import { Carousel, Button, Upload } from "antd";
 import { generateName, getCleanKey } from "./helpers";
-import { useSelector } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { PlusOutlined } from "@ant-design/icons";
+import { setSelectedFiles } from "./store";
 // const renderer = new marked.Renderer();
 
 // renderer.br = () => {
@@ -18,6 +19,12 @@ import { useSelector } from "react-redux";
 // marked.setOptions({
 //   renderer,
 // });
+
+const getBase64 = (img, callback) => {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result));
+  reader.readAsDataURL(img);
+};
 
 const Canvas = ({
   canvasContainerRef,
@@ -32,7 +39,10 @@ const Canvas = ({
     localProperties,
     globalProperties,
     data,
+    showControls,
+    selectedFiles,
   } = useSelector((state) => state.config);
+  const dispatch = useDispatch();
 
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
 
@@ -41,6 +51,34 @@ const Canvas = ({
   const cardContainerStyles = {
     transform: `scale(${zoomLevel})`,
     transformOrigin: "0% 0%",
+  };
+
+  const handleMediaChange = (file, fileList) => {
+    const filesPromises = fileList.map(
+      (file) =>
+        new Promise((resolve) => {
+          getBase64(file, (url) => {
+            resolve(url);
+          });
+        })
+    );
+
+    Promise.all(filesPromises).then((files) => {
+      dispatch(setSelectedFiles(files));
+    });
+
+    return false;
+  };
+  const cardProps = {
+    templateRef,
+    data,
+    selectedElement,
+    _updateSelectedElement,
+    localProperties,
+    globalProperties,
+    showControls,
+    handleMediaChange,
+    selectedFiles,
   };
 
   return (
@@ -53,15 +91,6 @@ const Canvas = ({
       ref={canvasContainerRef}
     >
       {grouppedTemplates.map(([groupId, templates]) => {
-        const cardProps = {
-          templateRef,
-          data,
-          selectedElement,
-          _updateSelectedElement,
-          localProperties,
-          globalProperties,
-        };
-
         if (groupId === "none") {
           return templates.map((template, idx) => {
             const { platform, className } = template;
@@ -155,15 +184,19 @@ const Card = ({
   _updateSelectedElement,
   localProperties,
   globalProperties,
+  showControls,
+  handleMediaChange,
+  selectedFiles = [],
 }) => {
   const { layout, className = "", platform, groupId, order } = template;
   const refId = `${groupId}-${platform}-${order}`;
+
   return (
     <div
       ref={(el) => (templateRef.current[refId] = el)}
-      className={`raw-editor-root flex flex-col gap-2 bg-[#202227] p-4 ${className}`}
+      className={`raw-editor-root flex flex-col gap-2 bg-[#202227] p-4 relative ${className}`}
     >
-      {layout.map(({ key }) => {
+      {layout.map(({ key, type }) => {
         const fullKey = generateName(groupId, platform, key);
         const value = _.get(data, key, "");
 
@@ -171,11 +204,30 @@ const Card = ({
           ..._.get(globalProperties, getCleanKey(key), {}),
           ..._.get(localProperties, fullKey, {}),
         };
-        if (!value) return null;
+        if (!value && type !== "media") return null;
 
         const classNames = cn("element", ...Object.values(mergedProperties), {
           outlined: selectedElement === fullKey,
         });
+
+        if (type === "media") {
+          const hasFiles = selectedFiles.length;
+          return hasFiles ? (
+            <div
+              className={classNames}
+              key={fullKey}
+              onClick={() => _updateSelectedElement(fullKey)}
+            >
+              {selectedFiles.map((file, index) => (
+                <img
+                  key={index}
+                  src={file}
+                  alt={`Selected file ${index + 1}`}
+                />
+              ))}
+            </div>
+          ) : null;
+        }
         return (
           <div
             key={fullKey}
@@ -187,6 +239,21 @@ const Card = ({
           ></div>
         );
       })}
+      {showControls && (
+        <div className="absolute bottom-1 right-1">
+          <Upload
+            name="avatar"
+            multiple
+            showUploadList={false}
+            beforeUpload={handleMediaChange}
+          >
+            <Button>
+              <PlusOutlined />
+              Upload
+            </Button>
+          </Upload>
+        </div>
+      )}
     </div>
   );
 };

@@ -8,25 +8,27 @@ import {
 } from "./firebase";
 import _ from "lodash";
 
+const DEFAULT_STATE = {
+  data: getDefaultContent(),
+  selectedElement: "",
+  globalProperties: GLOBAL,
+  localProperties: {},
+  propertyType: "local",
+  templates: [],
+  selectedTemplates: ["instagram"],
+  postVariant: "default",
+  filename: "",
+  zoomLevel: 0.7,
+  view: "col",
+  showControls: true,
+  selectedFiles: [],
+};
+
 const loadInitialState = async () => {
-  const initial = {
-    data: getDefaultContent(),
-    selectedElement: "",
-    globalProperties: GLOBAL,
-    localProperties: {},
-    propertyType: "local",
-    templates: [],
-    selectedTemplates: ["instagram"],
-    postVariant: "default",
-    filename: "",
-    zoomLevel: 0.7,
-    view: "col",
-  };
-
   await getUser();
-  const savedSession = await getConfigFromFirestore();
+  return await getConfigFromFirestore();
 
-  return savedSession || initial;
+  // return DEFAULT_STATE;
   // onAuthStateChanged(auth, (user) => {
   //   if (user) {
   //     const uid = user.uid;
@@ -72,6 +74,15 @@ const rawSlice = createSlice({
     setLocalProperties: (state, action) => {
       state.localProperties = action.payload;
     },
+    setShowControls: (state, action) => {
+      state.showControls = action.payload;
+    },
+    setSelectedFiles: (state, action) => {
+      state.selectedFiles = action.payload;
+    },
+    resetState: (state) => {
+      Object.assign(state, DEFAULT_STATE);
+    },
     setZoomLevel: (state, action) => {
       state.zoomLevel =
         Math.round(
@@ -96,6 +107,9 @@ export const {
   setGlobalProperties,
   setLocalProperties,
   setInitialState,
+  setShowControls,
+  setSelectedFiles,
+  resetState,
 } = rawSlice.actions;
 
 const store = configureStore({
@@ -110,15 +124,16 @@ store.subscribe((a, b) => {
     data: {
       ..._.pick(state.config.data, ["title", "content"]),
     },
-    selectedElement: "",
-    globalProperties: GLOBAL,
-    localProperties: {},
-    propertyType: "local",
-    templates: [],
-    selectedTemplates: ["instagram"],
-    postVariant: "default",
-    zoomLevel: 0.7,
-    view: "col",
+    ..._.pick(state.config, [
+      "globalProperties",
+      "localProperties",
+      "propertyType",
+      "templates",
+      "selectedTemplates",
+      "postVariant",
+      "zoomLevel",
+      "view",
+    ]),
   });
 });
 

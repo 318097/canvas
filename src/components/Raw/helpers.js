@@ -45,7 +45,12 @@ The original site, hosted at [**info.cern.ch**](https://info.cern.ch/), was the 
 
 const generateTemplate = (platforms, keys) => {
   platforms = [].concat(platforms);
-  const { title = "title", content = "content", groupId = "none" } = keys || {};
+  const {
+    title = "title",
+    content = "content",
+    groupId = "none",
+    images = "images",
+  } = keys || {};
 
   const layout = [
     {
@@ -53,6 +58,10 @@ const generateTemplate = (platforms, keys) => {
     },
     {
       key: content,
+    },
+    {
+      type: "media",
+      key: images,
     },
   ];
 

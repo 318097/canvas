@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  resetState,
   setPostVariant,
   setSelectedTemplates,
   setView,
@@ -63,6 +64,7 @@ const Header = () => {
             onClick={() => dispatch(setZoomLevel("+"))}
           />
         </div>
+        <Button onClick={() => dispatch(resetState())}>Reset</Button>
       </div>
     </header>
   );

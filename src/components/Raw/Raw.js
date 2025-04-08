@@ -19,6 +19,7 @@ import {
   setData,
   setGlobalProperties,
   setLocalProperties,
+  setShowControls,
   setTemplates,
   setView,
 } from "./store";
@@ -72,6 +73,7 @@ const Raw = () => {
         const tag = e.target.tagName;
         if (["CODE", "STRONG", "A"].includes(tag)) {
           e.stopPropagation();
+          e.preventDefault();
           console.log("Detected click on <code>, <strong>");
           const id = e.target.dataset.id ? e.target.dataset.id : shortid();
           e.target.dataset.id = id;
@@ -143,6 +145,7 @@ const Raw = () => {
   };
 
   const handleDownload = useCallback(() => {
+    dispatch(setShowControls(false));
     _updateSelectedElement("");
 
     templates.forEach((template) => {
