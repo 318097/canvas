@@ -1,19 +1,19 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as htmlToImage from "html-to-image";
 import "./Raw.scss";
-import { GENERIC_PROPERTIES } from "./config";
+import { GENERIC_PROPERTIES } from "../config";
 import Sidebar from "./Sidebar";
 import Canvas from "./Canvas";
 import Header from "./Header";
 import shortid from "shortid";
-import { getFormattedDate } from "./helpers";
+import { getFormattedDate } from "../helpers";
 import {
   isGenericTag,
   splitName,
   generateName,
   generateTemplate,
   getCleanKey,
-} from "./helpers";
+} from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setData,
@@ -22,7 +22,7 @@ import {
   setShowControls,
   setTemplates,
   setView,
-} from "./store";
+} from "../store";
 
 const Raw = () => {
   const [selectedElement, setSelectedElement] = useState("");

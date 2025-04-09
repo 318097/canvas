@@ -1,10 +1,10 @@
 import _ from "lodash";
 import React, { Fragment } from "react";
 import { Input, Select, Button, Radio } from "antd";
-import { DATA_CONFIG, PROPERTIES } from "./config";
-import { getCleanKey, splitName } from "./helpers";
+import { DATA_CONFIG, PROPERTIES } from "../config";
+import { getCleanKey, splitName } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
-import { setData, setFilename, setPropertyType } from "./store";
+import { setData, setFilename, setPropertyType } from "../store";
 
 const { TextArea } = Input;
 

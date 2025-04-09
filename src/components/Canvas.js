@@ -1,77 +1,250 @@
-import React, { useEffect, useRef, useState } from "react";
-import * as fabric from "fabric"; // v6
+import _ from "lodash";
+import { md } from "../helpers";
+import React from "react";
+import "./Raw.scss";
+import cn from "classnames";
+import { Carousel, Button, Upload } from "antd";
+import { generateName, getCleanKey } from "../helpers";
+import { useDispatch, useSelector } from "react-redux";
+import { PlusOutlined } from "@ant-design/icons";
+import { setSelectedFiles } from "../store";
 
-const FabricJSCanvas = () => {
-  const canvasEl = useRef();
-  const textRef = useRef();
-  const canvasContainerRef = useRef();
-  const [text, setText] = useState("Text");
+const getBase64 = (img, callback) => {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result));
+  reader.readAsDataURL(img);
+};
 
-  useEffect(() => {
-    const options = { backgroundColor: "whitesmoke" };
-    canvasContainerRef.current = new fabric.Canvas(canvasEl.current, options);
+const Canvas = ({
+  canvasContainerRef,
+  templateRef,
+  _updateSelectedElement,
+  selectedElement,
+}) => {
+  const {
+    zoomLevel,
+    view,
+    templates,
+    localProperties,
+    globalProperties,
+    data,
+    showControls,
+    selectedFiles,
+  } = useSelector((state) => state.config);
+  const dispatch = useDispatch();
 
-    textRef.current = createText({});
+  const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
 
-    canvasContainerRef.current.add(textRef.current);
-
-    return () => {
-      canvasContainerRef.current.dispose();
-    };
-  }, []);
-
-  const createText = ({
-    x = 10,
-    y = 10,
-    fontSize = 24,
-    penColor = "blue",
-    readonly = false,
-    height = "0",
-    width = "88",
-  }) => {
-    const textRef = new fabric.Textbox(text, {
-      left: x,
-      top: y,
-      originX: "left",
-      originY: "top",
-      fill: penColor,
-      width,
-      height,
-      selectable: !readonly,
-      fontSize,
-      // lockScalingY: true,
-    });
-    // textRef.set({ strokeUniform: true });
-    textRef.setControlsVisibility({
-      mtr: false,
-      tl: false,
-      tr: false,
-      bl: false,
-      br: false,
-      mb: false,
-      mt: false,
-    });
-
-    return textRef;
+  const zoomTransitionClasses = `transition-all duration-300 ease-in-out`;
+  const cardContainerClasses = `flex flex-col items-start gap-1 ${zoomTransitionClasses}`;
+  const cardContainerStyles = {
+    transform: `scale(${zoomLevel})`,
+    transformOrigin: "0% 0%",
   };
-  console.log(textRef);
+
+  const handleMediaChange = (file, fileList) => {
+    const filesPromises = fileList.map(
+      (file) =>
+        new Promise((resolve) => {
+          getBase64(file, (url) => {
+            resolve(url);
+          });
+        })
+    );
+
+    Promise.all(filesPromises).then((files) => {
+      dispatch(setSelectedFiles(files));
+    });
+
+    return false;
+  };
+  const cardProps = {
+    templateRef,
+    data,
+    selectedElement,
+    _updateSelectedElement,
+    localProperties,
+    globalProperties,
+    showControls,
+    handleMediaChange,
+    selectedFiles,
+  };
+
   return (
-    <div>
-      <div className="canvas-root">
-        <canvas height="400" width="900" ref={canvasEl} />
-      </div>
-      <input
-        type="text"
-        value={text}
-        onChange={(e) => {
-          setText(e.target.value);
-          // textRef.current.text = e.target.value;
-          textRef.current.set("text", e.target.value);
-          canvasContainerRef.current.renderAll();
-        }}
-      />
+    <div
+      className={`p-2 bg-white grow h-full overflow-auto flex max-w-full justify-center ${
+        view === "col"
+          ? "flex-col gap-2 items-center"
+          : "flex-wrap gap-8 items-start"
+      }`}
+      ref={canvasContainerRef}
+    >
+      {grouppedTemplates.map(([groupId, templates]) => {
+        if (groupId === "none") {
+          return templates.map((template, idx) => {
+            const { platform, className } = template;
+            const scalingContainerStyles = {
+              width: `${template.containerWidth * zoomLevel}px`,
+              height: `${template.containerHeight * zoomLevel + 40}px`,
+            };
+            return (
+              <div
+                key={groupId + idx}
+                style={scalingContainerStyles}
+                className={zoomTransitionClasses}
+              >
+                <div
+                  className={cardContainerClasses}
+                  style={cardContainerStyles}
+                >
+                  <Title
+                    platform={platform}
+                    className={className}
+                    containerWidth={template.containerWidth}
+                  />
+                  <Card template={template} {...cardProps} />
+                </div>
+              </div>
+            );
+          });
+        } else {
+          const { containerWidth, className, platform } = templates[0];
+          const scalingContainerStyles = {
+            width: `${templates[0].containerWidth * zoomLevel}px`,
+            height: `${templates[0].containerHeight * zoomLevel + 40}px`,
+          };
+          return (
+            <div
+              key={groupId}
+              style={scalingContainerStyles}
+              className={zoomTransitionClasses}
+            >
+              <div className={cardContainerClasses} style={cardContainerStyles}>
+                <Title
+                  platform={platform}
+                  className={className}
+                  templates={templates}
+                  containerWidth={templates[0].containerWidth}
+                />
+                <div
+                  className={`bg-gray-200 border p-[10px]`}
+                  style={{
+                    width: `${containerWidth}px`,
+                  }}
+                >
+                  <Carousel arrows infinite={false} className="m-auto">
+                    {templates.map((template) => (
+                      <Card
+                        template={template}
+                        key={template.order}
+                        {...cardProps}
+                      />
+                    ))}
+                  </Carousel>
+                </div>
+              </div>
+            </div>
+          );
+        }
+      })}
     </div>
   );
 };
 
-export default FabricJSCanvas;
+const Title = ({ platform, className, templates, containerWidth }) => (
+  <div
+    className="flex items-center justify-between w-full"
+    style={{ width: `${containerWidth}px` }}
+  >
+    <h1 className="text-xl font-bold grow w-full">
+      {platform} ({className})
+    </h1>
+    {!!templates && (
+      <div className="text-sm shrink-0">{`Total ${templates.length}`}</div>
+    )}
+  </div>
+);
+
+const Card = ({
+  template,
+  templateRef,
+  data,
+  selectedElement,
+  _updateSelectedElement,
+  localProperties,
+  globalProperties,
+  showControls,
+  handleMediaChange,
+  selectedFiles = [],
+}) => {
+  const { layout, className = "", platform, groupId, order } = template;
+  const refId = `${groupId}-${platform}-${order}`;
+
+  return (
+    <div
+      ref={(el) => (templateRef.current[refId] = el)}
+      className={`raw-editor-root flex flex-col gap-2 bg-[#202227] p-4 relative ${className}`}
+    >
+      {layout.map(({ key, type }) => {
+        const fullKey = generateName(groupId, platform, key);
+        const value = _.get(data, key, "");
+
+        const mergedProperties = {
+          ..._.get(globalProperties, getCleanKey(key), {}),
+          ..._.get(localProperties, fullKey, {}),
+        };
+        if (!value && type !== "media") return null;
+
+        const classNames = cn("element", ...Object.values(mergedProperties), {
+          outlined: selectedElement === fullKey,
+        });
+
+        if (type === "media") {
+          const hasFiles = selectedFiles.length;
+          return hasFiles ? (
+            <div
+              className={classNames}
+              key={fullKey}
+              onClick={() => _updateSelectedElement(fullKey)}
+            >
+              {selectedFiles.map((file, index) => (
+                <img
+                  key={index}
+                  src={file}
+                  alt={`Selected file ${index + 1}`}
+                />
+              ))}
+            </div>
+          ) : null;
+        }
+        return (
+          <div
+            key={fullKey}
+            onClick={() => _updateSelectedElement(fullKey)}
+            className={classNames}
+            dangerouslySetInnerHTML={{
+              __html: md.render(value),
+            }}
+          ></div>
+        );
+      })}
+      {showControls && (
+        <div className="absolute bottom-1 right-1">
+          <Upload
+            name="avatar"
+            multiple
+            showUploadList={false}
+            beforeUpload={handleMediaChange}
+          >
+            <Button>
+              <PlusOutlined />
+              Upload
+            </Button>
+          </Upload>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Canvas;

@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Segmented, Select } from "antd";
-import { POST_VARIANTS } from "./config";
-import { generateTemplate } from "./helpers";
+import { POST_VARIANTS } from "../config";
+import { generateTemplate } from "../helpers";
 import {
   ColumnHeightOutlined,
   ColumnWidthOutlined,
@@ -15,7 +15,7 @@ import {
   setSelectedTemplates,
   setView,
   setZoomLevel,
-} from "./store";
+} from "../store";
 
 const Header = () => {
   const { selectedTemplates, postVariant, zoomLevel, view } = useSelector(

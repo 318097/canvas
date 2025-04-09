@@ -2,14 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.canvas-root {
-  background: lightgray;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-}
-
 .font-roboto {
   font-family: "Roboto", sans-serif;
 }
