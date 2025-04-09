@@ -1,6 +1,8 @@
 import { GENERIC_PROPERTIES } from "./config";
 import slugify from "slugify";
 import dayjs from "dayjs";
+import hljs from "highlight.js";
+import markdown from "markdown-it";
 
 const getFormattedDate = () => {
   return dayjs().format("YYYY-MM-DD");
@@ -126,6 +128,22 @@ const generateTemplate = (platforms, keys) => {
   });
 };
 
+const md = markdown({
+  html: true,
+  linkify: true,
+  breaks: true,
+  typographer: true,
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return hljs.highlight(lang, str).value;
+      } catch (__) {}
+    }
+
+    return ""; // use external default escaping
+  },
+});
+
 export {
   isGenericTag,
   splitName,
@@ -135,4 +153,5 @@ export {
   getCleanKey,
   getSlug,
   getFormattedDate,
+  md,
 };

@@ -8,10 +8,6 @@ body,
   font-family: monospace;
 }
 
-// code {
-//   @apply bg-gray-500 rounded p-1 text-white;
-// }
-
 .raw-editor-root {
   @apply flex flex-col gap-6 items-center justify-center select-none;
 }
@@ -28,6 +24,18 @@ code {
   font-size: inherit;
 }
 
-// span.space {
-//   @apply inline-block w-full p-1;
-// }
+pre {
+  @apply bg-gray-700 text-white rounded p-1 my-3;
+  border: 1px dashed white;
+  padding: 12px;
+  line-height: 1.5rem;
+  cursor: pointer;
+  opacity: 0.4;
+  & > code {
+    all: unset;
+    background: none !important;
+    padding: none;
+    margin: none;
+    line-height: normal;
+  }
+}

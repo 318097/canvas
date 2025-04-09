@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { marked } from "marked";
+import { md } from "./helpers";
 import React from "react";
 import "./Raw.scss";
 import cn from "classnames";
@@ -8,17 +8,6 @@ import { generateName, getCleanKey } from "./helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
 import { setSelectedFiles } from "./store";
-// const renderer = new marked.Renderer();
-
-// renderer.br = () => {
-//   // Replace a single <br> with multiple <br> tags
-//   return "<span class='space'></span>";
-// };
-
-// Configure marked to use the custom renderer
-// marked.setOptions({
-//   renderer,
-// });
 
 const getBase64 = (img, callback) => {
   const reader = new FileReader();
@@ -234,7 +223,7 @@ const Card = ({
             onClick={() => _updateSelectedElement(fullKey)}
             className={classNames}
             dangerouslySetInnerHTML={{
-              __html: marked.parseInline(value).replace(/^<p>|<\/p>$/g, ""),
+              __html: md.render(value),
             }}
           ></div>
         );
