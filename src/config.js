@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 const NODE_ENV = process.env.NODE_ENV;
 const CRISP_WEBSITE_ID = process.env.REACT_APP_CRISP_WEBSITE_ID;
 
@@ -937,8 +939,12 @@ const POST_VARIANTS = [
 
 const GENERIC_PROPERTIES = ["CODE", "STRONG", "A"];
 
+const PROPERTIES_MAP = _.keyBy(PROPERTIES, "key");
+console.log("PROPERTIES_MAP::-", PROPERTIES_MAP);
+
 export {
   PROPERTIES,
+  PROPERTIES_MAP,
   GENERIC_PROPERTIES,
   POST_VARIANTS,
   GLOBAL,

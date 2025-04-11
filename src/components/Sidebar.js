@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React, { Fragment } from "react";
-import { Input, Select, Button, Radio } from "antd";
-import { DATA_CONFIG, PROPERTIES } from "../config";
+import { Input, Select, Button, Radio, Collapse } from "antd";
+import { DATA_CONFIG, PROPERTIES_MAP } from "../config";
 import { getCleanKey, splitName } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { setData, setFilename, setPropertyType } from "../store";
@@ -17,6 +17,57 @@ const Sidebar = ({
 }) => {
   const { data, filename, localProperties, globalProperties, propertyType } =
     useSelector((state) => state.config);
+
+  const getProperties = (list) => {
+    const props = {
+      selectedElement,
+      isGlobal,
+      globalProperties,
+      isGenericTagSelected,
+      localProperties,
+      handlePropertyChange,
+      properties: list.map((key) => PROPERTIES_MAP[key]),
+    };
+    return <Properties {...props} />;
+  };
+  const items = [
+    {
+      key: "5",
+      label: "General",
+      children: getProperties(["bg-color"]),
+    },
+    {
+      key: "1",
+      label: "Font",
+      children: getProperties([
+        "font-family",
+        "font-style",
+        "text-weight",
+        "text-size",
+        "text-color",
+      ]),
+    },
+    {
+      key: "2",
+      label: "Decoration",
+      children: getProperties([
+        "text-align",
+        "text-decoration",
+        "text-decoration-color",
+        "text-transform",
+      ]),
+    },
+    {
+      key: "3",
+      label: "Spacing",
+      children: getProperties(["flex-basis", "flex-width", "padding"]),
+    },
+    {
+      key: "4",
+      label: "Border",
+      children: getProperties(["border", "border-color", "border-radius"]),
+    },
+  ];
 
   const dispatch = useDispatch();
   return (
@@ -64,35 +115,13 @@ const Sidebar = ({
             onChange={(e) => dispatch(setPropertyType(e.target.value))}
             value={propertyType}
           />
-          {PROPERTIES.map((property) => {
-            const { options, label, key } = property;
-            const { uid, element } = splitName(selectedElement);
-
-            const value = isGlobal
-              ? _.get(
-                  globalProperties,
-                  isGenericTagSelected
-                    ? [getCleanKey(element), key]
-                    : [getCleanKey(uid), key],
-                  ""
-                )
-              : _.get(localProperties, [selectedElement, key], "");
-
-            return (
-              <div
-                className="flex flex-col items-start gap-1 mb-2"
-                key={`${isGlobal ? "g-" : "l-"}${key}`}
-              >
-                <label className="text-xs font-bold">{label}</label>
-                <Select
-                  options={options}
-                  onChange={(value) => handlePropertyChange(key, value)}
-                  value={value}
-                  className="w-full"
-                />
-              </div>
-            );
-          })}
+          <Collapse
+            items={items}
+            defaultActiveKey={["1", "2", "3", "4", "5"]}
+            size="small"
+            ghost
+            bordered
+          />
         </Fragment>
       )}
       <div className="grow flex justify-end flex-col gap-2">
@@ -109,4 +138,47 @@ const Sidebar = ({
   );
 };
 
+const Properties = ({
+  selectedElement,
+  isGlobal,
+  globalProperties,
+  isGenericTagSelected,
+  localProperties,
+  handlePropertyChange,
+  properties,
+}) => {
+  return (
+    <Fragment>
+      {properties.map((property) => {
+        const { options, label, key } = property;
+        const { uid, element } = splitName(selectedElement);
+
+        const value = isGlobal
+          ? _.get(
+              globalProperties,
+              isGenericTagSelected
+                ? [getCleanKey(element), key]
+                : [getCleanKey(uid), key],
+              ""
+            )
+          : _.get(localProperties, [selectedElement, key], "");
+
+        return (
+          <div
+            className="flex flex-col items-start gap-1 mb-2"
+            key={`${isGlobal ? "g-" : "l-"}${key}`}
+          >
+            <label className="text-xs font-bold">{label}</label>
+            <Select
+              options={options}
+              onChange={(value) => handlePropertyChange(key, value)}
+              value={value}
+              className="w-full"
+            />
+          </div>
+        );
+      })}
+    </Fragment>
+  );
+};
 export default Sidebar;
