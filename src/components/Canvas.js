@@ -177,7 +177,14 @@ const Card = ({
   handleMediaChange,
   selectedFiles = [],
 }) => {
-  const { layout, className = "", platform, groupId, order } = template;
+  const {
+    layout,
+    className = "",
+    platform,
+    groupId,
+    order,
+    pagination,
+  } = template;
   const refId = `${groupId}-${platform}-${order}`;
 
   return (
@@ -209,6 +216,7 @@ const Card = ({
             >
               {selectedFiles.map((file, index) => (
                 <img
+                  className="w-full"
                   key={index}
                   src={file}
                   alt={`Selected file ${index + 1}`}
@@ -228,7 +236,16 @@ const Card = ({
           ></div>
         );
       })}
-      {showControls && (
+      {pagination && (
+        <div
+          className={cn(
+            Object.values(_.get(globalProperties, ["pagination"], {})).join(" ")
+          )}
+        >
+          {pagination}
+        </div>
+      )}
+      {/* {showControls && (
         <div className="absolute bottom-1 right-1">
           <Upload
             name="avatar"
@@ -242,7 +259,7 @@ const Card = ({
             </Button>
           </Upload>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

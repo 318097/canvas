@@ -7,21 +7,13 @@ import Canvas from "./Canvas";
 import Header from "./Header";
 import shortid from "shortid";
 import { getFormattedDate } from "../helpers";
-import {
-  isGenericTag,
-  splitName,
-  generateName,
-  generateTemplate,
-  getCleanKey,
-} from "../helpers";
+import { isGenericTag, splitName, generateName, getCleanKey } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setData,
+  incrementExportId,
   setGlobalProperties,
   setLocalProperties,
   setShowControls,
-  setTemplates,
-  setView,
 } from "../store";
 
 const Raw = () => {
@@ -30,13 +22,13 @@ const Raw = () => {
   const dispatch = useDispatch();
   const {
     data,
-    postVariant,
-    selectedTemplates,
+
     filename,
     propertyType,
     templates,
     globalProperties,
     localProperties,
+    exportId,
   } = useSelector((state) => state.config);
 
   const isGlobal = propertyType === "global";
@@ -53,18 +45,6 @@ const Raw = () => {
       return newValue;
     });
   };
-
-  useEffect(() => {}, []);
-
-  useEffect(() => {
-    // setZoomLevel(selectedTemplates.length > 1 ? INITIAL_ZOOM_LEVEL : 0.8);
-    dispatch(setView(selectedTemplates.length > 1 ? "row" : "col"));
-    dispatch(setTemplates(generateTemplate(selectedTemplates)));
-  }, [selectedTemplates]);
-
-  useEffect(() => {
-    parseDataForVariant();
-  }, [postVariant]);
 
   useEffect(() => {
     canvasContainerRef.current.addEventListener(
@@ -101,49 +81,6 @@ const Raw = () => {
     }
   }, [globalProperties, data, canvasContainerRef.current]);
 
-  const parseDataForVariant = () => {
-    if (postVariant === "listicle") {
-      const contentList = data.content.trim().split("\n");
-      const contentIdObj = [];
-      const contentBreakdownObj = contentList.reduce(
-        (ob, contentLine, index) => {
-          const key = `content_#${index + 1}`;
-          contentIdObj.push(key);
-          return { ...ob, [key]: contentLine };
-        },
-        {}
-      );
-
-      const finalPages = [];
-      templates.forEach((template) => {
-        const { platform } = template;
-        const groupId = template.groupId ? template.groupId : shortid();
-        const pages = [
-          ...generateTemplate(platform, {
-            title: "title",
-            content: null,
-            groupId,
-          }),
-          ...contentIdObj.map(
-            (id) =>
-              generateTemplate(platform, {
-                title: null,
-                content: id,
-                groupId,
-              })[0]
-          ),
-        ].map((obj, idx) => ({ ...obj, order: idx + 1 }));
-
-        finalPages.push(...pages);
-      });
-
-      dispatch(setTemplates(finalPages));
-      dispatch(setData(contentBreakdownObj));
-    } else {
-      dispatch(setTemplates(generateTemplate(selectedTemplates)));
-    }
-  };
-
   const handleDownload = useCallback(() => {
     dispatch(setShowControls(false));
     _updateSelectedElement("");
@@ -161,7 +98,7 @@ const Raw = () => {
         })
         .then((dataUrl) => {
           const link = document.createElement("a");
-          link.download = `[${getFormattedDate()}:${platform}] ${
+          link.download = `#${exportId} [${getFormattedDate()}:${platform}] ${
             order ? `${order} - ` : ""
           }${filename}.png`;
           link.href = dataUrl;
@@ -171,7 +108,11 @@ const Raw = () => {
           console.log(err);
         });
     });
-  }, [templateRef, templates, filename]);
+    setTimeout(() => {
+      dispatch(setShowControls(true));
+      dispatch(incrementExportId());
+    }, 3000);
+  }, [templateRef, templates, filename, exportId]);
 
   const updatedClassesForTag = (selectedElement, classes, action = "set") => {
     if (!selectedElement) return;

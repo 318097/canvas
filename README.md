@@ -2,9 +2,9 @@
 
 ### Features
 
-- [ ] Live template edits for FB, Instagram (Story, Post), Linkedin, X
-- [ ] Select and download with proper naming (RandomID_FileName_Platform.png)
-- [ ] Retain state on refresh
+- [x] Live template edits for FB, Instagram (Story, Post), Linkedin, X
+- [x] Select and download with proper naming (RandomID_FileName_Platform.png)
+- [x] Retain state on refresh
 - [ ] Theming
   - [ ] Post themes - Dark
   - [ ] Configure tags with themes - Strong, Code, Italic
@@ -14,5 +14,5 @@
   - [ ] Multiple pages - On overflow, move content to next page
 - [ ] Dynamic data - fetch content from API
 - [ ] Autoselect themes (bg color, text color) etc
-- [ ] Add Support for images
+- [x] Add Support for images
 - [ ] Add fields - company name, pagination, url
