@@ -42,16 +42,18 @@ const getDefaultContent = () => {
     content: `Tim Berners-Lee launched the **World Wide Web Project** at CERN, giving birth to the internet as we know it.   
 The original site, hosted at [**info.cern.ch**](https://info.cern.ch/), was the first step toward a digital revolution.
     `,
+    brand: "Code404co",
   };
 };
 
-const generateTemplate = (platforms, keys) => {
+const generateTemplate = (platforms, keys, props = {}) => {
   platforms = [].concat(platforms);
   const {
     title = "title",
     content = "content",
     groupId = "none",
     images = "images",
+    brand = "brand",
   } = keys || {};
 
   const layout = [
@@ -64,6 +66,9 @@ const generateTemplate = (platforms, keys) => {
     {
       type: "media",
       key: images,
+    },
+    {
+      key: brand,
     },
   ];
 
@@ -124,6 +129,7 @@ const generateTemplate = (platforms, keys) => {
     return {
       ...template,
       layout: template.layout.filter((layout) => layout.key !== null),
+      ...props,
     };
   });
 };

@@ -7,6 +7,8 @@ import {
   updateConfigInFirestore,
 } from "./firebase";
 import _ from "lodash";
+import { generateTemplate } from "./helpers";
+import shortid from "shortid";
 
 const DEFAULT_STATE = {
   data: getDefaultContent(),
@@ -22,13 +24,18 @@ const DEFAULT_STATE = {
   view: "col",
   showControls: true,
   selectedFiles: [],
+  exportId: 1,
 };
+
+const INITIAL_ZOOM_LEVEL = 0.6;
 
 const loadInitialState = async () => {
   await getUser();
-  return await getConfigFromFirestore();
-
-  // return DEFAULT_STATE;
+  const userConfig = await getConfigFromFirestore();
+  return {
+    ...DEFAULT_STATE,
+    ...userConfig,
+  };
   // onAuthStateChanged(auth, (user) => {
   //   if (user) {
   //     const uid = user.uid;
@@ -55,9 +62,70 @@ const rawSlice = createSlice({
     },
     setPostVariant: (state, action) => {
       state.postVariant = action.payload;
+      if (state.postVariant === "listicle") {
+        const contentList = state.data.content
+          .trim()
+          .split("\n")
+          .map((item) => item.trim())
+          .filter((item) => item.length);
+        const contentIdObj = [];
+        const contentBreakdownObj = contentList.reduce(
+          (ob, contentLine, index) => {
+            const key = `content_#${index + 1}`;
+            contentIdObj.push(key);
+            return { ...ob, [key]: contentLine };
+          },
+          {}
+        );
+
+        const finalPages = [];
+        state.templates.forEach((template) => {
+          const { platform } = template;
+          const groupId =
+            template.groupId && template.groupId !== "none"
+              ? template.groupId
+              : shortid();
+          const pages = [
+            ...generateTemplate(platform, {
+              title: "title",
+              content: null,
+              groupId,
+            }),
+            ...contentIdObj.map(
+              (id, idx) =>
+                generateTemplate(
+                  platform,
+                  {
+                    title: null,
+                    content: id,
+                    groupId,
+                  },
+                  {
+                    pagination: `${idx + 1}/${contentIdObj.length}`,
+                  }
+                )[0]
+            ),
+          ].map((obj, idx) => ({
+            ...obj,
+            order: idx + 1,
+          }));
+
+          finalPages.push(...pages);
+        });
+
+        state.templates = finalPages;
+        state.data = { ...state.data, ...contentBreakdownObj };
+      } else {
+        state.templates = generateTemplate(state.selectedTemplates);
+      }
     },
     setSelectedTemplates: (state, action) => {
       state.selectedTemplates = action.payload;
+      state.zoomLevel =
+        state.selectedTemplates.length > 1 ? INITIAL_ZOOM_LEVEL : 0.8;
+
+      state.view = state.selectedTemplates.length > 1 ? "row" : "col";
+      state.templates = generateTemplate(state.selectedTemplates);
     },
     setFilename: (state, action) => {
       state.filename = action.payload;
@@ -81,7 +149,10 @@ const rawSlice = createSlice({
       state.selectedFiles = action.payload;
     },
     resetState: (state) => {
-      Object.assign(state, DEFAULT_STATE);
+      Object.assign(state, _.omit(DEFAULT_STATE, "exportId"));
+    },
+    incrementExportId: (state, action) => {
+      state.exportId++;
     },
     setZoomLevel: (state, action) => {
       state.zoomLevel =
@@ -110,6 +181,7 @@ export const {
   setShowControls,
   setSelectedFiles,
   resetState,
+  incrementExportId,
 } = rawSlice.actions;
 
 const store = configureStore({
@@ -122,7 +194,7 @@ store.subscribe((a, b) => {
   const state = store.getState();
   updateConfigInFirestore({
     data: {
-      ..._.pick(state.config.data, ["title", "content"]),
+      ..._.pick(state.config.data, ["title", "content", "brand"]),
     },
     ..._.pick(state.config, [
       "globalProperties",
@@ -133,6 +205,7 @@ store.subscribe((a, b) => {
       "postVariant",
       "zoomLevel",
       "view",
+      "exportId",
     ]),
   });
 });

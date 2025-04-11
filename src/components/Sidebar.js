@@ -21,21 +21,27 @@ const Sidebar = ({
   const dispatch = useDispatch();
   return (
     <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 w-[300px] shrink-0 h-full overflow-auto">
-      {Object.keys(data).map((key) => {
-        const rows = _.get(DATA_CONFIG, [key, "rows"], 3);
-        return (
-          <div className="flex flex-col items-start gap-1 mb-2" key={key}>
-            <label className="text-xs font-bold">{key}</label>
-            <TextArea
-              rows={rows}
-              placeholder={key}
-              value={data[key]}
-              onChange={(e) => dispatch(setData({ [key]: e.target.value }))}
-              spellCheck={false}
-            />
-          </div>
-        );
-      })}
+      {Object.keys(data)
+        .sort((a, b) => {
+          const orderA = _.get(DATA_CONFIG, [a, "order"], Infinity);
+          const orderB = _.get(DATA_CONFIG, [b, "order"], Infinity);
+          return orderA - orderB;
+        })
+        .map((key) => {
+          const rows = _.get(DATA_CONFIG, [key, "rows"], 3);
+          return (
+            <div className="flex flex-col items-start gap-1 mb-2" key={key}>
+              <label className="text-xs font-bold">{key}</label>
+              <TextArea
+                rows={rows}
+                placeholder={key}
+                value={data[key]}
+                onChange={(e) => dispatch(setData({ [key]: e.target.value }))}
+                spellCheck={false}
+              />
+            </div>
+          );
+        })}
 
       {!!selectedElement && (
         <Fragment>

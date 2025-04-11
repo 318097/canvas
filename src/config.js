@@ -842,6 +842,15 @@ const GLOBAL = {
     "text-decoration-color": "decoration-cyan-500",
     decoration: "decoration-4",
   },
+  pagination: {
+    ...DEFAULT_CLASSES,
+    "text-color": "text-white",
+    "text-size": "font-sm",
+    decoration: "decoration-4",
+    position: "absolute",
+    bottom: "bottom-4",
+    right: "right-12",
+  },
   title: {
     ...DEFAULT_CLASSES,
     "text-size": "text-5xl",
@@ -868,14 +877,33 @@ const GLOBAL = {
     overflow: "overflow-hidden",
     "flex-width": "w-4/5",
   },
+  brand: {
+    ...DEFAULT_CLASSES,
+    "text-size": "text-xs",
+    "text-align": "text-center",
+    "text-color": "text-white",
+    "flex-width": "w-4/5",
+    padding: "p-2",
+    leading: "leading-normal",
+    opacity: "opacity-50",
+  },
 };
 
 const DATA_CONFIG = {
   title: {
+    type: "textarea",
     rows: 3,
+    order: 1,
   },
   content: {
+    type: "textarea",
     rows: 10,
+    order: 2,
+  },
+  brand: {
+    type: "input",
+    order: 0,
+    rows: 1,
   },
 };
 
