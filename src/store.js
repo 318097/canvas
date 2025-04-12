@@ -9,22 +9,26 @@ import {
 import _ from "lodash";
 import { generateTemplate } from "./helpers";
 import shortid from "shortid";
+import dayjs from "dayjs";
 
 const DEFAULT_STATE = {
-  data: getDefaultContent(),
   selectedElement: "",
+  selectedFiles: [],
+  exportId: 1,
+  filename: "",
+  showControls: true,
+  // configuration: {
+  data: getDefaultContent(),
   globalProperties: GLOBAL,
   localProperties: {},
   propertyType: "local",
   templates: [],
   selectedTemplates: ["instagram"],
   postVariant: "default",
-  filename: "",
   zoomLevel: 0.7,
   view: "col",
-  showControls: true,
-  selectedFiles: [],
-  exportId: 1,
+  themes: [],
+  // }
 };
 
 const INITIAL_ZOOM_LEVEL = 0.6;
@@ -47,7 +51,7 @@ const loadInitialState = async () => {
 const initialState = await loadInitialState();
 
 const rawSlice = createSlice({
-  name: "config",
+  name: "sdata",
   initialState,
   reducers: {
     setData: (state, action) => {
@@ -62,12 +66,14 @@ const rawSlice = createSlice({
     },
     setPostVariant: (state, action) => {
       state.postVariant = action.payload;
-      if (state.postVariant === "listicle") {
+      if (["multipage", "listicle"].includes(state.postVariant)) {
+        const isListicle = state.postVariant === "listicle";
         const contentList = state.data.content
           .trim()
-          .split("\n")
+          .split(isListicle ? "\n" : "<page/>")
           .map((item) => item.trim())
           .filter((item) => item.length);
+
         const contentIdObj = [];
         const contentBreakdownObj = contentList.reduce(
           (ob, contentLine, index) => {
@@ -88,10 +94,10 @@ const rawSlice = createSlice({
           const pages = [
             ...generateTemplate(platform, {
               title: "title",
-              content: null,
+              content: isListicle ? null : "content_#1",
               groupId,
             }),
-            ...contentIdObj.map(
+            ...(isListicle ? contentIdObj : contentIdObj.slice(1)).map(
               (id, idx) =>
                 generateTemplate(
                   platform,
@@ -148,6 +154,22 @@ const rawSlice = createSlice({
     setSelectedFiles: (state, action) => {
       state.selectedFiles = action.payload;
     },
+    saveTheme: (state) => {
+      state.themes.push({
+        id: shortid(),
+        createdAt: dayjs().format("YYYY-MM-DD"),
+        localProperties: state.localProperties,
+        globalProperties: state.globalProperties,
+      });
+    },
+    applyRandomTheme: (state) => {
+      if (state.themes.length > 0) {
+        const randomIndex = Math.floor(Math.random() * state.themes.length);
+        const randomTheme = state.themes[randomIndex];
+        state.localProperties = randomTheme.localProperties;
+        state.globalProperties = randomTheme.globalProperties;
+      }
+    },
     resetState: (state) => {
       Object.assign(state, _.omit(DEFAULT_STATE, "exportId"));
     },
@@ -182,11 +204,13 @@ export const {
   setSelectedFiles,
   resetState,
   incrementExportId,
+  saveTheme,
+  applyRandomTheme,
 } = rawSlice.actions;
 
 const store = configureStore({
   reducer: {
-    config: rawSlice.reducer,
+    sdata: rawSlice.reducer,
   },
 });
 
@@ -194,9 +218,9 @@ store.subscribe((a, b) => {
   const state = store.getState();
   updateConfigInFirestore({
     data: {
-      ..._.pick(state.config.data, ["title", "content", "brand"]),
+      ..._.pick(state.sdata.data, ["title", "content", "brand"]),
     },
-    ..._.pick(state.config, [
+    ..._.pick(state.sdata, [
       "globalProperties",
       "localProperties",
       "propertyType",
@@ -206,6 +230,7 @@ store.subscribe((a, b) => {
       "zoomLevel",
       "view",
       "exportId",
+      "themes",
     ]),
   });
 });

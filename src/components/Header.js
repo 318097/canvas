@@ -19,7 +19,7 @@ import {
 
 const Header = () => {
   const { selectedTemplates, postVariant, zoomLevel, view } = useSelector(
-    (state) => state.config
+    (state) => state.sdata
   );
   const dispatch = useDispatch();
   return (

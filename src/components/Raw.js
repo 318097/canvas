@@ -29,7 +29,7 @@ const Raw = () => {
     globalProperties,
     localProperties,
     exportId,
-  } = useSelector((state) => state.config);
+  } = useSelector((state) => state.sdata);
 
   const isGlobal = propertyType === "global";
   const templateRef = useRef({});

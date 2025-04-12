@@ -7,7 +7,7 @@ import { Carousel, Button, Upload } from "antd";
 import { generateName, getCleanKey } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
-import { setSelectedFiles } from "../store";
+import { applyRandomTheme, saveTheme, setSelectedFiles } from "../store";
 
 const getBase64 = (img, callback) => {
   const reader = new FileReader();
@@ -30,7 +30,7 @@ const Canvas = ({
     data,
     showControls,
     selectedFiles,
-  } = useSelector((state) => state.config);
+  } = useSelector((state) => state.sdata);
   const dispatch = useDispatch();
 
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
@@ -101,6 +101,8 @@ const Canvas = ({
                     platform={platform}
                     className={className}
                     containerWidth={template.containerWidth}
+                    saveTheme={() => dispatch(saveTheme())}
+                    applyRandomTheme={() => dispatch(applyRandomTheme())}
                   />
                   <Card template={template} {...cardProps} />
                 </div>
@@ -125,6 +127,8 @@ const Canvas = ({
                   className={className}
                   templates={templates}
                   containerWidth={templates[0].containerWidth}
+                  saveTheme={() => dispatch(saveTheme())}
+                  applyRandomTheme={() => dispatch(applyRandomTheme())}
                 />
                 <div
                   className={`bg-gray-200 border p-[10px]`}
@@ -151,17 +155,27 @@ const Canvas = ({
   );
 };
 
-const Title = ({ platform, className, templates, containerWidth }) => (
+const Title = ({
+  platform,
+  className,
+  templates,
+  containerWidth,
+  saveTheme,
+  applyRandomTheme,
+}) => (
   <div
     className="flex items-center justify-between w-full"
     style={{ width: `${containerWidth}px` }}
   >
-    <h1 className="text-xl font-bold grow w-full">
+    <h1 className="text-xl font-bold grow w-full" onClick={applyRandomTheme}>
       {platform} ({className})
     </h1>
-    {!!templates && (
-      <div className="text-sm shrink-0">{`Total ${templates.length}`}</div>
-    )}
+    <div className="shrink-0">
+      <button onClick={saveTheme}>Save</button>
+      {!!templates && (
+        <div className="text-sm">{`Total ${templates.length}`}</div>
+      )}
+    </div>
   </div>
 );
 
@@ -194,7 +208,11 @@ const Card = ({
     >
       {layout.map(({ key, type }) => {
         const fullKey = generateName(groupId, platform, key);
-        const value = _.get(data, key, "");
+        let value = _.get(data, key, "");
+
+        if (key === "brand") {
+          value = value.replace(/\./g, "&#46;"); // replace '.' with html entity code for dot, fixes conversion to hyperlink
+        }
 
         const mergedProperties = {
           ..._.get(globalProperties, getCleanKey(key), {}),
@@ -245,7 +263,7 @@ const Card = ({
           {pagination}
         </div>
       )}
-      {/* {showControls && (
+      {showControls && (
         <div className="absolute bottom-1 right-1">
           <Upload
             name="avatar"
@@ -259,7 +277,7 @@ const Card = ({
             </Button>
           </Upload>
         </div>
-      )} */}
+      )}
     </div>
   );
 };

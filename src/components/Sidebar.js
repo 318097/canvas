@@ -16,7 +16,7 @@ const Sidebar = ({
   isGenericTagSelected,
 }) => {
   const { data, filename, localProperties, globalProperties, propertyType } =
-    useSelector((state) => state.config);
+    useSelector((state) => state.sdata);
 
   const getProperties = (list) => {
     const props = {
