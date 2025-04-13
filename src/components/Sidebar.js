@@ -4,19 +4,25 @@ import { Input, Select, Button, Radio, Collapse } from "antd";
 import { DATA_CONFIG, PROPERTIES_MAP } from "../config";
 import { getCleanKey, splitName } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
-import { setData, setFilename, setPropertyType } from "../store";
+import {
+  applyRandomTheme,
+  saveTheme,
+  setData,
+  setPropertyType,
+} from "../store";
 
 const { TextArea } = Input;
 
 const Sidebar = ({
-  handleDownload,
   selectedElement,
   handlePropertyChange,
   isGlobal,
   isGenericTagSelected,
 }) => {
-  const { data, filename, localProperties, globalProperties, propertyType } =
-    useSelector((state) => state.sdata);
+  const dispatch = useDispatch();
+  const { data, localProperties, globalProperties, propertyType } = useSelector(
+    (state) => state.sdata
+  );
 
   const getProperties = (list) => {
     const props = {
@@ -69,7 +75,6 @@ const Sidebar = ({
     },
   ];
 
-  const dispatch = useDispatch();
   return (
     <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 w-[300px] shrink-0 h-full overflow-auto">
       {Object.keys(data)
@@ -93,6 +98,13 @@ const Sidebar = ({
             </div>
           );
         })}
+      <div className="flex flex-col items-start gap-1 mb-2">
+        <label className="text-xs font-bold">Theme</label>
+        <div className="flex gap-2">
+          <Button onClick={() => dispatch(saveTheme())}>Save</Button>
+          <Button onClick={() => dispatch(applyRandomTheme())}>Random</Button>
+        </div>
+      </div>
 
       {!!selectedElement && (
         <Fragment>
@@ -101,7 +113,6 @@ const Sidebar = ({
           <Radio.Group
             optionType="button"
             buttonStyle="solid"
-            className="mb-4"
             options={[
               {
                 label: "Global",
@@ -124,16 +135,6 @@ const Sidebar = ({
           />
         </Fragment>
       )}
-      <div className="grow flex justify-end flex-col gap-2">
-        <Input
-          placeholder="Filename"
-          value={filename}
-          onChange={(e) => dispatch(setFilename(e.target.value))}
-        />
-        <Button type="primary" className="w-full" onClick={handleDownload}>
-          Download
-        </Button>
-      </div>
     </div>
   );
 };

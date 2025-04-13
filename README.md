@@ -13,6 +13,7 @@
   - [ ] Carousel
   - [ ] Multiple pages - On overflow, move content to next page
 - [ ] Dynamic data - fetch content from API
-- [ ] Autoselect themes (bg color, text color) etc
+- [x] Autoselect themes (bg color, text color) etc
 - [x] Add Support for images
 - [ ] Add fields - company name, pagination, url
+- [ ] Save/Restore ids for tags

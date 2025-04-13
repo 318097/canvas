@@ -4,7 +4,7 @@ import "./Raw.scss";
 import { GENERIC_PROPERTIES } from "../config";
 import Sidebar from "./Sidebar";
 import Canvas from "./Canvas";
-import Header from "./Header";
+import Mainbar from "./Mainbar";
 import shortid from "shortid";
 import { getFormattedDate } from "../helpers";
 import { isGenericTag, splitName, generateName, getCleanKey } from "../helpers";
@@ -190,8 +190,10 @@ const Raw = () => {
     selectedElement,
   };
 
-  const sidebarProps = {
+  const mainbarProps = {
     handleDownload,
+  };
+  const sidebarProps = {
     selectedElement,
     isGlobal,
     handlePropertyChange,
@@ -200,8 +202,8 @@ const Raw = () => {
 
   return (
     <div className="flex items-center flex-col p-0 h-full">
-      <Header />
       <div className="flex items-start gap-0 w-full grow overflow-hidden">
+        <Mainbar {...mainbarProps} />
         <Canvas {...canvasProps} />
         <Sidebar {...sidebarProps} />
       </div>

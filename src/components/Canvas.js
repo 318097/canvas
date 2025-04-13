@@ -7,7 +7,7 @@ import { Carousel, Button, Upload } from "antd";
 import { generateName, getCleanKey } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { PlusOutlined } from "@ant-design/icons";
-import { applyRandomTheme, saveTheme, setSelectedFiles } from "../store";
+import { setSelectedFiles } from "../store";
 
 const getBase64 = (img, callback) => {
   const reader = new FileReader();
@@ -101,8 +101,6 @@ const Canvas = ({
                     platform={platform}
                     className={className}
                     containerWidth={template.containerWidth}
-                    saveTheme={() => dispatch(saveTheme())}
-                    applyRandomTheme={() => dispatch(applyRandomTheme())}
                   />
                   <Card template={template} {...cardProps} />
                 </div>
@@ -127,8 +125,6 @@ const Canvas = ({
                   className={className}
                   templates={templates}
                   containerWidth={templates[0].containerWidth}
-                  saveTheme={() => dispatch(saveTheme())}
-                  applyRandomTheme={() => dispatch(applyRandomTheme())}
                 />
                 <div
                   className={`bg-gray-200 border p-[10px]`}
@@ -155,23 +151,15 @@ const Canvas = ({
   );
 };
 
-const Title = ({
-  platform,
-  className,
-  templates,
-  containerWidth,
-  saveTheme,
-  applyRandomTheme,
-}) => (
+const Title = ({ platform, className, templates, containerWidth }) => (
   <div
     className="flex items-center justify-between w-full"
     style={{ width: `${containerWidth}px` }}
   >
-    <h1 className="text-xl font-bold grow w-full" onClick={applyRandomTheme}>
+    <h1 className="text-xl font-bold grow w-full">
       {platform} ({className})
     </h1>
     <div className="shrink-0">
-      <button onClick={saveTheme}>Save</button>
       {!!templates && (
         <div className="text-sm">{`Total ${templates.length}`}</div>
       )}
