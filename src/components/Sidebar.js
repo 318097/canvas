@@ -101,7 +101,7 @@ const Sidebar = ({
   ];
 
   return (
-    <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 w-[300px] shrink-0 h-full overflow-auto">
+    <div className="flex flex-col gap-2 bg-gray-50 border border-l-gray-200 p-2 w-[300px] shrink-0 h-full overflow-auto">
       {Object.keys(data)
         .sort((a, b) => {
           const orderA = _.get(DATA_CONFIG, [a, "order"], Infinity);

@@ -25,7 +25,7 @@ const Mainbar = ({ handleDownload }) => {
     useSelector((state) => state.sdata);
   const dispatch = useDispatch();
   return (
-    <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 w-[280px] shrink-0 h-full overflow-auto">
+    <div className="flex flex-col gap-2 bg-gray-50 border border-r-gray-200 p-2 w-[280px] shrink-0 h-full overflow-auto">
       <div className="py-3 flex items-center justify-between">
         <h3 className="text-gray-400 font-bold ">Canvas</h3>
 

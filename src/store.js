@@ -1,22 +1,23 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
-import { getDefaultContent, getSlug } from "./helpers";
+import { getSlug } from "./helpers";
 import { GLOBAL } from "./config";
 import { updateConfigInFirestore } from "./firebase";
-import _ from "lodash";
 import { generateTemplate } from "./helpers";
+import { getAuth, signOut } from "firebase/auth";
+import _ from "lodash";
 import shortid from "shortid";
 import dayjs from "dayjs";
-import { getAuth, signOut } from "firebase/auth";
 
-const initialState = {
-  selectedElement: "",
-  selectedFiles: [],
-  exportId: 1,
-  filename: "",
-  showControls: true,
-  notification: null,
-  // configuration: {
-  data: getDefaultContent(),
+const initialData = {
+  title: "Did you know the `world’s` first website is still live? 🌍💻",
+  content: `Tim Berners-Lee launched the **World Wide Web Project** at CERN, giving birth to the internet as we know it.   
+The original site, hosted at [**info.cern.ch**](https://info.cern.ch/), was the first step toward a digital revolution.
+    `,
+  brand: "brand.name.co",
+};
+
+const initialConfig = {
+  data: initialData,
   globalProperties: GLOBAL,
   localProperties: {},
   propertyType: "global",
@@ -26,8 +27,17 @@ const initialState = {
   zoomLevel: 0.7,
   view: "col",
   themes: [],
+};
+
+const initialState = {
   loading: true,
-  // }
+  selectedElement: "",
+  selectedFiles: [],
+  filename: "",
+  showControls: true,
+  notification: null,
+  exportId: 1,
+  ...initialConfig,
 };
 
 const INITIAL_ZOOM_LEVEL = 0.6;
@@ -229,20 +239,9 @@ store.subscribe(() => {
 
   updateConfigInFirestore({
     data: {
-      ..._.pick(state.sdata.data, ["title", "content", "brand"]),
+      ..._.pick(state.sdata.data, Object.keys(initialData)),
     },
-    ..._.pick(state.sdata, [
-      "globalProperties",
-      "localProperties",
-      "propertyType",
-      "templates",
-      "selectedTemplates",
-      "postVariant",
-      "zoomLevel",
-      "view",
-      "exportId",
-      "themes",
-    ]),
+    ..._.pick(state.sdata, [...Object.keys(initialConfig), "exportId"]),
   });
 });
 

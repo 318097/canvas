@@ -46,16 +46,6 @@ const generateName = (groupId, element, uid) => {
 
 const getCleanKey = (key) => (key.includes("_") ? key.split("_")[0] : key);
 
-const getDefaultContent = () => {
-  return {
-    title: "Did you know the `world’s` first website is still live? 🌍💻",
-    content: `Tim Berners-Lee launched the **World Wide Web Project** at CERN, giving birth to the internet as we know it.   
-The original site, hosted at [**info.cern.ch**](https://info.cern.ch/), was the first step toward a digital revolution.
-    `,
-    brand: "brand.name.co",
-  };
-};
-
 const generateTemplate = (platforms, keys, props = {}) => {
   platforms = [].concat(platforms);
   const {
@@ -164,7 +154,6 @@ export {
   isGenericTag,
   splitName,
   generateName,
-  getDefaultContent,
   generateTemplate,
   getCleanKey,
   getSlug,
