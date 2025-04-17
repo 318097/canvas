@@ -68,12 +68,12 @@ const Mainbar = ({ handleDownload }) => {
 
         <div className="flex flex-col items-start gap-1 mb-2">
           <label className="text-xs font-bold">Zoom</label>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <Button
               icon={<MinusOutlined />}
               onClick={() => dispatch(setZoomLevel("-"))}
             />
-            {zoomLevel}
+            <span className="font-bold text-sm">{zoomLevel}</span>
             <Button
               icon={<PlusOutlined />}
               onClick={() => dispatch(setZoomLevel("+"))}

@@ -1,4 +1,4 @@
-import { GENERIC_PROPERTIES } from "./config";
+import { GENERIC_PROPERTIES, GENERIC_CLASSES } from "./config";
 import slugify from "slugify";
 import dayjs from "dayjs";
 import hljs from "highlight.js";
@@ -14,12 +14,22 @@ const getSlug = (str) =>
     strict: true,
   });
 
-const isGenericTag = (selectedElement) => {
-  return (
-    GENERIC_PROPERTIES.includes(splitName(selectedElement)["element"]) ||
-    GENERIC_PROPERTIES.includes(selectedElement)
-  );
+const isGenericClass = (selectedElement) =>
+  GENERIC_CLASSES.includes(splitName(selectedElement)["element"]) ||
+  GENERIC_CLASSES.includes(selectedElement);
+
+const getGenericClass = (classList) => {
+  for (const className of classList) {
+    const cn = `.${className}`;
+    if (isGenericClass(cn)) {
+      return cn;
+    }
+  }
 };
+
+const isGenericTag = (selectedElement) =>
+  GENERIC_PROPERTIES.includes(splitName(selectedElement)["element"]) ||
+  GENERIC_PROPERTIES.includes(selectedElement);
 
 const splitName = (selectedElement) => {
   const [groupId, element, uid] = selectedElement.split(":");
@@ -42,7 +52,7 @@ const getDefaultContent = () => {
     content: `Tim Berners-Lee launched the **World Wide Web Project** at CERN, giving birth to the internet as we know it.   
 The original site, hosted at [**info.cern.ch**](https://info.cern.ch/), was the first step toward a digital revolution.
     `,
-    brand: "Code404co",
+    brand: "www.code404.co",
   };
 };
 
@@ -160,4 +170,6 @@ export {
   getSlug,
   getFormattedDate,
   md,
+  isGenericClass,
+  getGenericClass,
 };

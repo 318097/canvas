@@ -17,11 +17,12 @@ const DEFAULT_STATE = {
   exportId: 1,
   filename: "",
   showControls: true,
+  notification: null,
   // configuration: {
   data: getDefaultContent(),
   globalProperties: GLOBAL,
   localProperties: {},
-  propertyType: "local",
+  propertyType: "global",
   templates: [],
   selectedTemplates: ["instagram"],
   postVariant: "default",
@@ -154,6 +155,9 @@ const rawSlice = createSlice({
     setSelectedFiles: (state, action) => {
       state.selectedFiles = action.payload;
     },
+    setNotification: (state, action) => {
+      state.notification = action.payload;
+    },
     saveTheme: (state) => {
       state.themes.push({
         id: shortid(),
@@ -161,6 +165,7 @@ const rawSlice = createSlice({
         localProperties: state.localProperties,
         globalProperties: state.globalProperties,
       });
+      state.notification = "Theme Saved.";
     },
     applyRandomTheme: (state) => {
       if (state.themes.length > 0) {
@@ -172,6 +177,7 @@ const rawSlice = createSlice({
     },
     resetState: (state) => {
       Object.assign(state, _.omit(DEFAULT_STATE, "exportId"));
+      state.templates = generateTemplate(state.selectedTemplates);
     },
     incrementExportId: (state, action) => {
       state.exportId++;
@@ -206,6 +212,7 @@ export const {
   incrementExportId,
   saveTheme,
   applyRandomTheme,
+  setNotification,
 } = rawSlice.actions;
 
 const store = configureStore({

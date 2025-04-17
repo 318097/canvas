@@ -3,17 +3,9 @@ import { md } from "../helpers";
 import React from "react";
 import "./Raw.scss";
 import cn from "classnames";
-import { Carousel, Button, Upload } from "antd";
+import { Carousel } from "antd";
 import { generateName, getCleanKey } from "../helpers";
-import { useDispatch, useSelector } from "react-redux";
-import { PlusOutlined } from "@ant-design/icons";
-import { setSelectedFiles } from "../store";
-
-const getBase64 = (img, callback) => {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result));
-  reader.readAsDataURL(img);
-};
+import { useSelector } from "react-redux";
 
 const Canvas = ({
   canvasContainerRef,
@@ -31,7 +23,6 @@ const Canvas = ({
     showControls,
     selectedFiles,
   } = useSelector((state) => state.sdata);
-  const dispatch = useDispatch();
 
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
 
@@ -42,22 +33,6 @@ const Canvas = ({
     transformOrigin: "0% 0%",
   };
 
-  const handleMediaChange = (file, fileList) => {
-    const filesPromises = fileList.map(
-      (file) =>
-        new Promise((resolve) => {
-          getBase64(file, (url) => {
-            resolve(url);
-          });
-        })
-    );
-
-    Promise.all(filesPromises).then((files) => {
-      dispatch(setSelectedFiles(files));
-    });
-
-    return false;
-  };
   const cardProps = {
     templateRef,
     data,
@@ -66,7 +41,6 @@ const Canvas = ({
     localProperties,
     globalProperties,
     showControls,
-    handleMediaChange,
     selectedFiles,
   };
 
@@ -75,7 +49,7 @@ const Canvas = ({
       className={`p-2 bg-white grow h-full overflow-auto flex max-w-full justify-center ${
         view === "col"
           ? "flex-col gap-2 items-center"
-          : "flex-wrap gap-8 items-start"
+          : "flex-wrap gap-2 items-start"
       }`}
       ref={canvasContainerRef}
     >
@@ -176,7 +150,6 @@ const Card = ({
   localProperties,
   globalProperties,
   showControls,
-  handleMediaChange,
   selectedFiles = [],
 }) => {
   const {
@@ -192,7 +165,11 @@ const Card = ({
   return (
     <div
       ref={(el) => (templateRef.current[refId] = el)}
-      className={`raw-editor-root flex flex-col gap-2 bg-[#202227] p-4 relative ${className}`}
+      className={cn(
+        "raw-editor-root",
+        className,
+        ...Object.values(_.get(globalProperties, "raw-editor-root", {}))
+      )}
     >
       {layout.map(({ key, type }) => {
         const fullKey = generateName(groupId, platform, key);
@@ -249,21 +226,6 @@ const Card = ({
           )}
         >
           {pagination}
-        </div>
-      )}
-      {showControls && (
-        <div className="absolute bottom-1 right-1">
-          <Upload
-            name="avatar"
-            multiple
-            showUploadList={false}
-            beforeUpload={handleMediaChange}
-          >
-            <Button>
-              <PlusOutlined />
-              Upload
-            </Button>
-          </Upload>
         </div>
       )}
     </div>

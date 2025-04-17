@@ -65,6 +65,10 @@ const PROPERTIES = [
         value: "font-merriweather",
       },
       {
+        label: "Monospace",
+        value: "font-monospace",
+      },
+      {
         label: "Montserrat",
         value: "font-montserrat",
       },
@@ -820,6 +824,7 @@ const DEFAULT_CLASSES = {
   "border-color": "border-transparent",
   "border-radius": "rounded-none",
   padding: "p-0",
+  "font-family": "font-monospace",
 };
 
 const GLOBAL = {
@@ -879,15 +884,19 @@ const GLOBAL = {
     overflow: "overflow-hidden",
     "flex-width": "w-4/5",
   },
+  "raw-editor-root": {
+    padding: "p-4",
+    "bg-color": "bg-[#202227]",
+    position: "relative",
+    gap: "gap-2",
+    display: "flex",
+    "flex-direction": "flex-col",
+  },
   brand: {
     ...DEFAULT_CLASSES,
     "text-size": "text-xs",
-    "text-align": "text-center",
     "text-color": "text-white",
-    "flex-width": "w-4/5",
-    padding: "p-2",
-    leading: "leading-normal",
-    opacity: "opacity-50",
+    "text-weight": "font-normal",
   },
 };
 
@@ -938,9 +947,9 @@ const POST_VARIANTS = [
 ];
 
 const GENERIC_PROPERTIES = ["CODE", "STRONG", "A"];
+const GENERIC_CLASSES = [".raw-editor-root"];
 
 const PROPERTIES_MAP = _.keyBy(PROPERTIES, "key");
-console.log("PROPERTIES_MAP::-", PROPERTIES_MAP);
 
 export {
   PROPERTIES,
@@ -950,6 +959,7 @@ export {
   GLOBAL,
   DEFAULT_CLASSES,
   DATA_CONFIG,
+  GENERIC_CLASSES,
 };
 
 export default config;

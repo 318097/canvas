@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React, { Fragment } from "react";
-import { Input, Select, Button, Radio, Collapse } from "antd";
+import { Input, Select, Button, Radio, Collapse, Upload } from "antd";
 import { DATA_CONFIG, PROPERTIES_MAP } from "../config";
 import { getCleanKey, splitName } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,9 +9,17 @@ import {
   saveTheme,
   setData,
   setPropertyType,
+  setSelectedFiles,
 } from "../store";
+import { PlusOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
+
+const getBase64 = (img, callback) => {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result));
+  reader.readAsDataURL(img);
+};
 
 const Sidebar = ({
   selectedElement,
@@ -20,9 +28,25 @@ const Sidebar = ({
   isGenericTagSelected,
 }) => {
   const dispatch = useDispatch();
-  const { data, localProperties, globalProperties, propertyType } = useSelector(
-    (state) => state.sdata
-  );
+  const { data, localProperties, globalProperties, propertyType, themes } =
+    useSelector((state) => state.sdata);
+
+  const handleMediaChange = (file, fileList) => {
+    const filesPromises = fileList.map(
+      (file) =>
+        new Promise((resolve) => {
+          getBase64(file, (url) => {
+            resolve(url);
+          });
+        })
+    );
+
+    Promise.all(filesPromises).then((files) => {
+      dispatch(setSelectedFiles(files));
+    });
+
+    return false;
+  };
 
   const getProperties = (list) => {
     const props = {
@@ -36,6 +60,7 @@ const Sidebar = ({
     };
     return <Properties {...props} />;
   };
+
   const items = [
     {
       key: "5",
@@ -99,11 +124,18 @@ const Sidebar = ({
           );
         })}
       <div className="flex flex-col items-start gap-1 mb-2">
-        <label className="text-xs font-bold">Theme</label>
-        <div className="flex gap-2">
-          <Button onClick={() => dispatch(saveTheme())}>Save</Button>
-          <Button onClick={() => dispatch(applyRandomTheme())}>Random</Button>
-        </div>
+        <label className="text-xs font-bold">Files</label>
+        <Upload
+          name="avatar"
+          multiple
+          showUploadList={false}
+          beforeUpload={handleMediaChange}
+        >
+          <Button>
+            <PlusOutlined />
+            Upload
+          </Button>
+        </Upload>
       </div>
 
       {!!selectedElement && (
@@ -135,6 +167,23 @@ const Sidebar = ({
           />
         </Fragment>
       )}
+      <hr />
+      <div className="flex flex-col items-start gap-1 mt-2">
+        <label className="text-xs font-bold">Theme ({themes.length})</label>
+        <div className="flex gap-2 w-full">
+          <Button
+            disabled={!themes.length}
+            type="primary"
+            className="grow"
+            onClick={() => dispatch(applyRandomTheme())}
+          >
+            Random
+          </Button>
+          <Button className="grow" onClick={() => dispatch(saveTheme())}>
+            Save
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
@@ -154,15 +203,16 @@ const Properties = ({
         const { options, label, key } = property;
         const { uid, element } = splitName(selectedElement);
 
+        const globalValue = _.get(
+          globalProperties,
+          isGenericTagSelected
+            ? [getCleanKey(element), key]
+            : [getCleanKey(uid), key]
+        );
+
         const value = isGlobal
-          ? _.get(
-              globalProperties,
-              isGenericTagSelected
-                ? [getCleanKey(element), key]
-                : [getCleanKey(uid), key],
-              ""
-            )
-          : _.get(localProperties, [selectedElement, key], "");
+          ? globalValue
+          : _.get(localProperties, [selectedElement, key]);
 
         return (
           <div
@@ -175,6 +225,7 @@ const Properties = ({
               onChange={(value) => handlePropertyChange(key, value)}
               value={value}
               className="w-full"
+              placeholder={globalValue}
             />
           </div>
         );

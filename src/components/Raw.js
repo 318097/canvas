@@ -6,29 +6,38 @@ import Sidebar from "./Sidebar";
 import Canvas from "./Canvas";
 import Mainbar from "./Mainbar";
 import shortid from "shortid";
-import { getFormattedDate } from "../helpers";
-import { isGenericTag, splitName, generateName, getCleanKey } from "../helpers";
+import {
+  isGenericTag,
+  splitName,
+  generateName,
+  getCleanKey,
+  getFormattedDate,
+  getGenericClass,
+  isGenericClass,
+} from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import {
   incrementExportId,
   setGlobalProperties,
   setLocalProperties,
+  setNotification,
   setShowControls,
 } from "../store";
+import { message } from "antd";
 
 const Raw = () => {
   const [selectedElement, setSelectedElement] = useState("");
-
+  const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
   const {
     data,
-
     filename,
     propertyType,
     templates,
     globalProperties,
     localProperties,
     exportId,
+    notification,
   } = useSelector((state) => state.sdata);
 
   const isGlobal = propertyType === "global";
@@ -36,6 +45,7 @@ const Raw = () => {
   const canvasContainerRef = useRef();
 
   const isGenericTagSelected = isGenericTag(selectedElement);
+  const isGenericClassSelected = isGenericClass(selectedElement);
 
   const _updateSelectedElement = (newValue) => {
     setSelectedElement((prev) => {
@@ -51,13 +61,19 @@ const Raw = () => {
       "click",
       (e) => {
         const tag = e.target.tagName;
-        if (["CODE", "STRONG", "A"].includes(tag)) {
+        if (
+          ["CODE", "STRONG", "A"].includes(tag) ||
+          getGenericClass(e.target.classList)
+        ) {
           e.stopPropagation();
           e.preventDefault();
-          console.log("Detected click on <code>, <strong>");
           const id = e.target.dataset.id ? e.target.dataset.id : shortid();
           e.target.dataset.id = id;
-          const fullKey = generateName(`none`, tag, id);
+          const fullKey = generateName(
+            `none`,
+            getGenericClass(e.target.classList) ?? tag,
+            id
+          );
           _updateSelectedElement(fullKey);
           updatedClassesForTag(fullKey, "outlined", "add");
         } else {
@@ -80,6 +96,13 @@ const Raw = () => {
       }
     }
   }, [globalProperties, data, canvasContainerRef.current]);
+
+  useEffect(() => {
+    if (!notification) return;
+    setTimeout(() => {
+      showMsg(notification);
+    }, 500);
+  }, [notification]);
 
   const handleDownload = useCallback(() => {
     dispatch(setShowControls(false));
@@ -114,7 +137,15 @@ const Raw = () => {
     }, 3000);
   }, [templateRef, templates, filename, exportId]);
 
-  const updatedClassesForTag = (selectedElement, classes, action = "set") => {
+  const showMsg = (msg) => {
+    messageApi.info(msg);
+    setTimeout(() => {
+      dispatch(setNotification(null));
+    }, 100);
+  };
+
+  const updatedClassesForTag = (selectedElement, classList, action = "set") => {
+    classList = [].concat(classList);
     if (!selectedElement) return;
     const { element, uid } = splitName(selectedElement);
     const elements = canvasContainerRef.current.querySelectorAll(
@@ -123,11 +154,11 @@ const Raw = () => {
 
     elements.forEach((el) => {
       if (action === "remove") {
-        el.classList.remove(classes);
+        el.classList.remove(classList);
       } else if (action === "set") {
-        el.classList = classes;
+        el.classList = classList.join(" ");
       } else if (action === "add") {
-        el.classList.add(classes);
+        el.classList.add(...classList);
       }
     });
   };
@@ -172,14 +203,18 @@ const Raw = () => {
       };
     }
 
-    if (isGenericTagSelected) {
+    if (isGenericTagSelected || isGenericClassSelected) {
       // if tags, then apply the classes
       const updatedClasses = [
         ...Object.values(updatedProperties),
         value,
         "outlined",
-      ].join(" ");
-      updatedClassesForTag(selectedElement, updatedClasses);
+      ];
+      updatedClassesForTag(
+        selectedElement,
+        updatedClasses,
+        isGenericClassSelected ? "add" : "set"
+      );
     }
   };
 
@@ -207,6 +242,7 @@ const Raw = () => {
         <Canvas {...canvasProps} />
         <Sidebar {...sidebarProps} />
       </div>
+      {contextHolder}
     </div>
   );
 };
