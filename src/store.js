@@ -1,17 +1,13 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { getDefaultContent, getSlug } from "./helpers";
 import { GLOBAL } from "./config";
-import {
-  getConfigFromFirestore,
-  getUser,
-  updateConfigInFirestore,
-} from "./firebase";
+import { updateConfigInFirestore } from "./firebase";
 import _ from "lodash";
 import { generateTemplate } from "./helpers";
 import shortid from "shortid";
 import dayjs from "dayjs";
 
-const DEFAULT_STATE = {
+const initialState = {
   selectedElement: "",
   selectedFiles: [],
   exportId: 1,
@@ -29,27 +25,11 @@ const DEFAULT_STATE = {
   zoomLevel: 0.7,
   view: "col",
   themes: [],
+  loading: true,
   // }
 };
 
 const INITIAL_ZOOM_LEVEL = 0.6;
-
-const loadInitialState = async () => {
-  await getUser();
-  const userConfig = await getConfigFromFirestore();
-  return {
-    ...DEFAULT_STATE,
-    ...userConfig,
-  };
-  // onAuthStateChanged(auth, (user) => {
-  //   if (user) {
-  //     const uid = user.uid;
-  //   }
-  //   return initial;
-  // });
-};
-
-const initialState = await loadInitialState();
 
 const rawSlice = createSlice({
   name: "sdata",
@@ -176,11 +156,18 @@ const rawSlice = createSlice({
       }
     },
     resetState: (state) => {
-      Object.assign(state, _.omit(DEFAULT_STATE, "exportId"));
+      Object.assign(state, _.omit(initialState, "exportId"));
       state.templates = generateTemplate(state.selectedTemplates);
     },
     incrementExportId: (state, action) => {
       state.exportId++;
+    },
+    setInitialState: (state, action) => {
+      Object.assign(state, {
+        ...initialState,
+        ...action.payload,
+        loading: false,
+      });
     },
     setZoomLevel: (state, action) => {
       state.zoomLevel =
@@ -193,7 +180,6 @@ const rawSlice = createSlice({
   },
 });
 
-export { initialState };
 export const {
   setData,
   setView,
@@ -205,7 +191,6 @@ export const {
   setTemplates,
   setGlobalProperties,
   setLocalProperties,
-  setInitialState,
   setShowControls,
   setSelectedFiles,
   resetState,
@@ -213,6 +198,7 @@ export const {
   saveTheme,
   applyRandomTheme,
   setNotification,
+  setInitialState,
 } = rawSlice.actions;
 
 const store = configureStore({
@@ -223,6 +209,9 @@ const store = configureStore({
 
 store.subscribe((a, b) => {
   const state = store.getState();
+
+  if (state.loading) return;
+
   updateConfigInFirestore({
     data: {
       ..._.pick(state.sdata.data, ["title", "content", "brand"]),
@@ -241,5 +230,7 @@ store.subscribe((a, b) => {
     ]),
   });
 });
+
+export { initialState };
 
 export default store;

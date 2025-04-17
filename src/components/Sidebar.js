@@ -124,7 +124,7 @@ const Sidebar = ({
           );
         })}
       <div className="flex flex-col items-start gap-1 mb-2">
-        <label className="text-xs font-bold">Files</label>
+        <label className="text-xs font-bold">files</label>
         <Upload
           name="avatar"
           multiple

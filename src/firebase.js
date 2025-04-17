@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, signInAnonymously } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import config from "./config";
 import {
   collection,
@@ -50,17 +50,12 @@ const getDefaultObj = () => {
   };
 };
 
-const getUser = async () => {
+const getUser = async (user) => {
   try {
-    const result = await signInAnonymously(auth);
-    const user = result.user;
-
-    // Check if the user already exists in the collection
     const userDocRef = doc(db, "users", user.uid);
     let userDoc = await getDoc(userDocRef);
 
     if (!userDoc.exists()) {
-      // If the user does not exist, create a new row
       await setDoc(userDocRef, {
         ...getDefaultObj(),
         ...initialState,
