@@ -4,7 +4,7 @@ import Auth from "./components/Auth";
 import { Route, Routes } from "react-router";
 import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth, getConfigFromFirestore, getUser } from "./firebase";
+import { auth, getConfigFromFirestore, validateUserInFireDb } from "./firebase";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { setInitialState } from "./store";
@@ -15,9 +15,8 @@ function App() {
 
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
-      console.log("user::-", user);
       if (user) {
-        await getUser(user);
+        await validateUserInFireDb();
         const userConfig = await getConfigFromFirestore();
         dispatch(setInitialState(userConfig));
       } else {

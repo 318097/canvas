@@ -5,11 +5,13 @@ import { generateTemplate } from "../helpers";
 import {
   ColumnHeightOutlined,
   ColumnWidthOutlined,
+  LogoutOutlined,
   MinusOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  logout,
   resetState,
   setFilename,
   setPostVariant,
@@ -24,7 +26,15 @@ const Mainbar = ({ handleDownload }) => {
   const dispatch = useDispatch();
   return (
     <div className="flex flex-col gap-2 bg-gray-100 border border-l-gray-300 p-2 w-[280px] shrink-0 h-full overflow-auto">
-      <h3 className="text-gray-400 font-bold py-3">Canvas</h3>
+      <div className="py-3 flex items-center justify-between">
+        <h3 className="text-gray-400 font-bold ">Canvas</h3>
+
+        <Button
+          size="small"
+          icon={<LogoutOutlined />}
+          onClick={() => dispatch(logout())}
+        />
+      </div>
       <hr />
       <div className="flex flex-col items-stretch gap-2 grow">
         <div className="flex flex-col items-start gap-1 mb-2">

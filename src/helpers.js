@@ -48,13 +48,11 @@ const getCleanKey = (key) => (key.includes("_") ? key.split("_")[0] : key);
 
 const getDefaultContent = () => {
   return {
-    title: "Enter **markdown** content here",
-    content: `\`Lorem Ipsum\` dolor sit amet, **consectetur** adipiscing elit. 
-
-- Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.   
-- Ut enim ad minim veniam, quis nostrud exercitation.
-`,
-    brand: "brand.name",
+    title: "Did you know the `world’s` first website is still live? 🌍💻",
+    content: `Tim Berners-Lee launched the **World Wide Web Project** at CERN, giving birth to the internet as we know it.   
+The original site, hosted at [**info.cern.ch**](https://info.cern.ch/), was the first step toward a digital revolution.
+    `,
+    brand: "brand.name.co",
   };
 };
 

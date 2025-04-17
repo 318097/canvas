@@ -44,26 +44,25 @@ const getTime = () => new Date().getTime();
 const getDefaultObj = () => {
   const now = getTime();
   return {
+    ...initialState,
     createdAt: now,
     updatedAt: now,
     userId: getUserId(),
   };
 };
 
-const getUser = async (user) => {
+const validateUserInFireDb = async () => {
   try {
-    const userDocRef = doc(db, "users", user.uid);
+    const uid = getUserId();
+
+    const userDocRef = doc(db, "users", uid);
     let userDoc = await getDoc(userDocRef);
 
     if (!userDoc.exists()) {
-      await setDoc(userDocRef, {
-        ...getDefaultObj(),
-        ...initialState,
-        id: user.uid,
-      });
-      console.log("New user document created with ID:", user.uid);
+      await setDoc(userDocRef, getDefaultObj());
+      console.log("New user document created with ID:", uid);
     } else {
-      console.log("User already exists with ID:", user.uid);
+      console.log("User already exists with ID:", uid);
     }
   } catch (error) {
     const errorCode = error.code;
@@ -80,14 +79,6 @@ const getUserId = () => {
   return uid;
 };
 
-const createConfigInFirestore = async (data) => {
-  await addDoc(USERS_COLLECTION, {
-    ...data,
-    ...getDefaultObj(data),
-    id: getUserId(),
-  });
-};
-
 const updateConfigInFirestore = async (data) => {
   const postRef = doc(USERS_COLLECTION, getUserId());
   await updateDoc(postRef, {
@@ -97,7 +88,7 @@ const updateConfigInFirestore = async (data) => {
 };
 
 const getConfigFromFirestore = async () => {
-  const q = query(USERS_COLLECTION, where("id", "==", getUserId()));
+  const q = query(USERS_COLLECTION, where("userId", "==", getUserId()));
   const querySnapshot = await getDocs(q);
   const data = [];
 
@@ -109,9 +100,8 @@ const getConfigFromFirestore = async () => {
 };
 
 export {
-  createConfigInFirestore,
   getConfigFromFirestore,
-  getUser,
+  validateUserInFireDb,
   auth,
   updateConfigInFirestore,
 };

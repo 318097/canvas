@@ -6,6 +6,7 @@ import _ from "lodash";
 import { generateTemplate } from "./helpers";
 import shortid from "shortid";
 import dayjs from "dayjs";
+import { getAuth, signOut } from "firebase/auth";
 
 const initialState = {
   selectedElement: "",
@@ -166,8 +167,9 @@ const rawSlice = createSlice({
       Object.assign(state, {
         ...initialState,
         ...action.payload,
-        loading: false,
       });
+      state.templates = generateTemplate(state.selectedTemplates);
+      state.loading = false;
     },
     setZoomLevel: (state, action) => {
       state.zoomLevel =
@@ -176,6 +178,18 @@ const rawSlice = createSlice({
             ? Number(state.zoomLevel) + 0.1
             : Number(state.zoomLevel) - 0.1) * 10
         ) / 10;
+    },
+    logout: (state, action) => {
+      const auth = getAuth();
+      signOut(auth)
+        .then(() => {
+          state.loading = true;
+          Object.assign(state, initialState);
+        })
+        .catch((error) => {
+          console.log("error::-", error);
+          // state.notification = "Logout failed: " + error.message;
+        });
     },
   },
 });
@@ -199,6 +213,7 @@ export const {
   applyRandomTheme,
   setNotification,
   setInitialState,
+  logout,
 } = rawSlice.actions;
 
 const store = configureStore({
@@ -207,7 +222,7 @@ const store = configureStore({
   },
 });
 
-store.subscribe((a, b) => {
+store.subscribe(() => {
   const state = store.getState();
 
   if (state.loading) return;
