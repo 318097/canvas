@@ -21,7 +21,6 @@ const Canvas = ({
     globalProperties,
     data,
     showControls,
-    selectedFiles,
   } = useSelector((state) => state.sdata);
 
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
@@ -41,7 +40,6 @@ const Canvas = ({
     localProperties,
     globalProperties,
     showControls,
-    selectedFiles,
   };
 
   return (
@@ -150,7 +148,6 @@ const Card = ({
   localProperties,
   globalProperties,
   showControls,
-  selectedFiles = [],
 }) => {
   const {
     layout,
@@ -190,14 +187,14 @@ const Card = ({
         });
 
         if (type === "media") {
-          const hasFiles = selectedFiles.length;
+          const hasFiles = data.files?.length;
           return hasFiles ? (
             <div
               className={classNames}
               key={fullKey}
               onClick={() => _updateSelectedElement(fullKey)}
             >
-              {selectedFiles.map(({ url }, index) => (
+              {data.files?.map(({ url }, index) => (
                 <img
                   className="w-full"
                   key={index}

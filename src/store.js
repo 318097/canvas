@@ -14,6 +14,7 @@ const initialData = {
 The original site, hosted at [**info.cern.ch**](https://info.cern.ch/), was the first step toward a digital revolution.
     `,
   brand: "brand.name.co",
+  files: [],
 };
 
 const initialConfig = {
@@ -38,7 +39,6 @@ const nonMutableConfig = {
 const initialState = {
   loading: true,
   selectedElement: "",
-  selectedFiles: [],
   filename: "",
   showControls: true,
   notification: null,
@@ -151,7 +151,7 @@ const rawSlice = createSlice({
       state.showControls = action.payload;
     },
     setSelectedFiles: (state, action) => {
-      state.selectedFiles = action.payload;
+      state.data.files = action.payload;
     },
     setNotification: (state, action) => {
       state.notification = action.payload;

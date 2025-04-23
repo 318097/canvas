@@ -23,14 +23,8 @@ const getBase64 = (img, callback) => {
 
 const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
   const dispatch = useDispatch();
-  const {
-    data,
-    localProperties,
-    globalProperties,
-    propertyType,
-    themes,
-    selectedFiles,
-  } = useSelector((state) => state.sdata);
+  const { data, localProperties, globalProperties, propertyType, themes } =
+    useSelector((state) => state.sdata);
 
   const handleMediaChange = (file, fileList) => {
     const filesPromises = fileList.map(
@@ -117,6 +111,32 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
         })
         .map((key) => {
           const rows = _.get(DATA_CONFIG, [key, "rows"], 3);
+          if (key === "files")
+            return (
+              <div className="flex flex-col items-start gap-1 mb-2">
+                <label className="text-xs font-bold">files</label>
+                <Upload
+                  className="w-full"
+                  listType="picture"
+                  multiple
+                  // showUploadList={false}
+                  beforeUpload={handleMediaChange}
+                  fileList={data.files}
+                  onRemove={(file) => {
+                    const newFiles = data.files.filter(
+                      (f) => f.uid !== file.uid
+                    );
+                    dispatch(setSelectedFiles(newFiles));
+                  }}
+                >
+                  <Button>
+                    <PlusOutlined />
+                    Upload
+                  </Button>
+                </Upload>
+              </div>
+            );
+
           return (
             <div className="flex flex-col items-start gap-1 mb-2" key={key}>
               <label className="text-xs font-bold">{key}</label>
@@ -130,26 +150,6 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
             </div>
           );
         })}
-      <div className="flex flex-col items-start gap-1 mb-2">
-        <label className="text-xs font-bold">files</label>
-        <Upload
-          className="w-full"
-          listType="picture"
-          multiple
-          // showUploadList={false}
-          beforeUpload={handleMediaChange}
-          fileList={selectedFiles}
-          onRemove={(file) => {
-            const newFiles = selectedFiles.filter((f) => f.uid !== file.uid);
-            dispatch(setSelectedFiles(newFiles));
-          }}
-        >
-          <Button>
-            <PlusOutlined />
-            Upload
-          </Button>
-        </Upload>
-      </div>
 
       {!!selectedElement && (
         <Fragment>
