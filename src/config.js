@@ -135,27 +135,35 @@ const PROPERTIES = [
         value: "text-sm",
       },
       {
-        label: "MD",
-        value: "text-md",
-      },
-      {
         label: "LG",
-        value: "text-3xl",
+        value: "text-lg",
       },
       {
         label: "XL",
-        value: "text-4xl",
+        value: "text-xl",
       },
       {
         label: "2XL",
-        value: "text-5xl",
+        value: "text-2xl",
       },
       {
         label: "3XL",
-        value: "text-6xl",
+        value: "text-3xl",
       },
       {
         label: "4XL",
+        value: "text-4xl",
+      },
+      {
+        label: "5XL",
+        value: "text-5xl",
+      },
+      {
+        label: "6XL",
+        value: "text-6xl",
+      },
+      {
+        label: "7XL",
         value: "text-7xl",
       },
     ],

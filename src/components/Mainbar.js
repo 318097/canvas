@@ -128,18 +128,12 @@ const Mainbar = ({ handleDownload }) => {
       </div>
 
       <div className="flex justify-end flex-col gap-2">
-        <Row gutter={16}>
-          <Col span={12}>
-            <Card variant="borderless">
-              <Statistic title="Export Id" value={exportId} />
-            </Card>
-          </Col>
-          <Col span={12}>
-            <Card variant="borderless">
-              <Statistic title="Total Exports" value={totalExports} />
-            </Card>
-          </Col>
-        </Row>
+        <Card variant="borderless">
+          <Statistic title="Export Id" value={exportId} />
+        </Card>
+        <Card variant="borderless">
+          <Statistic title="Total Exports" value={totalExports} />
+        </Card>
         <Input
           placeholder="Filename"
           value={filename}
