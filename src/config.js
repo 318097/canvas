@@ -836,7 +836,7 @@ const DEFAULT_CLASSES = {
 };
 
 const GLOBAL = {
-  CODE: {
+  code: {
     ...DEFAULT_CLASSES,
     "bg-color": "bg-gray-700",
     "border-radius": "rounded",
@@ -844,12 +844,12 @@ const GLOBAL = {
     "text-color": "text-white",
     "text-size": "font-[inherit]",
   },
-  STRONG: {
+  strong: {
     ...DEFAULT_CLASSES,
     "text-color": "text-gray-400",
     "text-size": "font-[inherit]",
   },
-  A: {
+  a: {
     ...DEFAULT_CLASSES,
     "text-color": "text-white",
     "text-size": "font-[inherit]",
@@ -954,7 +954,7 @@ const POST_VARIANTS = [
   // },
 ];
 
-const GENERIC_PROPERTIES = ["CODE", "STRONG", "A"];
+const GENERIC_PROPERTIES = ["code", "strong", "a"];
 const GENERIC_CLASSES = [".raw-editor-root"];
 
 const PROPERTIES_MAP = _.keyBy(PROPERTIES, "key");

@@ -21,12 +21,7 @@ const getBase64 = (img, callback) => {
   reader.readAsDataURL(img);
 };
 
-const Sidebar = ({
-  selectedElement,
-  handlePropertyChange,
-  isGlobal,
-  isGenericTagSelected,
-}) => {
+const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
   const dispatch = useDispatch();
   const {
     data,
@@ -66,7 +61,6 @@ const Sidebar = ({
       selectedElement,
       isGlobal,
       globalProperties,
-      isGenericTagSelected,
       localProperties,
       handlePropertyChange,
       properties: list.map((key) => PROPERTIES_MAP[key]),
@@ -160,30 +154,37 @@ const Sidebar = ({
       {!!selectedElement && (
         <Fragment>
           <hr />
-          <h3 className="text-sm font-bold text-left">{selectedElement}</h3>
-          <Radio.Group
-            optionType="button"
-            buttonStyle="solid"
-            options={[
-              {
-                label: "Global",
-                value: "global",
-              },
-              {
-                label: "Local",
-                value: "local",
-              },
-            ]}
-            onChange={(e) => dispatch(setPropertyType(e.target.value))}
-            value={propertyType}
-          />
-          <Collapse
-            items={items}
-            defaultActiveKey={["1", "2", "3", "4", "5"]}
-            size="small"
-            ghost
-            bordered
-          />
+          <div className="flex flex-col items-start gap-1 mb-2">
+            <label className="text-xs font-bold">selected element</label>
+            <h3 className="text-sm font-bold text-left">{selectedElement}</h3>
+          </div>
+          <div className="flex flex-col items-start gap-1 mb-2">
+            <label className="text-xs font-bold">properties</label>
+            <Radio.Group
+              optionType="button"
+              buttonStyle="solid"
+              options={[
+                {
+                  label: "Global",
+                  value: "global",
+                },
+                {
+                  label: "Local",
+                  value: "local",
+                },
+              ]}
+              onChange={(e) => dispatch(setPropertyType(e.target.value))}
+              value={propertyType}
+            />
+            <div className="w-full mt-2">
+              <Collapse
+                items={items}
+                defaultActiveKey={["1", "2", "3", "4", "5"]}
+                size="small"
+                bordered={false}
+              />
+            </div>
+          </div>
         </Fragment>
       )}
       <hr />
@@ -211,7 +212,6 @@ const Properties = ({
   selectedElement,
   isGlobal,
   globalProperties,
-  isGenericTagSelected,
   localProperties,
   handlePropertyChange,
   properties,
@@ -220,14 +220,12 @@ const Properties = ({
     <Fragment>
       {properties.map((property) => {
         const { options, label, key } = property;
-        const { uid, element } = splitName(selectedElement);
+        const { element } = splitName(selectedElement);
 
-        const globalValue = _.get(
-          globalProperties,
-          isGenericTagSelected
-            ? [getCleanKey(element), key]
-            : [getCleanKey(uid), key]
-        );
+        const globalValue = _.get(globalProperties, [
+          getCleanKey(element),
+          key,
+        ]);
 
         const value = isGlobal
           ? globalValue

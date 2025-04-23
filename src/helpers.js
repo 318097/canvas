@@ -32,29 +32,30 @@ const isGenericTag = (selectedElement) =>
   GENERIC_PROPERTIES.includes(selectedElement);
 
 const splitName = (selectedElement) => {
-  const [groupId, element, uid] = selectedElement.split(":");
+  const [platform, groupId, element, uid] = selectedElement.split(":");
   return {
+    platform,
     groupId,
     element,
     uid,
   };
 };
 
-const generateName = (groupId, element, uid) => {
-  return `${groupId || "none"}:${element}:${uid}`;
+const generateName = (platform, groupId, element, uid) => {
+  return `${platform}:${groupId || "detached"}:${element}:${uid || ""}`;
 };
 
 const getCleanKey = (key) => (key.includes("_") ? key.split("_")[0] : key);
 
-const generateTemplate = (platforms, keys, props = {}) => {
+const generateTemplate = (platforms, classNames, props = {}) => {
   platforms = [].concat(platforms);
   const {
     title = "title",
     content = "content",
-    groupId = "none",
+    groupId = "detached",
     images = "images",
     brand = "brand",
-  } = keys || {};
+  } = classNames || {};
 
   const layout = [
     {

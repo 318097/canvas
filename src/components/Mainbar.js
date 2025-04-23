@@ -6,8 +6,6 @@ import {
   Input,
   Card,
   Popconfirm,
-  Col,
-  Row,
   Statistic,
 } from "antd";
 import { POST_VARIANTS } from "../config";

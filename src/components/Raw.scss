@@ -44,10 +44,18 @@ pre {
 }
 
 .ant-collapse-header {
-  padding: 4px 0 !important;
+  padding: 8px 0 !important;
   font-weight: bold;
   color: rgb(0, 0, 0) !important;
 }
 .ant-collapse-content-box {
-  padding: 0 !important;
+  padding: 8px !important;
+}
+
+.ant-progress {
+  @apply relative h-[8px];
+}
+
+.ant-progress-outer {
+  @apply absolute;
 }

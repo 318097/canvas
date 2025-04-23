@@ -24,10 +24,12 @@ import {
   setNotification,
   setShowControls,
 } from "../store";
-import { message } from "antd";
+import { message, Progress } from "antd";
+import _ from "lodash";
 
 const Raw = () => {
   const [selectedElement, setSelectedElement] = useState("");
+  const [progressPercent, setProgressPercent] = useState(0);
   const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
   const {
@@ -61,9 +63,9 @@ const Raw = () => {
     canvasContainerRef.current.addEventListener(
       "click",
       (e) => {
-        const tag = e.target.tagName;
+        const tag = _.toLower(e.target.tagName);
         if (
-          ["CODE", "STRONG", "A"].includes(tag) ||
+          GENERIC_PROPERTIES.includes(tag) ||
           getGenericClass(e.target.classList)
         ) {
           e.stopPropagation();
@@ -71,7 +73,8 @@ const Raw = () => {
           const id = e.target.dataset.id ? e.target.dataset.id : shortid();
           e.target.dataset.id = id;
           const fullKey = generateName(
-            `none`,
+            "null",
+            `detached`,
             getGenericClass(e.target.classList) ?? tag,
             id
           );
@@ -108,7 +111,8 @@ const Raw = () => {
   const handleDownload = useCallback(() => {
     dispatch(setShowControls(false));
     _updateSelectedElement("");
-
+    setProgressPercent(20);
+    const eachProgress = Math.floor(80 / templates.length);
     templates.forEach((template) => {
       const { platform, groupId, order, containerWidth, containerHeight } =
         template;
@@ -128,6 +132,14 @@ const Raw = () => {
           }${filename}.png`;
           link.href = dataUrl;
           link.click();
+          setProgressPercent((prev) => {
+            const newPercent = prev + eachProgress;
+            if (newPercent >= 100) {
+              dispatch(setNotification("Export completed"));
+              return 100;
+            }
+            return newPercent;
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -136,6 +148,7 @@ const Raw = () => {
     setTimeout(() => {
       dispatch(setShowControls(true));
       dispatch(incrementExportId());
+      setProgressPercent(0);
     }, 3000);
   }, [templateRef, templates, filename, exportId]);
 
@@ -166,10 +179,10 @@ const Raw = () => {
   };
 
   const handlePropertyChange = (property, value) => {
-    const { element, uid } = splitName(selectedElement);
+    const { element } = splitName(selectedElement);
     let updatedProperties;
 
-    const keyToUpdate = isGenericTagSelected ? element : getCleanKey(uid);
+    const keyToUpdate = getCleanKey(element);
 
     if (isGlobal) {
       updatedProperties = {
@@ -234,11 +247,18 @@ const Raw = () => {
     selectedElement,
     isGlobal,
     handlePropertyChange,
-    isGenericTagSelected,
   };
 
   return (
     <div className="flex items-center flex-col p-0 h-full">
+      {!!progressPercent && (
+        <Progress
+          percent={progressPercent}
+          strokeLinecap="butt"
+          status="active"
+          showInfo={false}
+        />
+      )}
       <div className="flex items-start gap-0 w-full grow overflow-hidden">
         <Mainbar {...mainbarProps} />
         <Canvas {...canvasProps} />

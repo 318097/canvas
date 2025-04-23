@@ -86,7 +86,7 @@ const rawSlice = createSlice({
         state.templates.forEach((template) => {
           const { platform } = template;
           const groupId =
-            template.groupId && template.groupId !== "none"
+            template.groupId && template.groupId !== "detached"
               ? template.groupId
               : shortid();
           const pages = [
@@ -249,10 +249,13 @@ store.subscribe(() => {
   if (state.loading) return;
 
   updateConfigInFirestore({
+    ..._.pick(state.sdata, [
+      ...Object.keys(initialConfig),
+      ...Object.keys(nonMutableConfig),
+    ]),
     data: {
       ..._.pick(state.sdata.data, Object.keys(initialData)),
     },
-    ..._.pick(state.sdata, [...Object.keys(initialConfig), "exportId"]),
   });
 });
 

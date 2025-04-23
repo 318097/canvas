@@ -54,7 +54,7 @@ const Canvas = ({
       ref={canvasContainerRef}
     >
       {grouppedTemplates.map(([groupId, templates]) => {
-        if (groupId === "none") {
+        if (groupId === "detached") {
           return templates.map((template, idx) => {
             const { platform, className } = template;
             const scalingContainerStyles = {
@@ -171,16 +171,16 @@ const Card = ({
         ...Object.values(_.get(globalProperties, "raw-editor-root", {}))
       )}
     >
-      {layout.map(({ key, type }) => {
-        const fullKey = generateName(groupId, platform, key);
-        let value = _.get(data, key, "");
+      {layout.map(({ key: element, type }) => {
+        const fullKey = generateName(platform, groupId, element);
+        let value = _.get(data, element, "");
 
-        if (key === "brand") {
+        if (element === "brand") {
           value = value.replace(/\./g, "&#46;"); // replace '.' with html entity code for dot, fixes conversion to hyperlink
         }
 
         const mergedProperties = {
-          ..._.get(globalProperties, getCleanKey(key), {}),
+          ..._.get(globalProperties, getCleanKey(element), {}),
           ..._.get(localProperties, fullKey, {}),
         };
         if (!value && type !== "media") return null;
