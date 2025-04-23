@@ -28,15 +28,28 @@ const Sidebar = ({
   isGenericTagSelected,
 }) => {
   const dispatch = useDispatch();
-  const { data, localProperties, globalProperties, propertyType, themes } =
-    useSelector((state) => state.sdata);
+  const {
+    data,
+    localProperties,
+    globalProperties,
+    propertyType,
+    themes,
+    selectedFiles,
+  } = useSelector((state) => state.sdata);
 
   const handleMediaChange = (file, fileList) => {
     const filesPromises = fileList.map(
       (file) =>
         new Promise((resolve) => {
           getBase64(file, (url) => {
-            resolve(url);
+            resolve({
+              name: file.name,
+              uid: file.uid,
+              size: file.size,
+              url,
+              status: "done",
+              thumbUrl: url,
+            });
           });
         })
     );
@@ -126,10 +139,16 @@ const Sidebar = ({
       <div className="flex flex-col items-start gap-1 mb-2">
         <label className="text-xs font-bold">files</label>
         <Upload
-          name="avatar"
+          className="w-full"
+          listType="picture"
           multiple
-          showUploadList={false}
+          // showUploadList={false}
           beforeUpload={handleMediaChange}
+          fileList={selectedFiles}
+          onRemove={(file) => {
+            const newFiles = selectedFiles.filter((f) => f.uid !== file.uid);
+            dispatch(setSelectedFiles(newFiles));
+          }}
         >
           <Button>
             <PlusOutlined />

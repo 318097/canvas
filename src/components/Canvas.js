@@ -197,11 +197,11 @@ const Card = ({
               key={fullKey}
               onClick={() => _updateSelectedElement(fullKey)}
             >
-              {selectedFiles.map((file, index) => (
+              {selectedFiles.map(({ url }, index) => (
                 <img
                   className="w-full"
                   key={index}
-                  src={file}
+                  src={url}
                   alt={`Selected file ${index + 1}`}
                 />
               ))}

@@ -18,6 +18,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   incrementExportId,
+  incrementTotalExports,
   setGlobalProperties,
   setLocalProperties,
   setNotification,
@@ -120,6 +121,7 @@ const Raw = () => {
           height: containerHeight,
         })
         .then((dataUrl) => {
+          dispatch(incrementTotalExports());
           const link = document.createElement("a");
           link.download = `#${exportId} [${getFormattedDate()}:${platform}] ${
             order ? `${order} - ` : ""

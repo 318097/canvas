@@ -1,5 +1,15 @@
 import React from "react";
-import { Button, Segmented, Select, Input } from "antd";
+import {
+  Button,
+  Segmented,
+  Select,
+  Input,
+  Card,
+  Popconfirm,
+  Col,
+  Row,
+  Statistic,
+} from "antd";
 import { POST_VARIANTS } from "../config";
 import { generateTemplate } from "../helpers";
 import {
@@ -21,8 +31,15 @@ import {
 } from "../store";
 
 const Mainbar = ({ handleDownload }) => {
-  const { selectedTemplates, postVariant, zoomLevel, view, filename } =
-    useSelector((state) => state.sdata);
+  const {
+    selectedTemplates,
+    postVariant,
+    zoomLevel,
+    view,
+    filename,
+    exportId,
+    totalExports,
+  } = useSelector((state) => state.sdata);
   const dispatch = useDispatch();
   return (
     <div className="flex flex-col gap-2 bg-gray-50 border border-r-gray-200 p-2 w-[280px] shrink-0 h-full overflow-auto">
@@ -90,20 +107,47 @@ const Mainbar = ({ handleDownload }) => {
             />
           </div>
         </div>
+        <div>
+          <Popconfirm
+            title="Reset state?"
+            placement="right"
+            description={
+              <div className="max-w-[300px]">
+                Are you sure you want to reset the state?
+                <br /> (This will remove all your templates, properties, filters
+                and data.)
+              </div>
+            }
+            onConfirm={() => dispatch(resetState())}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger>Reset</Button>
+          </Popconfirm>
+        </div>
       </div>
 
       <div className="flex justify-end flex-col gap-2">
+        <Row gutter={16}>
+          <Col span={12}>
+            <Card variant="borderless">
+              <Statistic title="Export Id" value={exportId} />
+            </Card>
+          </Col>
+          <Col span={12}>
+            <Card variant="borderless">
+              <Statistic title="Total Exports" value={totalExports} />
+            </Card>
+          </Col>
+        </Row>
         <Input
           placeholder="Filename"
           value={filename}
           onChange={(e) => dispatch(setFilename(e.target.value))}
         />
         <div className="flex gap-2">
-          <Button className="grow" onClick={() => dispatch(resetState())}>
-            Reset State
-          </Button>
           <Button className="grow" type="primary" onClick={handleDownload}>
-            Download
+            Export
           </Button>
         </div>
       </div>

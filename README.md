@@ -17,3 +17,4 @@
 - [x] Add Support for images
 - [ ] Add fields - company name, pagination, url
 - [ ] Save/Restore ids for tags
+- [ ] Auth

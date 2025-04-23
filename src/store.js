@@ -29,6 +29,12 @@ const initialConfig = {
   themes: [],
 };
 
+const nonMutableConfig = {
+  exportId: 1,
+  totalExports: 0,
+  themes: [],
+};
+
 const initialState = {
   loading: true,
   selectedElement: "",
@@ -36,7 +42,7 @@ const initialState = {
   filename: "",
   showControls: true,
   notification: null,
-  exportId: 1,
+  ...nonMutableConfig,
   ...initialConfig,
 };
 
@@ -114,6 +120,7 @@ const rawSlice = createSlice({
         state.templates = finalPages;
         state.data = { ...state.data, ...contentBreakdownObj };
       } else {
+        state.data = _.pick(state.data, Object.keys(initialData));
         state.templates = generateTemplate(state.selectedTemplates);
       }
     },
@@ -167,11 +174,14 @@ const rawSlice = createSlice({
       }
     },
     resetState: (state) => {
-      Object.assign(state, _.omit(initialState, "exportId"));
+      Object.assign(state, _.omit(initialState, Object.keys(nonMutableConfig)));
       state.templates = generateTemplate(state.selectedTemplates);
     },
-    incrementExportId: (state, action) => {
+    incrementExportId: (state) => {
       state.exportId++;
+    },
+    incrementTotalExports: (state) => {
+      state.totalExports++;
     },
     setInitialState: (state, action) => {
       Object.assign(state, {
@@ -224,6 +234,7 @@ export const {
   setNotification,
   setInitialState,
   logout,
+  incrementTotalExports,
 } = rawSlice.actions;
 
 const store = configureStore({

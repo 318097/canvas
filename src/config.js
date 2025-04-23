@@ -920,11 +920,11 @@ const DATA_CONFIG = {
 
 const POST_VARIANTS = [
   {
-    label: "Singlepage",
+    label: "Single-page",
     value: "default",
   },
   {
-    label: "Multipage",
+    label: "Multi-page",
     value: "multipage",
   },
   {
