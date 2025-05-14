@@ -10,8 +10,9 @@ import {
   setData,
   setPropertyType,
   setSelectedFiles,
+  updateDataConfig,
 } from "../store";
-import { PlusOutlined } from "@ant-design/icons";
+import { EyeFilled, EyeInvisibleFilled, PlusOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
 
@@ -23,8 +24,14 @@ const getBase64 = (img, callback) => {
 
 const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
   const dispatch = useDispatch();
-  const { data, localProperties, globalProperties, propertyType, themes } =
-    useSelector((state) => state.sdata);
+  const {
+    data,
+    localProperties,
+    globalProperties,
+    propertyType,
+    themes,
+    dataConfig = {},
+  } = useSelector((state) => state.sdata);
 
   const handleMediaChange = (file, fileList) => {
     const filesPromises = fileList.map(
@@ -105,16 +112,33 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
     <div className="flex flex-col gap-2 bg-gray-50 border border-l-gray-200 p-2 w-[300px] shrink-0 h-full overflow-auto">
       {Object.keys(data)
         .sort((a, b) => {
-          const orderA = _.get(DATA_CONFIG, [a, "order"], Infinity);
-          const orderB = _.get(DATA_CONFIG, [b, "order"], Infinity);
+          const orderA = _.get(dataConfig, [a, "order"], Infinity);
+          const orderB = _.get(dataConfig, [b, "order"], Infinity);
           return orderA - orderB;
         })
         .map((key) => {
-          const rows = _.get(DATA_CONFIG, [key, "rows"], 3);
-          if (key === "files")
-            return (
-              <div className="flex flex-col items-start gap-1 mb-2">
-                <label className="text-xs font-bold">files</label>
+          const config = _.get(dataConfig, key, {});
+          const rows = _.get(config, "rows", 3);
+          const visible = _.get(config, "visible", true);
+
+          return (
+            <div className="flex flex-col items-start gap-1 mb-2" key={key}>
+              <label
+                className={`text-xs font-bold ${
+                  visible ? "" : "text-gray-400"
+                }`}
+              >
+                {key}&nbsp;
+                <span
+                  className="cursor-pointer"
+                  onClick={() =>
+                    dispatch(updateDataConfig({ key, property: "visible" }))
+                  }
+                >
+                  {visible ? <EyeFilled /> : <EyeInvisibleFilled />}
+                </span>
+              </label>
+              {key === "files" ? (
                 <Upload
                   className="w-full"
                   listType="picture"
@@ -134,19 +158,15 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
                     Upload
                   </Button>
                 </Upload>
-              </div>
-            );
-
-          return (
-            <div className="flex flex-col items-start gap-1 mb-2" key={key}>
-              <label className="text-xs font-bold">{key}</label>
-              <TextArea
-                rows={rows}
-                placeholder={key}
-                value={data[key]}
-                onChange={(e) => dispatch(setData({ [key]: e.target.value }))}
-                spellCheck={false}
-              />
+              ) : (
+                <TextArea
+                  rows={rows}
+                  placeholder={key}
+                  value={data[key]}
+                  onChange={(e) => dispatch(setData({ [key]: e.target.value }))}
+                  spellCheck={false}
+                />
+              )}
             </div>
           );
         })}

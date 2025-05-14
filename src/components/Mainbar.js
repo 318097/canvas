@@ -7,6 +7,7 @@ import {
   Card,
   Popconfirm,
   Statistic,
+  Tooltip,
 } from "antd";
 import { POST_VARIANTS } from "../config";
 import { generateTemplate } from "../helpers";
@@ -136,11 +137,23 @@ const Mainbar = ({ handleDownload }) => {
           placeholder="Filename"
           value={filename}
           onChange={(e) => dispatch(setFilename(e.target.value))}
+          // addonAfter={<ReloadOutlined onClick={generateFileName} />}
         />
         <div className="flex gap-2">
-          <Button className="grow" type="primary" onClick={handleDownload}>
-            Export
-          </Button>
+          <Tooltip
+            title={
+              <div>
+                <div className="text-xs font-bold">Export</div>
+                <div className="text-xs text-gray-500">
+                  Export the selected templates as a PNG file.
+                </div>
+              </div>
+            }
+          >
+            <Button className="grow" type="primary" onClick={handleDownload}>
+              Export
+            </Button>
+          </Tooltip>
         </div>
       </div>
     </div>

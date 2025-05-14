@@ -908,24 +908,6 @@ const GLOBAL = {
   },
 };
 
-const DATA_CONFIG = {
-  title: {
-    type: "textarea",
-    rows: 3,
-    order: 1,
-  },
-  content: {
-    type: "textarea",
-    rows: 10,
-    order: 2,
-  },
-  brand: {
-    type: "input",
-    order: 0,
-    rows: 1,
-  },
-};
-
 const POST_VARIANTS = [
   {
     label: "Single-page",
@@ -966,7 +948,6 @@ export {
   POST_VARIANTS,
   GLOBAL,
   DEFAULT_CLASSES,
-  DATA_CONFIG,
   GENERIC_CLASSES,
 };
 

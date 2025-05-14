@@ -129,7 +129,7 @@ const Raw = () => {
           const link = document.createElement("a");
           link.download = `#${exportId} [${getFormattedDate()}:${platform}] ${
             order ? `${order} - ` : ""
-          }${filename}.png`;
+          }${filename || "export"}.png`;
           link.href = dataUrl;
           link.click();
           setProgressPercent((prev) => {

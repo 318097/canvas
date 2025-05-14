@@ -17,6 +17,30 @@ The original site, hosted at [**info.cern.ch**](https://info.cern.ch/), was the 
   files: [],
 };
 
+const DATA_CONFIG = {
+  title: {
+    key: "title",
+    type: "textarea",
+    rows: 3,
+    order: 1,
+    visible: true,
+  },
+  content: {
+    key: "content",
+    type: "textarea",
+    rows: 10,
+    order: 2,
+    visible: true,
+  },
+  brand: {
+    key: "brand",
+    type: "input",
+    order: 0,
+    rows: 1,
+    visible: true,
+  },
+};
+
 const initialConfig = {
   data: initialData,
   globalProperties: GLOBAL,
@@ -28,6 +52,7 @@ const initialConfig = {
   zoomLevel: 0.7,
   view: "col",
   themes: [],
+  dataConfig: DATA_CONFIG,
 };
 
 const nonMutableConfig = {
@@ -183,6 +208,16 @@ const rawSlice = createSlice({
     incrementTotalExports: (state) => {
       state.totalExports++;
     },
+    updateDataConfig: (state, { payload }) => {
+      const { key, property } = payload;
+
+      if (property === "visible")
+        _.set(
+          state.dataConfig,
+          [key, "visible"],
+          !_.get(state.dataConfig, [key, "visible"])
+        );
+    },
     setInitialState: (state, action) => {
       Object.assign(state, {
         ...initialState,
@@ -235,6 +270,7 @@ export const {
   setInitialState,
   logout,
   incrementTotalExports,
+  updateDataConfig,
 } = rawSlice.actions;
 
 const store = configureStore({

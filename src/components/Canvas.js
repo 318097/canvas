@@ -21,6 +21,7 @@ const Canvas = ({
     globalProperties,
     data,
     showControls,
+    dataConfig,
   } = useSelector((state) => state.sdata);
 
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
@@ -40,6 +41,7 @@ const Canvas = ({
     localProperties,
     globalProperties,
     showControls,
+    dataConfig,
   };
 
   return (
@@ -148,6 +150,7 @@ const Card = ({
   localProperties,
   globalProperties,
   showControls,
+  dataConfig,
 }) => {
   const {
     layout,
@@ -168,54 +171,58 @@ const Card = ({
         ...Object.values(_.get(globalProperties, "raw-editor-root", {}))
       )}
     >
-      {layout.map(({ key: element, type }) => {
-        const fullKey = generateName(platform, groupId, element);
-        let value = _.get(data, element, "");
+      {layout
+        .filter(({ key: element }) =>
+          _.get(dataConfig, [element, "visible"], true)
+        )
+        .map(({ key: element, type }) => {
+          const fullKey = generateName(platform, groupId, element);
+          let value = _.get(data, element, "");
 
-        if (element === "brand") {
-          value = value.replace(/\./g, "&#46;"); // replace '.' with html entity code for dot, fixes conversion to hyperlink
-        }
+          if (element === "brand") {
+            value = value.replace(/\./g, "&#46;"); // replace '.' with html entity code for dot, fixes conversion to hyperlink
+          }
 
-        const mergedProperties = {
-          ..._.get(globalProperties, getCleanKey(element), {}),
-          ..._.get(localProperties, fullKey, {}),
-        };
-        if (!value && type !== "media") return null;
+          const mergedProperties = {
+            ..._.get(globalProperties, getCleanKey(element), {}),
+            ..._.get(localProperties, fullKey, {}),
+          };
+          if (!value && type !== "media") return null;
 
-        const classNames = cn("element", ...Object.values(mergedProperties), {
-          outlined: selectedElement === fullKey,
-        });
+          const classNames = cn("element", ...Object.values(mergedProperties), {
+            outlined: selectedElement === fullKey,
+          });
 
-        if (type === "media") {
-          const hasFiles = data.files?.length;
-          return hasFiles ? (
+          if (type === "media") {
+            const hasFiles = data.files?.length;
+            return hasFiles ? (
+              <div
+                className={classNames}
+                key={fullKey}
+                onClick={() => _updateSelectedElement(fullKey)}
+              >
+                {data.files?.map(({ url }, index) => (
+                  <img
+                    className="w-full"
+                    key={index}
+                    src={url}
+                    alt={`Selected file ${index + 1}`}
+                  />
+                ))}
+              </div>
+            ) : null;
+          }
+          return (
             <div
-              className={classNames}
               key={fullKey}
               onClick={() => _updateSelectedElement(fullKey)}
-            >
-              {data.files?.map(({ url }, index) => (
-                <img
-                  className="w-full"
-                  key={index}
-                  src={url}
-                  alt={`Selected file ${index + 1}`}
-                />
-              ))}
-            </div>
-          ) : null;
-        }
-        return (
-          <div
-            key={fullKey}
-            onClick={() => _updateSelectedElement(fullKey)}
-            className={classNames}
-            dangerouslySetInnerHTML={{
-              __html: md.render(value),
-            }}
-          ></div>
-        );
-      })}
+              className={classNames}
+              dangerouslySetInnerHTML={{
+                __html: md.render(value),
+              }}
+            ></div>
+          );
+        })}
       {pagination && (
         <div
           className={cn(
