@@ -886,7 +886,7 @@ const GLOBAL = {
     padding: "p-2",
     leading: "leading-relaxed",
   },
-  images: {
+  files: {
     border: "rounded",
     "border-radius": "rounded",
     overflow: "overflow-hidden",

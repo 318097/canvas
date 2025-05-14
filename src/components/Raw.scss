@@ -14,12 +14,24 @@ body,
 
 .element {
   outline: none;
+
   & > p {
     font-family: inherit;
   }
 }
 .outlined {
   outline: thin dashed cyan;
+  // position: relative;
+  // &:after {
+  //   content: "";
+  //   position: absolute;
+  //   height: 200vh;
+  //   width: 1px;
+  //   background: cyan;
+  //   left: 0;
+  //   top: 0;
+  //   transform: translateY(-50%);
+  // }
 }
 
 pre,

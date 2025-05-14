@@ -22,6 +22,7 @@ const Canvas = ({
     data,
     showControls,
     dataConfig,
+    postVariant,
   } = useSelector((state) => state.sdata);
 
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
@@ -42,6 +43,7 @@ const Canvas = ({
     globalProperties,
     showControls,
     dataConfig,
+    postVariant,
   };
 
   return (
@@ -151,6 +153,7 @@ const Card = ({
   globalProperties,
   showControls,
   dataConfig,
+  postVariant,
 }) => {
   const {
     layout,
@@ -178,6 +181,7 @@ const Card = ({
         .map(({ key: element, type }) => {
           const fullKey = generateName(platform, groupId, element);
           let value = _.get(data, element, "");
+          const visible = _.get(dataConfig, [element, "visible"], true);
 
           if (element === "brand") {
             value = value.replace(/\./g, "&#46;"); // replace '.' with html entity code for dot, fixes conversion to hyperlink
@@ -193,7 +197,7 @@ const Card = ({
             outlined: selectedElement === fullKey,
           });
 
-          if (type === "media") {
+          if (type === "media" && visible) {
             const hasFiles = data.files?.length;
             return hasFiles ? (
               <div
@@ -223,7 +227,7 @@ const Card = ({
             ></div>
           );
         })}
-      {pagination && (
+      {pagination && postVariant === "listicle" && (
         <div
           className={cn(
             Object.values(_.get(globalProperties, ["pagination"], {})).join(" ")

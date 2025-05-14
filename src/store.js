@@ -7,8 +7,9 @@ import { getAuth, signOut } from "firebase/auth";
 import _ from "lodash";
 import shortid from "shortid";
 import dayjs from "dayjs";
+import { thunk as thunkMiddleware } from "redux-thunk";
 
-const initialData = {
+const INITIAL_DATA = {
   title: "Did you know the `world’s` first website is still live? 🌍💻",
   content: `Tim Berners-Lee launched the **World Wide Web Project** at CERN, giving birth to the internet as we know it.   
 The original site, hosted at [**info.cern.ch**](https://info.cern.ch/), was the first step toward a digital revolution.
@@ -42,7 +43,7 @@ const DATA_CONFIG = {
 };
 
 const initialConfig = {
-  data: initialData,
+  data: INITIAL_DATA,
   globalProperties: GLOBAL,
   localProperties: {},
   propertyType: "global",
@@ -73,6 +74,10 @@ const initialState = {
 
 const INITIAL_ZOOM_LEVEL = 0.6;
 
+const isMultipageOrListicle = (postVariant, content) =>
+  (postVariant === "multipage" && content.includes("---")) ||
+  (postVariant === "listicle" && content.includes("\n"));
+
 const rawSlice = createSlice({
   name: "sdata",
   initialState,
@@ -89,7 +94,12 @@ const rawSlice = createSlice({
     },
     setPostVariant: (state, action) => {
       state.postVariant = action.payload;
-      if (["multipage", "listicle"].includes(state.postVariant)) {
+
+      state.data = _.pick(state.data, Object.keys(INITIAL_DATA));
+      state.templates = generateTemplate(state.selectedTemplates);
+
+      if (isMultipageOrListicle(state.postVariant, state.data.content)) {
+        console.log("parsse....");
         const isListicle = state.postVariant === "listicle";
         const contentList = state.data.content
           .trim()
@@ -144,9 +154,6 @@ const rawSlice = createSlice({
 
         state.templates = finalPages;
         state.data = { ...state.data, ...contentBreakdownObj };
-      } else {
-        state.data = _.pick(state.data, Object.keys(initialData));
-        state.templates = generateTemplate(state.selectedTemplates);
       }
     },
     setSelectedTemplates: (state, action) => {
@@ -273,10 +280,22 @@ export const {
   updateDataConfig,
 } = rawSlice.actions;
 
+const setDataThunk = (data) => async (dispatch, getState) => {
+  const { sdata } = getState();
+  await dispatch(setData(data));
+  if (sdata.postVariant === "multipage" || data.content.includes("---")) {
+    dispatch(setPostVariant("multipage"));
+  }
+};
+
+export { setDataThunk };
+
 const store = configureStore({
   reducer: {
     sdata: rawSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(thunkMiddleware),
 });
 
 store.subscribe(() => {
@@ -290,7 +309,7 @@ store.subscribe(() => {
       ...Object.keys(nonMutableConfig),
     ]),
     data: {
-      ..._.pick(state.sdata.data, Object.keys(initialData)),
+      ..._.pick(state.sdata.data, Object.keys(INITIAL_DATA)),
     },
   });
 });

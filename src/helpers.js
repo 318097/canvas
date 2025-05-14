@@ -53,7 +53,7 @@ const generateTemplate = (platforms, classNames, props = {}) => {
     title = "title",
     content = "content",
     groupId = "detached",
-    images = "images",
+    files = "files",
     brand = "brand",
   } = classNames || {};
 
@@ -66,7 +66,7 @@ const generateTemplate = (platforms, classNames, props = {}) => {
     },
     {
       type: "media",
-      key: images,
+      key: files,
     },
     {
       key: brand,

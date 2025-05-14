@@ -1,13 +1,13 @@
 import _ from "lodash";
 import React, { Fragment } from "react";
 import { Input, Select, Button, Radio, Collapse, Upload } from "antd";
-import { DATA_CONFIG, PROPERTIES_MAP } from "../config";
+import { PROPERTIES_MAP } from "../config";
 import { getCleanKey, splitName } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import {
   applyRandomTheme,
   saveTheme,
-  setData,
+  setDataThunk,
   setPropertyType,
   setSelectedFiles,
   updateDataConfig,
@@ -144,6 +144,7 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
                   listType="picture"
                   multiple
                   // showUploadList={false}
+                  accept=".png,.jpg,.jpeg,.gif"
                   beforeUpload={handleMediaChange}
                   fileList={data.files}
                   onRemove={(file) => {
@@ -163,7 +164,9 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
                   rows={rows}
                   placeholder={key}
                   value={data[key]}
-                  onChange={(e) => dispatch(setData({ [key]: e.target.value }))}
+                  onChange={(e) =>
+                    dispatch(setDataThunk({ [key]: e.target.value }))
+                  }
                   spellCheck={false}
                 />
               )}
