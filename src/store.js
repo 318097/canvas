@@ -68,7 +68,7 @@ const rawSlice = createSlice({
         const isListicle = state.postVariant === "listicle";
         const contentList = state.data.content
           .trim()
-          .split(isListicle ? "\n" : "<page/>")
+          .split(isListicle ? "\n" : "---")
           .map((item) => item.trim())
           .filter((item) => item.length);
 
