@@ -22,14 +22,14 @@ const DATA_CONFIG = {
   title: {
     key: "title",
     type: "textarea",
-    rows: 3,
+    rows: 4,
     order: 1,
     visible: true,
   },
   content: {
     key: "content",
     type: "textarea",
-    rows: 10,
+    rows: 16,
     order: 2,
     visible: true,
   },

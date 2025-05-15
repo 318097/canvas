@@ -117,14 +117,14 @@ const generateTemplate = (platforms, classNames, props = {}) => {
       className: `h-[627px] w-[1200px]`,
       layout,
     },
-    {
-      platform: "youtube_thumbnail",
-      groupId: groupId,
-      containerWidth: 1280,
-      containerHeight: 720,
-      className: `h-[720px] w-[1280px]`,
-      layout,
-    },
+    // {
+    //   platform: "youtube_thumbnail",
+    //   groupId: groupId,
+    //   containerWidth: 1280,
+    //   containerHeight: 720,
+    //   className: `h-[720px] w-[1280px]`,
+    //   layout,
+    // },
   ];
 
   return TEMPLATES.filter((template) =>

@@ -11,6 +11,7 @@ import {
   Avatar,
   Popover,
   Tag,
+  Carousel,
 } from "antd";
 import { POST_VARIANTS } from "../config";
 import { generateTemplate } from "../helpers";
@@ -166,12 +167,22 @@ const Mainbar = ({ handleDownload }) => {
       </div>
 
       <div className="flex justify-end flex-col gap-2">
-        <Card variant="borderless">
-          <Statistic title="Export Id" value={exportId} />
-        </Card>
-        <Card variant="borderless">
-          <Statistic title="Total Exports" value={totalExports} />
-        </Card>
+        <Carousel
+          autoplay
+          dotPosition="bottom"
+          dots={true}
+          effect="fade"
+          arrows
+          autoplaySpeed={7000}
+        >
+          <Card variant="borderless">
+            <Statistic title="Export Id" value={exportId} />
+          </Card>
+          <Card variant="borderless">
+            <Statistic title="Total Exports" value={totalExports} />
+          </Card>
+        </Carousel>
+
         <Input
           placeholder="Filename"
           value={filename}
