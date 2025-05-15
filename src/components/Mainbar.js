@@ -61,18 +61,15 @@ const Mainbar = ({ handleDownload }) => {
           trigger="click"
           placement="bottomRight"
           content={
-            <div className="w-32 min-h-8 flex flex-col items-stretch gap-2 overflow-hidden">
+            <div className="w-36 min-h-8 flex flex-col items-stretch gap-2 overflow-hidden">
               <div className="text-xs text-gray-600 truncate">{userName}</div>
               {!!userEmail && (
                 <div className="text-xs text-gray-600">{userEmail}</div>
               )}
-              <Tag className="overflow-hidden truncate w-full">{userId}</Tag>
-              <Button
-                className="mt-1"
-                type="primary"
-                danger
-                onClick={() => dispatch(logout())}
-              >
+              <Tag className="overflow-hidden truncate w-full mt-1">
+                {userId}
+              </Tag>
+              <Button type="primary" danger onClick={() => dispatch(logout())}>
                 <LogoutOutlined className="mr-2" />
                 Logout
               </Button>

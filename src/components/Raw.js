@@ -13,7 +13,6 @@ import {
   getCleanKey,
   getFormattedDate,
   getGenericClass,
-  isGenericClass,
 } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -23,6 +22,7 @@ import {
   setLocalProperties,
   setNotification,
   setShowControls,
+  setUpdateGenericTag,
 } from "../store";
 import { message, Progress } from "antd";
 import _ from "lodash";
@@ -41,6 +41,7 @@ const Raw = () => {
     localProperties,
     exportId,
     notification,
+    updateGenericTag,
   } = useSelector((state) => state.sdata);
 
   const isGlobal = propertyType === "global";
@@ -48,7 +49,6 @@ const Raw = () => {
   const canvasContainerRef = useRef();
 
   const isGenericTagSelected = isGenericTag(selectedElement);
-  const isGenericClassSelected = isGenericClass(selectedElement);
 
   const _updateSelectedElement = (newValue) => {
     setSelectedElement((prev) => {
@@ -87,6 +87,18 @@ const Raw = () => {
       true
     );
   }, [canvasContainerRef.current]);
+
+  useEffect(() => {
+    if (updateGenericTag) {
+      for (const element in globalProperties) {
+        const name = generateName(null, null, element);
+        if (isGenericTag(name)) {
+          updatedClassesForTag(name, Object.values(globalProperties[element]));
+        }
+      }
+      dispatch(setUpdateGenericTag(false));
+    }
+  }, [updateGenericTag]);
 
   useEffect(() => {
     const node = canvasContainerRef.current;

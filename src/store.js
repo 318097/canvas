@@ -1,5 +1,5 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
-import { getSlug } from "./helpers";
+import { getSlug, splitName } from "./helpers";
 import { GLOBAL } from "./config";
 import { updateConfigInFirestore } from "./firebase";
 import { generateTemplate } from "./helpers";
@@ -68,6 +68,7 @@ const initialState = {
   filename: "",
   showControls: true,
   notification: null,
+  updateGenericTag: false,
   ...nonMutableConfig,
   ...initialConfig,
 };
@@ -188,22 +189,72 @@ const rawSlice = createSlice({
     setNotification: (state, action) => {
       state.notification = action.payload;
     },
-    saveTheme: (state) => {
-      state.themes.push({
-        id: shortid(),
-        createdAt: dayjs().format("YYYY-MM-DD"),
-        localProperties: state.localProperties,
-        globalProperties: state.globalProperties,
-      });
-      state.notification = "Theme Saved.";
-    },
-    applyRandomTheme: (state) => {
-      if (state.themes.length > 0) {
-        const randomIndex = Math.floor(Math.random() * state.themes.length);
-        const randomTheme = state.themes[randomIndex];
-        state.localProperties = randomTheme.localProperties;
-        state.globalProperties = randomTheme.globalProperties;
+    saveThemeOrVariant: (state, action) => {
+      const { element } = splitName(action.payload);
+      if (element) {
+        if (!state.dataConfig[element]) {
+          state.dataConfig[element] = {
+            key: element,
+            visible: true,
+            variants: [],
+            activeVariant: null,
+          };
+        }
+        if (!state.dataConfig[element].variants) {
+          state.dataConfig[element].variants = [];
+        }
+        state.dataConfig[element].variants.push({
+          id: shortid(),
+          createdAt: dayjs().format("YYYY-MM-DD"),
+          properties: {
+            ..._.get(state.globalProperties, element, {}),
+            ..._.get(state.localProperties, element, {}),
+          },
+        });
+      } else {
+        state.themes.push({
+          id: shortid(),
+          createdAt: dayjs().format("YYYY-MM-DD"),
+          localProperties: state.localProperties,
+          globalProperties: state.globalProperties,
+        });
       }
+      state.notification = action.payload
+        ? `Theme saved for ${action.payload}`
+        : `Theme Saved.`;
+    },
+    applyNextThemeOrVariant: (state, action) => {
+      const { element } = splitName(action.payload);
+      if (element) {
+        const variants = _.get(state.dataConfig, [element, "variants"], []);
+        const variantIdx = _.get(
+          state.dataConfig,
+          [element, "activeVariant"],
+          null
+        );
+        if (variants.length > 0) {
+          const nextVariantIdx =
+            variantIdx === null ? 0 : (variantIdx + 1) % variants.length;
+          _.set(state.dataConfig, [element, "activeVariant"], nextVariantIdx);
+          const nextVariant = variants[nextVariantIdx];
+          state.globalProperties[element] = nextVariant.properties;
+          state.updateGenericTag = true;
+        }
+      } else {
+        if (state.themes.length > 0) {
+          const randomIndex = Math.floor(Math.random() * state.themes.length);
+          const randomTheme = state.themes[randomIndex];
+          state.localProperties = randomTheme.localProperties;
+          state.globalProperties = randomTheme.globalProperties;
+        }
+      }
+    },
+    resetElement: (state, action) => {
+      const { element } = splitName(action.payload);
+
+      state.localProperties[action.payload] = {};
+      state.globalProperties[element] = _.get(GLOBAL, element, {});
+      state.updateGenericTag = true;
     },
     resetState: (state) => {
       Object.assign(state, _.omit(initialState, Object.keys(nonMutableConfig)));
@@ -211,6 +262,9 @@ const rawSlice = createSlice({
     },
     incrementExportId: (state) => {
       state.exportId++;
+    },
+    setUpdateGenericTag: (state) => {
+      state.updateGenericTag = false;
     },
     incrementTotalExports: (state) => {
       state.totalExports++;
@@ -271,13 +325,15 @@ export const {
   setSelectedFiles,
   resetState,
   incrementExportId,
-  saveTheme,
-  applyRandomTheme,
+  saveThemeOrVariant,
+  applyNextThemeOrVariant,
   setNotification,
   setInitialState,
   logout,
   incrementTotalExports,
   updateDataConfig,
+  resetElement,
+  setUpdateGenericTag,
 } = rawSlice.actions;
 
 const setDataThunk = (data) => async (dispatch, getState) => {

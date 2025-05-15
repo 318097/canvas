@@ -1,12 +1,13 @@
 import _ from "lodash";
 import React, { Fragment } from "react";
-import { Input, Select, Button, Radio, Collapse, Upload } from "antd";
+import { Input, Select, Button, Radio, Collapse, Upload, Tag } from "antd";
 import { GENERIC_CLASSES, PROPERTIES_MAP } from "../config";
 import { getCleanKey, splitName } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  applyRandomTheme,
-  saveTheme,
+  applyNextThemeOrVariant,
+  resetElement,
+  saveThemeOrVariant,
   setDataThunk,
   setPropertyType,
   setSelectedFiles,
@@ -114,7 +115,11 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
       visible: !GENERIC_CLASSES.includes(element),
     },
   ];
-
+  const selectedElementVariants = _.get(
+    dataConfig,
+    [element, "variants"],
+    []
+  ).length;
   return (
     <div className="flex flex-col gap-2 bg-gray-50 border border-l-gray-200 p-2 w-[300px] shrink-0 h-full overflow-auto">
       {Object.keys(data)
@@ -185,8 +190,34 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
         <Fragment>
           <hr />
           <div className="flex flex-col items-start gap-1 mb-2">
-            <label className="text-xs font-bold">selected element</label>
-            <h3 className="text-sm font-bold text-left">{selectedElement}</h3>
+            <label className="text-xs font-bold">
+              selected element
+              {selectedElementVariants > 0 ? (
+                <Tag
+                  className="ml-2 cursor-pointer text-xs font-normal"
+                  onClick={() =>
+                    dispatch(applyNextThemeOrVariant(selectedElement))
+                  }
+                >{`${selectedElementVariants} variant(s)`}</Tag>
+              ) : null}
+            </label>
+            <h3 className="text-base font-bold text-left truncate max-w-full overflow-hidden">
+              {selectedElement}
+            </h3>
+            <div className="flex gap-2 w-full">
+              <Button
+                className="grow"
+                onClick={() => dispatch(resetElement(selectedElement))}
+              >
+                Reset
+              </Button>
+              <Button
+                className="grow"
+                onClick={() => dispatch(saveThemeOrVariant(selectedElement))}
+              >
+                Save variant
+              </Button>
+            </div>
           </div>
           <div className="flex flex-col items-start gap-1 mb-2">
             <label className="text-xs font-bold">properties</label>
@@ -225,11 +256,14 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
             disabled={!themes.length}
             type="primary"
             className="grow"
-            onClick={() => dispatch(applyRandomTheme())}
+            onClick={() => dispatch(applyNextThemeOrVariant())}
           >
             Random
           </Button>
-          <Button className="grow" onClick={() => dispatch(saveTheme())}>
+          <Button
+            className="grow"
+            onClick={() => dispatch(saveThemeOrVariant())}
+          >
             Save
           </Button>
         </div>
