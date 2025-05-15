@@ -896,9 +896,12 @@ const GLOBAL = {
     padding: "p-4",
     "bg-color": "bg-[#202227]",
     position: "relative",
-    gap: "gap-2",
+    gap: "gap-6",
     display: "flex",
     "flex-direction": "flex-col",
+    "align-items": "items-center",
+    "justify-content": "justify-center",
+    select: "select-none",
   },
   brand: {
     ...DEFAULT_CLASSES,

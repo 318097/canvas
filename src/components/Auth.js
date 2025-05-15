@@ -1,30 +1,74 @@
 import React from "react";
-import { getAuth, signInAnonymously } from "firebase/auth";
+import {
+  getAuth,
+  signInAnonymously,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import { useNavigate } from "react-router";
+import { Button } from "antd";
+import { validateUserInFireDb } from "../firebase";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = (type) => {
+    setLoading(true);
     const auth = getAuth();
-    signInAnonymously(auth)
-      .then(() => {
-        console.log("Anonymous login successful");
+
+    const authFn =
+      type === "google"
+        ? signInWithPopup(auth, new GoogleAuthProvider())
+        : signInAnonymously(auth);
+    authFn
+      .then(async (user) => {
+        const userId = user.user.uid;
+        const userEmail = user.user.email || "";
+        const userName = user.user.displayName || "Guest";
+        const userPhoto = user.user.photoURL;
+
+        await validateUserInFireDb({
+          userId,
+          userEmail,
+          userName,
+          userPhoto,
+        });
         navigate("/home");
       })
       .catch((error) => {
         console.error("Error during anonymous login:", error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
-      <button
-        className="px-4 py-2 text-lg font-medium text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        onClick={handleLogin}
-      >
-        Login
-      </button>
+      <div className="w-96 h-[500px] p-12 bg-white shadow-lg rounded flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-bold">Canvas</h1>
+        <p className="text-gray-600 mb-6">Login to start creating</p>
+        <div className="flex flex-col items-stretch justify-center w-full gap-4 grow">
+          <Button
+            disabled={loading}
+            loading={loading}
+            type="primary"
+            size="large"
+            onClick={() => handleLogin("google")}
+          >
+            Login with Google
+          </Button>
+          <Button
+            disabled={loading}
+            loading={loading}
+            size="large"
+            onClick={() => handleLogin("anonymous")}
+          >
+            Login as Guest
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

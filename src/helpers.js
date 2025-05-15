@@ -45,7 +45,10 @@ const generateName = (platform, groupId, element, uid) => {
   return `${platform}:${groupId || "detached"}:${element}:${uid || ""}`;
 };
 
-const getCleanKey = (key) => (key.includes("_") ? key.split("_")[0] : key);
+const getCleanKey = (key) => {
+  const cleaned = key.includes("_") ? key.split("_")[0] : key;
+  return cleaned.replace(/\./g, "");
+};
 
 const generateTemplate = (platforms, classNames, props = {}) => {
   platforms = [].concat(platforms);

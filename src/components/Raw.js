@@ -218,18 +218,13 @@ const Raw = () => {
       };
     }
 
-    if (isGenericTagSelected || isGenericClassSelected) {
-      // if tags, then apply the classes
+    if (isGenericTagSelected) {
       const updatedClasses = [
         ...Object.values(updatedProperties),
         value,
         "outlined",
       ];
-      updatedClassesForTag(
-        selectedElement,
-        updatedClasses,
-        isGenericClassSelected ? "add" : "set"
-      );
+      updatedClassesForTag(selectedElement, updatedClasses);
     }
   };
 

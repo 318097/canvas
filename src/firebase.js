@@ -12,13 +12,10 @@ import {
   setDoc,
   getDocs,
 } from "firebase/firestore";
-
 import { initialState } from "./store";
 
 const { FIREBASE_API_KEY, FIREBASE_APP_ID, FIREBASE_MEASUREMENT_ID } =
   config.FIREBASE;
-
-const COLLECTION_NAME = "users";
 
 const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
@@ -35,21 +32,23 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth();
 const db = getFirestore(app);
 
+const COLLECTION_NAME = "users";
 const USERS_COLLECTION = collection(db, COLLECTION_NAME);
 
 const getTime = () => new Date().getTime();
 
-const getDefaultObj = () => {
+const getDefaultObj = (userInfo) => {
   const now = getTime();
   return {
-    ...initialState,
+    userId: getUserId(),
+    ...userInfo,
     createdAt: now,
     updatedAt: now,
-    userId: getUserId(),
+    ...initialState,
   };
 };
 
-const validateUserInFireDb = async () => {
+const validateUserInFireDb = async (userInfo = {}) => {
   try {
     const uid = getUserId();
 
@@ -57,7 +56,7 @@ const validateUserInFireDb = async () => {
     let userDoc = await getDoc(userDocRef);
 
     if (!userDoc.exists()) {
-      await setDoc(userDocRef, getDefaultObj());
+      await setDoc(userDocRef, getDefaultObj(userInfo));
       console.log("New user document created with ID:", uid);
     } else {
       console.log("User already exists with ID:", uid);

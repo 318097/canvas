@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React, { Fragment } from "react";
 import { Input, Select, Button, Radio, Collapse, Upload } from "antd";
-import { PROPERTIES_MAP } from "../config";
+import { GENERIC_CLASSES, PROPERTIES_MAP } from "../config";
 import { getCleanKey, splitName } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -32,6 +32,8 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
     themes,
     dataConfig = {},
   } = useSelector((state) => state.sdata);
+
+  const { element } = splitName(selectedElement);
 
   const handleMediaChange = (file, fileList) => {
     const filesPromises = fileList.map(
@@ -74,6 +76,7 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
       key: "5",
       label: "General",
       children: getProperties(["bg-color"]),
+      visible: true,
     },
     {
       key: "1",
@@ -85,6 +88,7 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
         "text-size",
         "text-color",
       ]),
+      visible: !GENERIC_CLASSES.includes(element),
     },
     {
       key: "2",
@@ -95,16 +99,19 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
         "text-decoration-color",
         "text-transform",
       ]),
+      visible: !GENERIC_CLASSES.includes(element),
     },
     {
       key: "3",
       label: "Spacing",
       children: getProperties(["flex-basis", "flex-width", "padding"]),
+      visible: !GENERIC_CLASSES.includes(element),
     },
     {
       key: "4",
       label: "Border",
       children: getProperties(["border", "border-color", "border-radius"]),
+      visible: !GENERIC_CLASSES.includes(element),
     },
   ];
 
@@ -201,7 +208,7 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
             />
             <div className="w-full mt-2">
               <Collapse
-                items={items}
+                items={items.filter((item) => item.visible)}
                 defaultActiveKey={["1", "2", "3", "4", "5"]}
                 size="small"
                 bordered={false}

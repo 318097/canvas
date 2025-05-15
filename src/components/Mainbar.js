@@ -8,6 +8,9 @@ import {
   Popconfirm,
   Statistic,
   Tooltip,
+  Avatar,
+  Popover,
+  Tag,
 } from "antd";
 import { POST_VARIANTS } from "../config";
 import { generateTemplate } from "../helpers";
@@ -38,18 +41,54 @@ const Mainbar = ({ handleDownload }) => {
     filename,
     exportId,
     totalExports,
+    userPhoto,
+    userId,
+    userName,
+    userEmail,
   } = useSelector((state) => state.sdata);
   const dispatch = useDispatch();
   return (
     <div className="flex flex-col gap-2 bg-gray-50 border border-r-gray-200 p-2 w-[280px] shrink-0 h-full overflow-auto">
-      <div className="py-3 flex items-center justify-between">
-        <h3 className="text-gray-400 font-bold ">Canvas</h3>
-
-        <Button
-          size="small"
-          icon={<LogoutOutlined />}
-          onClick={() => dispatch(logout())}
-        />
+      <div className="py-3 flex items-start justify-between">
+        <div>
+          <h3 className="text-gray-600 font-bold truncate">Canvas</h3>
+          <p className="text-xs text-gray-400 truncate">
+            Live social media builder
+          </p>
+        </div>
+        <Popover
+          trigger="click"
+          placement="bottomRight"
+          content={
+            <div className="w-32 min-h-8 flex flex-col items-stretch gap-2 overflow-hidden">
+              <div className="text-xs text-gray-600 truncate">{userName}</div>
+              {!!userEmail && (
+                <div className="text-xs text-gray-600">{userEmail}</div>
+              )}
+              <Tag className="overflow-hidden truncate w-full">{userId}</Tag>
+              <Button
+                className="mt-1"
+                type="primary"
+                danger
+                onClick={() => dispatch(logout())}
+              >
+                <LogoutOutlined className="mr-2" />
+                Logout
+              </Button>
+            </div>
+          }
+        >
+          <Avatar
+            src={userPhoto}
+            style={{
+              backgroundColor: "#fde3cf",
+              color: "#f56a00",
+              cursor: "pointer",
+            }}
+          >
+            {userPhoto ? "" : userName?.charAt(0)?.toUpperCase()}
+          </Avatar>
+        </Popover>
       </div>
       <hr />
       <div className="flex flex-col items-stretch gap-2 grow">
