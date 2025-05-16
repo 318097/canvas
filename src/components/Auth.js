@@ -47,9 +47,11 @@ const Auth = () => {
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="w-96 h-[500px] p-12 bg-white shadow-lg rounded flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold">Canvas</h1>
-        <p className="text-gray-600 mb-6">Login to start creating</p>
-        <div className="flex flex-col items-stretch justify-center w-full gap-4 grow">
+        <div className="grow flex flex-col items-center pt-6">
+          <h1 className="text-2xl font-bold">Canvas</h1>
+          <p className="text-gray-600 mb-6">Login to start creating</p>
+        </div>
+        <div className="flex flex-col items-stretch justify-center w-full gap-4">
           <Button
             disabled={loading}
             loading={loading}
