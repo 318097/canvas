@@ -142,6 +142,7 @@ const md = markdown({
   html: true,
   linkify: true,
   breaks: true,
+  xhtmlOut: true,
   typographer: true,
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {

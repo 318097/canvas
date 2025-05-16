@@ -8,9 +8,12 @@ body,
   font-family: monospace;
 }
 
-// .raw-editor-root {
-//   @apply flex flex-col gap-6 items-center justify-center select-none;
-// }
+.raw-editor-root {
+  hr {
+    max-width: 60%;
+    margin: 24px auto;
+  }
+}
 
 .element {
   outline: none;
@@ -18,6 +21,7 @@ body,
 
   & > p {
     font-family: inherit;
+    margin: 12px 0;
   }
 }
 .outlined {
@@ -33,6 +37,13 @@ body,
   //   top: 0;
   //   transform: translateY(-50%);
   // }
+}
+
+ol {
+  list-style: numbers inside;
+}
+ul {
+  list-style: circle inside;
 }
 
 pre,

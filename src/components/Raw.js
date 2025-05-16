@@ -21,7 +21,6 @@ import {
   setGlobalProperties,
   setLocalProperties,
   setNotification,
-  setShowControls,
   setUpdateGenericTag,
 } from "../store";
 import { message, Progress } from "antd";
@@ -121,7 +120,6 @@ const Raw = () => {
   }, [notification]);
 
   const handleDownload = useCallback(() => {
-    dispatch(setShowControls(false));
     _updateSelectedElement("");
     setProgressPercent(20);
     const eachProgress = Math.floor(80 / templates.length);
@@ -158,7 +156,6 @@ const Raw = () => {
         });
     });
     setTimeout(() => {
-      dispatch(setShowControls(true));
       dispatch(incrementExportId());
       setProgressPercent(0);
     }, 3000);

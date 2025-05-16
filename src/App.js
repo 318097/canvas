@@ -7,7 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth, getConfigFromFirestore, validateUserInFireDb } from "./firebase";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
-import { setInitialState } from "./store";
+import { setDataThunk, setInitialState } from "./store";
 
 function App() {
   const navigate = useNavigate();
@@ -19,6 +19,7 @@ function App() {
         await validateUserInFireDb();
         const userConfig = await getConfigFromFirestore();
         dispatch(setInitialState(userConfig));
+        dispatch(setDataThunk(userConfig.data)); // retain multipage or listicle on refresh
       } else {
         navigate("/auth");
       }

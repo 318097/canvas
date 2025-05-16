@@ -868,7 +868,7 @@ const GLOBAL = {
   },
   title: {
     ...DEFAULT_CLASSES,
-    "text-size": "text-5xl",
+    "text-size": "text-4xl",
     "text-weight": "font-bold",
     "text-align": "text-center",
     "text-color": "text-white",
@@ -878,7 +878,7 @@ const GLOBAL = {
   },
   content: {
     ...DEFAULT_CLASSES,
-    "text-size": "text-3xl",
+    "text-size": "text-2xl",
     "text-align": "text-left",
     "text-color": "text-white",
     "text-weight": "font-normal",
@@ -902,6 +902,7 @@ const GLOBAL = {
     "align-items": "items-center",
     "justify-content": "justify-center",
     select: "select-none",
+    overflow: "overflow-hidden",
   },
   brand: {
     ...DEFAULT_CLASSES,
@@ -919,10 +920,12 @@ const POST_VARIANTS = [
   {
     label: "Multi-page",
     value: "multipage",
+    description: "Break content into multiple pages using <page> tag",
   },
   {
     label: "Listicle",
     value: "listicle",
+    description: "Content is broken into multiple pages on new line (\\n)",
   },
   // {
   //   label: "Cover",
@@ -939,7 +942,21 @@ const POST_VARIANTS = [
   // },
 ];
 
-const GENERIC_PROPERTIES = ["code", "strong", "a"];
+const GENERIC_PROPERTIES = [
+  "code",
+  "strong",
+  "a",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "ol",
+  "ul",
+  "blockquote",
+  "table",
+];
 const GENERIC_CLASSES = [".raw-editor-root"];
 
 const PROPERTIES_MAP = _.keyBy(PROPERTIES, "key");

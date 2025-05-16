@@ -20,7 +20,6 @@ const Canvas = ({
     localProperties,
     globalProperties,
     data,
-    showControls,
     dataConfig,
     postVariant,
   } = useSelector((state) => state.sdata);
@@ -41,7 +40,6 @@ const Canvas = ({
     _updateSelectedElement,
     localProperties,
     globalProperties,
-    showControls,
     dataConfig,
     postVariant,
   };
@@ -86,7 +84,7 @@ const Canvas = ({
         } else {
           const { containerWidth, className, platform } = templates[0];
           const scalingContainerStyles = {
-            width: `${templates[0].containerWidth * zoomLevel}px`,
+            width: `${templates[0].containerWidth * zoomLevel + 40}px`,
             height: `${templates[0].containerHeight * zoomLevel + 40}px`,
           };
           return (
@@ -105,7 +103,7 @@ const Canvas = ({
                 <div
                   className={`bg-gray-200 border p-[10px]`}
                   style={{
-                    width: `${containerWidth}px`,
+                    width: `${containerWidth + 20}px`,
                   }}
                 >
                   <Carousel arrows infinite={false} className="m-auto">
@@ -151,7 +149,6 @@ const Card = ({
   _updateSelectedElement,
   localProperties,
   globalProperties,
-  showControls,
   dataConfig,
   postVariant,
 }) => {

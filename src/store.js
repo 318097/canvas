@@ -10,10 +10,43 @@ import dayjs from "dayjs";
 import { thunk as thunkMiddleware } from "redux-thunk";
 
 const INITIAL_DATA = {
-  title: "Did you know the `world’s` first website is still live? 🌍💻",
-  content: `Tim Berners-Lee launched the **World Wide Web Project** at CERN, giving birth to the internet as we know it.   
-The original site, hosted at [**info.cern.ch**](https://info.cern.ch/), was the first step toward a digital revolution.
-    `,
+  title: "Welcome to the `Markdown`-based Social Media Post Generator  ",
+  content: `
+## Features
+- **Markdown Support**: Write your content in Markdown format for easy formatting.
+- **Template Generation**: Automatically generate templates for different platforms.
+- **Multi-page Support**: Create multi-page or listicle-style posts effortlessly.
+
+<br>
+
+## Getting Started
+1. **Set Your Title** Use the \`title\` field to define the main heading of your post.
+2. **Write Your Content** Add your content in the \`content\` field. You can use Markdown syntax for formatting.
+3. **Add Branding** Use the \`brand\` field to include your brand name or tagline.
+
+<page>
+
+## Advanced Usage
+**Multi-page Posts** To create multi-page posts, use \` &lt; page &gt; \` to separate pages in your content.
+**Listicle Posts** For listicle-style posts, use line breaks to separate items.
+
+<br>
+
+## Tips for Best Results
+- Keep your content concise and engaging.
+- Use headings (\`#\`, \`##\`, etc.) to structure your content.
+- Preview your post to ensure proper formatting.
+
+<br>
+
+[Markdown Guide](https://www.markdownguide.org/)
+
+Happy Posting! 🎉
+`,
+  //   title: "Did you know the `world’s` first website is still live? 🌍💻",
+  //   content: `Tim Berners-Lee launched the **World Wide Web Project** at CERN, giving birth to the internet as we know it.
+  // The original site, hosted at [**info.cern.ch**](https://info.cern.ch/), was the first step toward a digital revolution.
+  //     `,
   brand: "brand.name.co",
   files: [],
 };
@@ -42,7 +75,7 @@ const DATA_CONFIG = {
   },
 };
 
-const initialConfig = {
+const appConfig = {
   data: INITIAL_DATA,
   globalProperties: GLOBAL,
   localProperties: {},
@@ -56,28 +89,29 @@ const initialConfig = {
   dataConfig: DATA_CONFIG,
 };
 
-const nonMutableConfig = {
+const nonResettableConfig = {
   exportId: 1,
   totalExports: 0,
   themes: [],
+  dataConfig: DATA_CONFIG,
 };
 
 const initialState = {
   loading: true,
-  selectedElement: "",
   filename: "",
-  showControls: true,
   notification: null,
   updateGenericTag: false,
-  ...nonMutableConfig,
-  ...initialConfig,
+  ...nonResettableConfig,
+  ...appConfig,
 };
 
 const INITIAL_ZOOM_LEVEL = 0.6;
 
-const isMultipageOrListicle = (postVariant, content) =>
-  (postVariant === "multipage" && content.includes("---")) ||
-  (postVariant === "listicle" && content.includes("\n"));
+const isMultipageOrListicle = (postVariant, content) => {
+  const isMultipage = postVariant === "multipage" && content.includes("<page>");
+  const isListicle = postVariant === "listicle" && content.includes("\n");
+  return isMultipage || isListicle;
+};
 
 const rawSlice = createSlice({
   name: "sdata",
@@ -100,11 +134,10 @@ const rawSlice = createSlice({
       state.templates = generateTemplate(state.selectedTemplates);
 
       if (isMultipageOrListicle(state.postVariant, state.data.content)) {
-        console.log("parsse....");
         const isListicle = state.postVariant === "listicle";
         const contentList = state.data.content
           .trim()
-          .split(isListicle ? "\n" : "---")
+          .split(isListicle ? "\n" : "<page>")
           .map((item) => item.trim())
           .filter((item) => item.length);
 
@@ -180,9 +213,6 @@ const rawSlice = createSlice({
     setLocalProperties: (state, action) => {
       state.localProperties = action.payload;
     },
-    setShowControls: (state, action) => {
-      state.showControls = action.payload;
-    },
     setSelectedFiles: (state, action) => {
       state.data.files = action.payload;
     },
@@ -257,7 +287,10 @@ const rawSlice = createSlice({
       state.updateGenericTag = true;
     },
     resetState: (state) => {
-      Object.assign(state, _.omit(initialState, Object.keys(nonMutableConfig)));
+      Object.assign(
+        state,
+        _.omit(initialState, Object.keys(nonResettableConfig))
+      );
       state.templates = generateTemplate(state.selectedTemplates);
     },
     incrementExportId: (state) => {
@@ -321,7 +354,6 @@ export const {
   setTemplates,
   setGlobalProperties,
   setLocalProperties,
-  setShowControls,
   setSelectedFiles,
   resetState,
   incrementExportId,
@@ -339,7 +371,7 @@ export const {
 const setDataThunk = (data) => async (dispatch, getState) => {
   const { sdata } = getState();
   await dispatch(setData(data));
-  if (sdata.postVariant === "multipage" || data.content.includes("---")) {
+  if (sdata.postVariant === "multipage" || data.content.includes("<page>")) {
     dispatch(setPostVariant("multipage"));
   }
 };
@@ -361,8 +393,8 @@ store.subscribe(() => {
 
   updateConfigInFirestore({
     ..._.pick(state.sdata, [
-      ...Object.keys(initialConfig),
-      ...Object.keys(nonMutableConfig),
+      ...Object.keys(appConfig),
+      ...Object.keys(nonResettableConfig),
     ]),
     data: {
       ..._.pick(state.sdata.data, Object.keys(INITIAL_DATA)),

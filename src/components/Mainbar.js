@@ -110,10 +110,20 @@ const Mainbar = ({ handleDownload }) => {
           <label className="text-xs font-bold">Variant</label>
           <Select
             placeholder="Variant"
-            // className="w-full"
+            className="w-full"
             options={POST_VARIANTS}
             value={postVariant}
             onChange={(variant) => dispatch(setPostVariant(variant))}
+            optionRender={(option) => {
+              return (
+                <div className="flex flex-col items-start gap-.5">
+                  <div>{option.data.label}</div>
+                  <div className="text-xs text-gray-600 break-words whitespace-break-spaces">
+                    {option.data.description}
+                  </div>
+                </div>
+              );
+            }}
           />
         </div>
 
@@ -145,20 +155,18 @@ const Mainbar = ({ handleDownload }) => {
         </div>
         <div>
           <Popconfirm
-            title="Reset state?"
+            title="Sure?"
             placement="right"
             description={
               <div className="max-w-[300px]">
-                Are you sure you want to reset the state?
-                <br /> (This will remove all your templates, properties, filters
-                and data.)
+                This will clear templates, properties, filters & data.
               </div>
             }
             onConfirm={() => dispatch(resetState())}
             okText="Yes"
             cancelText="No"
           >
-            <Button danger>Reset</Button>
+            <Button danger>Clear</Button>
           </Popconfirm>
         </div>
       </div>
