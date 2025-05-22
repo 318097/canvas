@@ -84,7 +84,7 @@ const Mainbar = ({ handleDownload }) => {
               cursor: "pointer",
             }}
           >
-            {userPhoto ? "" : userName?.charAt(0)?.toUpperCase()}
+            {userName?.charAt(0)?.toUpperCase()}
           </Avatar>
         </Popover>
       </div>

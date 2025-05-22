@@ -26,8 +26,14 @@ const Canvas = ({
 
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
 
-  const zoomTransitionClasses = `transition-all duration-300 ease-in-out`;
-  const cardContainerClasses = `flex flex-col items-start gap-1 ${zoomTransitionClasses}`;
+  const canvasContainerClasses = `h-full p-4 bg-white overflow-auto flex-auto flex gap-8 ${
+    view === "col"
+      ? "flex-col items-center justify-start"
+      : "flex-wrap items-start justify-start"
+  }`;
+
+  const scalingContainerClasses = `transition-all duration-300 ease-in-out`;
+  const cardContainerClasses = `flex flex-col items-start gap-1 ${scalingContainerClasses}`;
   const cardContainerStyles = {
     transform: `scale(${zoomLevel})`,
     transformOrigin: "0% 0%",
@@ -45,14 +51,7 @@ const Canvas = ({
   };
 
   return (
-    <div
-      className={`p-2 bg-white grow h-full overflow-auto flex max-w-full justify-center ${
-        view === "col"
-          ? "flex-col gap-2 items-center"
-          : "flex-wrap gap-2 items-start"
-      }`}
-      ref={canvasContainerRef}
-    >
+    <div className={canvasContainerClasses} ref={canvasContainerRef}>
       {grouppedTemplates.map(([groupId, templates]) => {
         if (groupId === "detached") {
           return templates.map((template, idx) => {
@@ -64,8 +63,8 @@ const Canvas = ({
             return (
               <div
                 key={groupId + idx}
+                className={scalingContainerClasses}
                 style={scalingContainerStyles}
-                className={zoomTransitionClasses}
               >
                 <div
                   className={cardContainerClasses}
@@ -84,14 +83,14 @@ const Canvas = ({
         } else {
           const { containerWidth, className, platform } = templates[0];
           const scalingContainerStyles = {
-            width: `${templates[0].containerWidth * zoomLevel + 40}px`,
+            width: `${templates[0].containerWidth * zoomLevel}px`,
             height: `${templates[0].containerHeight * zoomLevel + 40}px`,
           };
           return (
             <div
               key={groupId}
               style={scalingContainerStyles}
-              className={zoomTransitionClasses}
+              className={scalingContainerClasses}
             >
               <div className={cardContainerClasses} style={cardContainerStyles}>
                 <Title

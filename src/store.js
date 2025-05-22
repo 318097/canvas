@@ -382,8 +382,7 @@ const store = configureStore({
   reducer: {
     sdata: rawSlice.reducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(thunkMiddleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
 
 store.subscribe(() => {
