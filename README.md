@@ -1,4 +1,4 @@
-# Grid
+# Grid app
 
 ### Features
 
