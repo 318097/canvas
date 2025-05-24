@@ -13,7 +13,7 @@ import {
   Tag,
   Carousel,
 } from "antd";
-import { POST_VARIANTS } from "../config";
+import config, { POST_VARIANTS } from "../config";
 import { generateTemplate } from "../helpers";
 import {
   ColumnHeightOutlined,
@@ -52,9 +52,9 @@ const Mainbar = ({ handleDownload }) => {
     <div className="flex flex-col gap-2 bg-gray-50 border border-r-gray-200 p-2 w-[280px] shrink-0 h-full overflow-auto">
       <div className="py-3 flex items-start justify-between">
         <div>
-          <h3 className="text-gray-600 font-bold truncate">Canvas</h3>
-          <p className="text-xs text-gray-400 truncate">
-            Live social media builder
+          <h3 className="text-gray-600 font-bold truncate">{config.appName}</h3>
+          <p className="text-xs text-gray-400 truncate whitespace-break-spaces">
+            {config.tagline}
           </p>
         </div>
         <Popover
@@ -82,6 +82,7 @@ const Mainbar = ({ handleDownload }) => {
               backgroundColor: "#fde3cf",
               color: "#f56a00",
               cursor: "pointer",
+              flexShrink: 0,
             }}
           >
             {userName?.charAt(0)?.toUpperCase()}

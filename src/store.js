@@ -7,39 +7,20 @@ import { getAuth, signOut } from "firebase/auth";
 import _ from "lodash";
 import shortid from "shortid";
 import dayjs from "dayjs";
-import { thunk as thunkMiddleware } from "redux-thunk";
 
 const INITIAL_DATA = {
   title: "Welcome to the `Markdown`-based Social Media Post Generator  ",
   content: `
 ## Features
 - **Markdown Support**: Write your content in Markdown format for easy formatting.
+- **Auto Layout**: Entire layout is centered. No need to manually position.
 - **Template Generation**: Automatically generate templates for different platforms.
-- **Multi-page Support**: Create multi-page or listicle-style posts effortlessly.
+- **Multi-page Posts** To create multi-page posts, use \` &lt; page &gt; \` to separate pages in your content.
+- **Listicle Posts** For listicle-style posts, use line breaks to separate items.
+- **Theming & Variants** Create variants for tags (strong, code, etc) or save the entire page as a theme.
+- **Export** Hassle free export.
 
 <br>
-
-## Getting Started
-1. **Set Your Title** Use the \`title\` field to define the main heading of your post.
-2. **Write Your Content** Add your content in the \`content\` field. You can use Markdown syntax for formatting.
-3. **Add Branding** Use the \`brand\` field to include your brand name or tagline.
-
-<page>
-
-## Advanced Usage
-**Multi-page Posts** To create multi-page posts, use \` &lt; page &gt; \` to separate pages in your content.
-**Listicle Posts** For listicle-style posts, use line breaks to separate items.
-
-<br>
-
-## Tips for Best Results
-- Keep your content concise and engaging.
-- Use headings (\`#\`, \`##\`, etc.) to structure your content.
-- Preview your post to ensure proper formatting.
-
-<br>
-
-[Markdown Guide](https://www.markdownguide.org/)
 
 Happy Posting! 🎉
 `,

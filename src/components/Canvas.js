@@ -26,7 +26,7 @@ const Canvas = ({
 
   const grouppedTemplates = Object.entries(_.groupBy(templates, "groupId"));
 
-  const canvasContainerClasses = `h-full p-4 bg-white overflow-auto flex-auto flex gap-8 ${
+  const canvasContainerClasses = `h-full p-4 bg-white overflow-auto flex-auto grid-bg flex gap-8 ${
     view === "col"
       ? "flex-col items-center justify-start"
       : "flex-wrap items-start justify-start"

@@ -1,4 +1,4 @@
-# Canvas
+# Grid
 
 ### Features
 

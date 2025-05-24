@@ -17,9 +17,9 @@ const config = {
     FIREBASE_APP_ID,
     FIREBASE_MEASUREMENT_ID,
   },
-  appId: "CANVAS",
-  appName: "Canvas",
-  tagline: "<app_tagline>",
+  appId: "GRID",
+  appName: "Grid",
+  tagline: "Realtime Markdown-based Social Media Builder",
   sponser: "https://www.buymeacoffee.com/mehullakhanpal",
 };
 

@@ -8,6 +8,7 @@ import {
 import { useNavigate } from "react-router";
 import { Button } from "antd";
 import { validateUserInFireDb } from "../firebase";
+import config from "../config";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -45,13 +46,13 @@ const Auth = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="flex justify-center items-center h-screen grid-bg">
       <div className="w-96 h-[500px] p-12 bg-white shadow-lg rounded flex flex-col items-center justify-center">
         <div className="grow flex flex-col items-center pt-6">
-          <h1 className="text-2xl font-bold">Canvas</h1>
-          <p className="text-gray-600 mb-6">Login to start creating</p>
+          <h1 className="text-2xl font-bold">{config.appName}</h1>
+          <p className="text-gray-600 mb-6 text-center">{config.tagline}</p>
         </div>
-        <div className="flex flex-col items-stretch justify-center w-full gap-4">
+        <div className="flex flex-col items-stretch justify-center w-full gap-4 ">
           <Button
             disabled={loading}
             loading={loading}
