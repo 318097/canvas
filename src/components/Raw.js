@@ -137,9 +137,9 @@ const Raw = () => {
         .then((dataUrl) => {
           dispatch(incrementTotalExports());
           const link = document.createElement("a");
-          link.download = `#${exportId} [${getFormattedDate()}:${platform}] ${
-            order ? `${order} - ` : ""
-          }${filename || "export"}.png`;
+          link.download = `#${exportId}${
+            order ? `.${order}` : ""
+          } [${getFormattedDate()}:${platform}] ${filename || "export"}.png`;
           link.href = dataUrl;
           link.click();
           setProgressPercent((prev) => {
