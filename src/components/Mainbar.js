@@ -91,7 +91,7 @@ const Mainbar = ({ handleDownload }) => {
       </div>
       <hr />
       <div className="flex flex-col items-stretch gap-2 grow">
-        <div className="flex flex-col items-start gap-1 mb-2">
+        <div className="flex flex-col items-start gap-1 mb-3">
           <label className="text-xs font-bold">Platforms</label>
           <Select
             mode="multiple"
@@ -107,7 +107,7 @@ const Mainbar = ({ handleDownload }) => {
           />
         </div>
 
-        <div className="flex flex-col items-start gap-1 mb-2">
+        <div className="flex flex-col items-start gap-1 mb-3">
           <label className="text-xs font-bold">Variant</label>
           <Select
             placeholder="Variant"
@@ -128,7 +128,7 @@ const Mainbar = ({ handleDownload }) => {
           />
         </div>
 
-        <div className="flex flex-col items-start gap-1 mb-2">
+        <div className="flex flex-col items-start gap-1 mb-3">
           <label className="text-xs font-bold">View</label>
           <Segmented
             onChange={(view) => dispatch(setView(view))}
@@ -140,7 +140,7 @@ const Mainbar = ({ handleDownload }) => {
           />
         </div>
 
-        <div className="flex flex-col items-start gap-1 mb-2">
+        <div className="flex flex-col items-start gap-1 mb-3">
           <label className="text-xs font-bold">Zoom</label>
           <div className="flex items-center gap-2">
             <Button

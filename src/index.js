@@ -6,6 +6,10 @@ import reportWebVitals from "./reportWebVitals";
 import store from "./store";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router";
+import mixpanel from "mixpanel-browser";
+import config from "./config";
+
+mixpanel.init(config.MIXPANEL_TOKEN, { autocapture: true, debug: true });
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 

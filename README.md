@@ -11,9 +11,21 @@
 - [x] Autoselect themes (bg color, text color) etc
 - [x] Add Support for images
 - [x] Add fields - company name, pagination, url
-- [ ] Save/Restore ids for tags
 - [x] Auth
 - [ ] Event Tracking - exports
+- [ ] Add Google analytics
+- [ ] Create demo video
+- [ ] Allow entry to update db based on user id
+- [ ] Add about page
+- [ ] Logo
+- [ ] Social media post
+- [ ] Welcome email
+
+- [ ] Save/Restore ids for tags
+- [ ] Increment/Decrement export id
+- [ ] Multiple space
+- [ ] Add images in same page or move to new page
+- [ ] Change to cyclic theme instead of random
 
 #### v2
 

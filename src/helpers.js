@@ -3,6 +3,7 @@ import slugify from "slugify";
 import dayjs from "dayjs";
 import hljs from "highlight.js";
 import markdown from "markdown-it";
+import mixpanel from "mixpanel-browser";
 
 const getFormattedDate = () => {
   return dayjs().format("YYYY-MM-DD");
@@ -155,6 +156,29 @@ const md = markdown({
   },
 });
 
+const trackEvent = (eventName, properties) => {
+  try {
+    mixpanel.track(eventName, { ...properties });
+  } catch (err) {
+    console.log("Mixpanel tracking error:", err);
+  }
+};
+
+const identifyUser = ({ userId, userEmail, userName, type }) => {
+  try {
+    mixpanel.identify(userId);
+    mixpanel.track("Sign In");
+    mixpanel.people.set_once({
+      id: userId,
+      email: userEmail,
+      name: userName,
+      accountType: type,
+    });
+  } catch (err) {
+    console.log("Mixpanel identify error:", err);
+  }
+};
+
 export {
   isGenericTag,
   splitName,
@@ -166,4 +190,6 @@ export {
   md,
   isGenericClass,
   getGenericClass,
+  trackEvent,
+  identifyUser,
 };

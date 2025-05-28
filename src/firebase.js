@@ -1,16 +1,14 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
 import config from "./config";
 import {
   collection,
   getFirestore,
-  query,
-  where,
   updateDoc,
   doc,
   getDoc,
   setDoc,
-  getDocs,
 } from "firebase/firestore";
 import { initialState } from "./store";
 
@@ -28,7 +26,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
+const analytics = getAnalytics(app);
 const auth = getAuth();
 const db = getFirestore(app);
 
@@ -85,15 +83,14 @@ const updateConfigInFirestore = async (data) => {
 };
 
 const getConfigFromFirestore = async () => {
-  const q = query(USERS_COLLECTION, where("userId", "==", getUserId()));
-  const querySnapshot = await getDocs(q);
-  const data = [];
+  const userDocRef = doc(db, "users", getUserId());
+  const userDoc = await getDoc(userDocRef);
 
-  querySnapshot.forEach((doc) => {
-    data.push({ ...doc.data(), id: doc.id });
-  });
+  if (!userDoc.exists()) {
+    throw new Error("User document not found");
+  }
 
-  return data[0];
+  return { ...userDoc.data(), id: userDoc.id };
 };
 
 export {

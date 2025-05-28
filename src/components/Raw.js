@@ -13,6 +13,7 @@ import {
   getCleanKey,
   getFormattedDate,
   getGenericClass,
+  trackEvent,
 } from "../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -41,6 +42,7 @@ const Raw = () => {
     exportId,
     notification,
     updateGenericTag,
+    selectedTemplates,
   } = useSelector((state) => state.sdata);
 
   const isGlobal = propertyType === "global";
@@ -146,6 +148,7 @@ const Raw = () => {
             const newPercent = prev + eachProgress;
             if (newPercent >= 100) {
               dispatch(setNotification("Export completed"));
+
               return 100;
             }
             return newPercent;
@@ -158,6 +161,10 @@ const Raw = () => {
     setTimeout(() => {
       dispatch(incrementExportId());
       setProgressPercent(0);
+      trackEvent("Exported Files", {
+        totalFiles: templates.length,
+        selectedTemplates,
+      });
     }, 3000);
   }, [templateRef, templates, filename, exportId]);
 

@@ -82,36 +82,32 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
     {
       key: "1",
       label: "Font",
-      children: getProperties([
-        "font-family",
-        "font-style",
-        "text-weight",
-        "text-size",
-        "text-color",
-      ]),
+      children: getProperties(["font-family", "text-size", "text-color"]),
       visible: !GENERIC_CLASSES.includes(element),
     },
     {
       key: "2",
-      label: "Decoration",
+      label: "Decoration & Styling",
       children: getProperties([
+        "text-weight",
+        "font-style",
         "text-align",
+        "text-transform",
         "text-decoration",
         "text-decoration-color",
-        "text-transform",
       ]),
+      visible: !GENERIC_CLASSES.includes(element),
+    },
+    {
+      key: "4",
+      label: "Border",
+      children: getProperties(["border", "border-radius", "border-color"]),
       visible: !GENERIC_CLASSES.includes(element),
     },
     {
       key: "3",
       label: "Spacing",
       children: getProperties(["flex-basis", "flex-width", "padding"]),
-      visible: !GENERIC_CLASSES.includes(element),
-    },
-    {
-      key: "4",
-      label: "Border",
-      children: getProperties(["border", "border-color", "border-radius"]),
       visible: !GENERIC_CLASSES.includes(element),
     },
   ];
@@ -134,7 +130,7 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
           const visible = _.get(config, "visible", true);
 
           return (
-            <div className="flex flex-col items-start gap-1 mb-2" key={key}>
+            <div className="flex flex-col items-start gap-1 mb-3" key={key}>
               <label
                 className={`text-xs font-bold ${
                   visible ? "" : "text-gray-400"
@@ -189,7 +185,7 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
       {!!selectedElement && (
         <Fragment>
           <hr />
-          <div className="flex flex-col items-start gap-1 mb-2">
+          <div className="flex flex-col items-start gap-1 mb-3">
             <label className="text-xs font-bold">
               selected element
               {selectedElementVariants > 0 ? (
@@ -219,7 +215,7 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
               </Button>
             </div>
           </div>
-          <div className="flex flex-col items-start gap-1 mb-2">
+          <div className="flex flex-col items-start gap-1 mb-3">
             <label className="text-xs font-bold">properties</label>
             <Radio.Group
               optionType="button"
@@ -240,7 +236,7 @@ const Sidebar = ({ selectedElement, handlePropertyChange, isGlobal }) => {
             <div className="w-full mt-2">
               <Collapse
                 items={items.filter((item) => item.visible)}
-                defaultActiveKey={["1", "2", "3", "4", "5"]}
+                defaultActiveKey={["1", "2", "5"]}
                 size="small"
                 bordered={false}
               />
@@ -297,7 +293,7 @@ const Properties = ({
 
         return (
           <div
-            className="flex flex-col items-start gap-1 mb-2"
+            className="flex flex-col items-start gap-1 mb-3"
             key={`${isGlobal ? "g-" : "l-"}${key}`}
           >
             <label className="text-xs font-bold">{label}</label>

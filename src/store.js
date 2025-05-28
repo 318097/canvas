@@ -7,6 +7,7 @@ import { getAuth, signOut } from "firebase/auth";
 import _ from "lodash";
 import shortid from "shortid";
 import dayjs from "dayjs";
+import mixpanel from "mixpanel-browser";
 
 const INITIAL_DATA = {
   title: "Welcome to the `Markdown`-based Social Media Post Generator  ",
@@ -302,12 +303,13 @@ const rawSlice = createSlice({
       state.loading = false;
     },
     setZoomLevel: (state, action) => {
-      state.zoomLevel =
+      const newValue =
         Math.round(
           (action.payload === "+"
             ? Number(state.zoomLevel) + 0.1
             : Number(state.zoomLevel) - 0.1) * 10
         ) / 10;
+      if (newValue >= 0.1 && newValue <= 1) state.zoomLevel = newValue;
     },
     logout: (state, action) => {
       const auth = getAuth();
@@ -315,6 +317,8 @@ const rawSlice = createSlice({
         .then(() => {
           state.loading = true;
           Object.assign(state, initialState);
+          mixpanel.track("Logout");
+          mixpanel.reset();
         })
         .catch((error) => {
           console.log("error::-", error);

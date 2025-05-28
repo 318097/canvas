@@ -21,6 +21,7 @@ const config = {
   appName: "Grid",
   tagline: "Realtime Markdown-based Social Media Builder",
   sponser: "https://www.buymeacoffee.com/mehullakhanpal",
+  MIXPANEL_TOKEN: process.env.REACT_APP_MIXPANEL_TOKEN,
 };
 
 const PROPERTIES = [

@@ -9,6 +9,7 @@ import { useNavigate } from "react-router";
 import { Button } from "antd";
 import { validateUserInFireDb } from "../firebase";
 import config from "../config";
+import { identifyUser } from "../helpers";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -28,6 +29,13 @@ const Auth = () => {
         const userEmail = user.user.email || "";
         const userName = user.user.displayName || "Guest";
         const userPhoto = user.user.photoURL;
+
+        identifyUser({
+          userId,
+          userEmail,
+          userName,
+          type,
+        });
 
         await validateUserInFireDb({
           userId,
